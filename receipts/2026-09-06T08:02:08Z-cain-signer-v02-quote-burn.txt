@@ -1,0 +1,10 @@
+receipt: 2026-09-06T08:02:08Z
+name: cain-signer-v02-quote-burn
+cmd: agent-link/pay.sh quote 0x000000000000000000000000000000000000dEaD 1 burn test seq 6888 receipt x
+--- output ---
+{
+ "ok": false,
+ "mode": "quote",
+ "error": "recipient is a burn/zero address — not a payee"
+}
+--- exit: 1 ---

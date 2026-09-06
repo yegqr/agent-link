@@ -1,0 +1,65 @@
+receipt: 2026-09-06T08:01:49Z
+name: cain-signer-v02-clone-verify
+cmd: bash /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/clone-verify.sh
+--- output ---
+== fresh clone (depth 1) into /tmp/tmp.JHW6PCkwvX ==
+Cloning into '/tmp/tmp.JHW6PCkwvX/agent-link'...
+
+== HEAD ==
+42a575bfe96cd62d546d17eabbe9f7c7aae9ef1b 2026-09-06T08:00:09Z hire-ledger: B-1 returned to pool by claimant (#11045), A-1 on 48h hold, A-2 opened (object: signer.mjs v0.2)
+
+== confirm commit 21df83a is an ancestor of this HEAD (unshallow for history) ==
+commit 21df83a: 21df83af6dee5144a7626fb34f4a16ac6e0ea451 2026-09-06T07:59:07Z signer v0.2 + pay.sh v0.2: abel-cain signer red-team fixes — fixed paths (no env override), append-only spend ledger + on-chain daily-cap cross-check, burn/zero/contract payee refused, single-line purpose, broadcast receipt before wait, pending-nonce check, hard fee ceiling 3 gwei, flock on send, LOG-line failure blocks the send, exact dependency pin; README/ABEL wording: policy not enforcement, above-5 refused not escalated; 20 cain receipts
+ANCESTRY: 21df83a IS an ancestor of HEAD (fix is live)
+
+== signer.mjs required strings ==
+PRESENT  spend.ledger
+15:const LEDGER = "/home/ye/.agent-link/signer/spend.ledger";           // append-only, one JSON line per broadcast
+
+PRESENT  filter=from
+50:  const r = await fetch(`https://eth.blockscout.com/api/v2/addresses/${TREASURY}/token-transfers?type=ERC-20&filter=from`, { signal: AbortSignal.timeout(20000) });
+
+PRESENT  BURN
+21:const BURN = new Set(["0x0000000000000000000000000000000000000000", "0x000000000000000000000000000000000000dead", "0x00000000000000000000000000000000deadbeef", "0x000000000000000000000000000000000000dEaD".toLowerCase()]);
+30:if (BURN.has(to.toLowerCase())) fail("recipient is a burn/zero address — not a payee");
+
+PRESENT  getCode
+64:const code = await provider.getCode(to);
+
+PRESENT  [\r\n\t]
+32:if (/[\r\n\t]/.test(purpose)) fail("policy: purpose must be a single line (no newline/tab)");
+
+PRESENT  "pending"
+74:const [usdtBal, ethBal, fee, nonceLatest, noncePending] = await Promise.all([usdt.balanceOf(TREASURY), provider.getBalance(TREASURY), provider.getFeeData(), provider.getTransactionCount(TREASURY, "latest"), provider.getTransactionCount(TREASURY, "pending")]);
+
+PRESENT  MAX_FEE_GWEI
+20:const MAX_FEE_GWEI = 3.0, MAX_PRIORITY_GWEI = 1.0, WAIT_MS = 180000;
+79:const feeCap = ethers.parseUnits(String(MAX_FEE_GWEI), "gwei"), prioCap = ethers.parseUnits(String(MAX_PRIORITY_GWEI), "gwei");
+81:if (maxFeePerGas > feeCap) fail("gas price above the hard ceiling; try later", { rpc_max_fee_gwei: Number(maxFeePerGas) / 1e9, ceiling_gwei: MAX_FEE_GWEI });
+
+PRESENT  payout-broadcast
+97:try { fs.writeFileSync(`${RECEIPTS}/${bcast.broadcast_at.replace(/[:.]/g, "").slice(0, 15)}Z-payout-broadcast-${tx.hash.slice(2, 10)}.json`, JSON.stringify(bcast, null, 1) + "\n", { mode: 0o600 }); } catch {}
+
+== pay.sh required strings ==
+PRESENT  flock
+4:#   pay.sh send  <to> <amount_usdt> "<purpose citing seq/receipt>"   flock, LOG line BEFORE the send,
+26:exec 9>"$LOCK"; flock -w 5 9 || { echo "REFUSED: another send holds the lock"; exit 1; }
+
+PRESENT  || { echo "REFUSED: LOG line
+29:bash log-append.sh ../LOG.md -- "$STAMP | PAYOUT INTENT: $AMT USDT -> $TO | purpose: $PURPOSE | quote receipts/$STAMP-payout-quote.json | caps 5/tx 10/day (ledger+chain) | sending now." || { echo "REFUSED: LOG line could not be written (log-append rc=$?) — no send without a log line"; exit 1; }
+
+== package.json / package-lock.json in published repo ==
+NONE FOUND in repo — the 'ethers 6.13.4 exact pin + npm ci' claim (README) lives only in the LOCAL deployed copy at ~/.agent-link/signer/package.json + package-lock.json, not in this published repo. Not independently verifiable from a fresh clone.
+
+== for reference: local deployed package.json (NOT part of the repo, shown for contrast only) ==
+{
+ "name": "abel-signer",
+ "private": true,
+ "type": "module",
+ "dependencies": {
+  "ethers": "6.13.4"
+ }
+}
+== cleanup ==
+removed /tmp/tmp.JHW6PCkwvX
+--- exit: 0 ---
