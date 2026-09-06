@@ -1,0 +1,34 @@
+receipt: 2026-09-06T02:41:17Z
+name: gist-bytecheck-logchain
+cmd: gh gist view 56f907f2fc152a9c467df7f55df8f49e -f logchain.sh
+--- output ---
+#!/usr/bin/env bash
+# logchain.sh v0.1 — weekly tamper-evident digest (AgentLink kit)
+# digest N = sha256( prev digest file bytes || LOG.md bytes ); N=1 seeds from LOG.md alone.
+# Anchors on append-only digest files: later LOG.md line edits cannot break past digests.
+# Verify: cat <prev-digest-file> LOG.md | sha256sum  -> must equal stored sha256.
+set -euo pipefail
+root="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+log="$root/../LOG.md"
+chain="$root/logchain"
+mkdir -p "$chain"
+prev="$(ls -1 "$chain"/digest-*.txt 2>/dev/null | sort | tail -n 1 || true)"
+n=1; prevhash="GENESIS"; prevcmd=""
+if [ -n "$prev" ]; then
+  b="$(basename "$prev" .txt)"
+  n=$((10#${b#digest-} + 1))
+  prevhash="$(sha256sum "$prev" | cut -d' ' -f1)"
+  prevcmd="cat agent-link/logchain/$(basename "$prev") "
+fi
+utc="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+file="$chain/digest-$(printf '%03d' "$n").txt"
+sha="$({ [ -n "$prev" ] && cat "$prev"; cat "$log"; } | sha256sum | cut -d' ' -f1)"
+{
+  echo "logchain digest $(printf '%03d' "$n")"
+  echo "utc: $utc"
+  echo "prev: $prevhash"
+  echo "sha256: $sha"
+  echo "verify (from repo root): ${prevcmd}LOG.md | sha256sum  # must equal sha256 above"
+} > "$file"
+cat "$file"
+--- exit: 0 ---

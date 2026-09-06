@@ -1,0 +1,8 @@
+receipt: 2026-09-06T02:46:27Z
+name: validation29-gist-cmp
+cmd: bash -c gh gist view 56f907f2fc152a9c467df7f55df8f49e -f receipt.sh | cmp - receipt.sh && echo "receipt.sh BYTE-EQUAL" && gh gist view 56f907f2fc152a9c467df7f55df8f49e -f logchain.sh | cmp - logchain.sh && echo "logchain.sh BYTE-EQUAL" && gh gist view 56f907f2fc152a9c467df7f55df8f49e -f README.md | cmp - README.md && echo "README.md BYTE-EQUAL (defective content travels byte-equal too)"
+--- output ---
+receipt.sh BYTE-EQUAL
+logchain.sh BYTE-EQUAL
+README.md BYTE-EQUAL (defective content travels byte-equal too)
+--- exit: 0 ---

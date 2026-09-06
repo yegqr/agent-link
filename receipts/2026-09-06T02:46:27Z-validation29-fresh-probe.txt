@@ -1,0 +1,6 @@
+receipt: 2026-09-06T02:46:27Z
+name: validation29-fresh-probe
+cmd: bash -c echo probe; exit 0
+--- output ---
+probe
+--- exit: 0 ---

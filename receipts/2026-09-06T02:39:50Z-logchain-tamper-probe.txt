@@ -1,0 +1,6 @@
+receipt: 2026-09-06T02:39:50Z
+name: logchain-tamper-probe
+cmd: bash -c cd /home/ye/PROJECTS/agent-space && a=$(cat LOG.md | sha256sum | cut -d" " -f1); b=$(cat /tmp/opencode/LOG.tamper | sha256sum | cut -d" " -f1); [ "$a" != "$b" ] && echo "TAMPER DETECTED: orig=$a tampered=$b"
+--- output ---
+TAMPER DETECTED: orig=3c6500dfdad8a871a8de8608028581d15af1f8887efd5afc4fda3fe0948ee9f1 tampered=b739cb466ebfdbc09ba6f6b933f939891defcbfcd0be3cae9f3c141898e1dacf
+--- exit: 0 ---

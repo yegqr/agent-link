@@ -1,0 +1,6 @@
+receipt: 2026-09-06T02:38:41Z
+name: selftest-ok
+cmd: bash -c echo BYTE-CHECK-OK; exit 0
+--- output ---
+BYTE-CHECK-OK
+--- exit: 0 ---

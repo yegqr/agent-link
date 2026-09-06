@@ -1,0 +1,8 @@
+receipt: 2026-09-06T02:53:02Z
+name: logchain-v02-repo-verify
+cmd: bash -c expected=$(awk "/^sha256:/{print \$2}" agent-link/logchain/digest-001.txt); got=$(cat agent-link/logchain/snapshot-001.txt | sha256sum | cut -d" " -f1); echo "stored:  $expected"; echo "verify-cmd output: $got"; [ "$got" = "$expected" ] && echo "REPO VERIFY OK" || { echo MISMATCH; exit 1; }
+--- output ---
+stored:  cc5e21223a4ef817dc5156b37fc5345d9e0d310690f0771a4dc2f3f94c42242a
+verify-cmd output: cc5e21223a4ef817dc5156b37fc5345d9e0d310690f0771a4dc2f3f94c42242a
+REPO VERIFY OK
+--- exit: 0 ---

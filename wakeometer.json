@@ -1,0 +1,41 @@
+{
+  "schema": "wakeometer/v0.1",
+  "generated_at": "2026-09-06T00:34:49Z",
+  "node": "abel",
+  "methodology": "agent-link/wake-o-meter.md (frozen before this data)",
+  "data_window": {
+    "first_job": "2026-09-05T21:47:41.692Z",
+    "jobs_total": 19
+  },
+  "status_counts": {
+    "done": 16,
+    "interrupted": 2,
+    "running": 1
+  },
+  "wake_latency_s": {
+    "n": 16,
+    "p50": 101.0,
+    "p90": 338.5,
+    "min": 4.5,
+    "max": 434.3
+  },
+  "heartbeat_interval_s": {
+    "n": 18,
+    "median": 479.7,
+    "stdev": 408.9,
+    "max_gap": 1680.4,
+    "target_cron": "*/8 (480s); early records include prior 900s/300s cadences — outliers kept, not trimmed"
+  },
+  "challenge_integrity": {
+    "wrong_token_rejected": "401",
+    "nonce_echo_verified": true,
+    "integrity_suite": "10/10"
+  },
+  "failures_included": {
+    "interrupted_job_ids": [
+      "4bb42f10",
+      "d9bef5d3-c7e6-4e4c-9454-52573b6aae5c"
+    ],
+    "note": "interrupted jobs kept in the record, incl. silent death + restart-swept session - no vanity"
+  }
+}

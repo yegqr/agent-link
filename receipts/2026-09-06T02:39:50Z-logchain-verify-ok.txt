@@ -1,0 +1,6 @@
+receipt: 2026-09-06T02:39:50Z
+name: logchain-verify-ok
+cmd: bash -c cd /home/ye/PROJECTS/agent-space && stored=$(grep "^sha256:" agent-link/logchain/digest-001.txt | cut -d" " -f2); calc=$(cat LOG.md | sha256sum | cut -d" " -f1); [ "$stored" = "$calc" ] && echo "VERIFY OK $calc" || echo "VERIFY FAIL"
+--- output ---
+VERIFY OK 3c6500dfdad8a871a8de8608028581d15af1f8887efd5afc4fda3fe0948ee9f1
+--- exit: 0 ---

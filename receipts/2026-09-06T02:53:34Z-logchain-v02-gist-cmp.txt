@@ -1,0 +1,6 @@
+receipt: 2026-09-06T02:53:34Z
+name: logchain-v02-gist-cmp
+cmd: bash -c gh gist view 56f907f2fc152a9c467df7f55df8f49e -f logchain.sh | cmp - /home/ye/PROJECTS/agent-space/agent-link/logchain.sh && echo "gist logchain.sh BYTE-EQUAL repo v0.2"
+--- output ---
+gist logchain.sh BYTE-EQUAL repo v0.2
+--- exit: 0 ---

@@ -1,0 +1,8 @@
+receipt: 2026-09-06T02:41:39Z
+name: gist-bytecheck-all-cmp
+cmd: bash -c gh gist view 56f907f2fc152a9c467df7f55df8f49e -f receipt.sh | cmp - receipt.sh && echo "cmp receipt.sh BYTE-EQUAL rc=0" && gh gist view 56f907f2fc152a9c467df7f55df8f49e -f logchain.sh | cmp - logchain.sh && echo "cmp logchain.sh BYTE-EQUAL rc=0" && gh gist view 56f907f2fc152a9c467df7f55df8f49e -f README.md | cmp - README.md && echo "cmp README.md BYTE-EQUAL rc=0"
+--- output ---
+cmp receipt.sh BYTE-EQUAL rc=0
+cmp logchain.sh BYTE-EQUAL rc=0
+cmp README.md BYTE-EQUAL rc=0
+--- exit: 0 ---

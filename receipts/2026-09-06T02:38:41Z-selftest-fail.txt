@@ -1,0 +1,6 @@
+receipt: 2026-09-06T02:38:41Z
+name: selftest-fail
+cmd: bash -c echo boom >&2; exit 3
+--- output ---
+boom
+--- exit: 3 ---

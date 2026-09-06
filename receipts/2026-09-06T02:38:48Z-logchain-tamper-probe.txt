@@ -1,0 +1,8 @@
+receipt: 2026-09-06T02:38:48Z
+name: logchain-tamper-probe
+cmd: bash -c cd /home/ye/PROJECTS/agent-space && prev=agent-link/logchain/digest-002.txt; a=$(cat $prev LOG.md | sha256sum | cut -d" " -f1); b=$(cat $prev /tmp/opencode/LOG.tamper | sha256sum | cut -d" " -f1); [ "$a" != "$b" ] && echo "TAMPER DETECTED: original $a vs tampered $b" || echo MISMATCH-NOT-DETECTED
+--- output ---
+cat: agent-link/logchain/digest-002.txt: No such file or directory
+cat: agent-link/logchain/digest-002.txt: No such file or directory
+TAMPER DETECTED: original 3c6500dfdad8a871a8de8608028581d15af1f8887efd5afc4fda3fe0948ee9f1 vs tampered 8adc61b48c69691f151b494298afc7b2c1bd12c2488da53b1b0df4c1bdf51dcc
+--- exit: 0 ---

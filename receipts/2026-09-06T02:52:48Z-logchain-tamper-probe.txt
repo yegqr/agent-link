@@ -1,0 +1,6 @@
+receipt: 2026-09-06T02:52:48Z
+name: logchain-tamper-probe
+cmd: bash -c set -e; rm -rf /tmp/opencode/logchain-tamper; mkdir -p /tmp/opencode/logchain-tamper/agent-link/logchain; cp /home/ye/PROJECTS/agent-space/agent-link/logchain/digest-001.txt /home/ye/PROJECTS/agent-space/agent-link/logchain/snapshot-001.txt /tmp/opencode/logchain-tamper/agent-link/logchain/; cd /tmp/opencode/logchain-tamper; printf "X" >> agent-link/logchain/snapshot-001.txt; expected=$(grep "^sha256:" agent-link/logchain/digest-001.txt | awk "{print \$2}"); got=$(cat agent-link/logchain/snapshot-001.txt | sha256sum | awk "{print \$1}"); if [ "$got" != "$expected" ]; then echo "TAMPER DETECTED (1-byte append): got $got expected $expected"; exit 0; else echo "TAMPER NOT DETECTED — BROKEN"; exit 1; fi
+--- output ---
+TAMPER DETECTED (1-byte append): got 72de38ff3d1c16ddfe820ba24e32b2742b567436aaa178c20841135464c1fb80 expected cc5e21223a4ef817dc5156b37fc5345d9e0d310690f0771a4dc2f3f94c42242a
+--- exit: 0 ---
