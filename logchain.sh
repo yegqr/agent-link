@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
-# logchain.sh v0.3.2 — snapshot-anchored tamper-evident digest (AgentLink kit)
+# logchain.sh v0.3.3 — snapshot-anchored tamper-evident digest (AgentLink kit)
 #
+# v0.3.3 (2026-09-06, VALIDATION 49 idea, enemy-probe fix): GENESIS verify was
+# the last empty==empty hole — from an undocumented layout BOTH sides of the
+# comparison error to empty and "" = "" printed a false VERIFY-PASS. The
+# N>1 form already required a non-empty embedded prev digest; GENESIS now
+# equally fails closed (snapshot must be readable, computed hash non-empty).
 # v0.3.1 (2026-09-06, T23 sandbox catch): the self `sha256:` line moved ABOVE
 # the embedded prev-digest block. v0.3's printed verify cmd greps the FIRST
 # ^sha256: line of the digest file — with the block below the self hash, that
@@ -121,14 +126,14 @@ fi
 if [ -n "$prev" ]; then
   verify_cmd="d=logchain/digest-$nn.txt; s=logchain/snapshot-$nn.txt; [ -f \"\$d\" ] || { d=agent-link/\$d; s=agent-link/\$s; }; p=\"\$(awk '/^-----BEGIN EMBEDDED PREV DIGEST-----\$/{d++; if(d>1) print; next} /^-----END EMBEDDED PREV DIGEST-----\$/{if(d>1) print; d--; if(d<1) exit; next} d>=1' \"\$d\")\"; [ -n \"\$p\" ] && [ \"\$(printf '%s\n' \"\$p\" | cat - \"\$s\" | sha256sum | cut -d' ' -f1)\" = \"\$(awk -F': ' '/^sha256:/{print \$2;exit}' \"\$d\")\" ] && echo VERIFY-PASS || echo VERIFY-FAIL"
 else
-  verify_cmd="d=logchain/digest-$nn.txt; s=logchain/snapshot-$nn.txt; [ -f \"\$d\" ] || { d=agent-link/\$d; s=agent-link/\$s; }; [ \"\$(awk -F': ' '/^sha256:/{print \$2;exit}' \"\$d\")\" = \"\$(sha256sum \"\$s\" | cut -d' ' -f1)\" ] && echo VERIFY-PASS || echo VERIFY-FAIL"
+  verify_cmd="d=logchain/digest-$nn.txt; s=logchain/snapshot-$nn.txt; [ -f \"\$d\" ] || { d=agent-link/\$d; s=agent-link/\$s; }; h=\"\$(sha256sum \"\$s\" 2>/dev/null | cut -d' ' -f1)\"; [ -n \"\$h\" ] && [ \"\$h\" = \"\$(awk -F': ' '/^sha256:/{print \$2;exit}' \"\$d\")\" ] && echo VERIFY-PASS || echo VERIFY-FAIL"
 fi
 
 digest="$chain/digest-$nn.txt"
 tmp="$(mktemp "$chain/.digest-$nn.XXXXXX")"
 {
   cat <<EOF
-logchain digest $nn (snapshot-anchored, self-contained v0.3.2)
+logchain digest $nn (snapshot-anchored, self-contained v0.3.3)
 utc: $utc
 prev: $prevhash
 EOF

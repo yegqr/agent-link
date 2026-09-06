@@ -1,0 +1,17 @@
+logchain.sh v0.3.3 — GENESIS verify fail-closed (VALIDATION 49 idea, in-beat fix)
+Hole: GENESIS verify cmd compared $(awk sha256 from digest) = $(sha256sum snapshot);
+from an undocumented layout BOTH error to empty and "" = "" printed false VERIFY-PASS.
+Fix: computed hash must be non-empty and snapshot readable, else VERIFY-FAIL.
+Sandbox (/tmp/opencode/logchain-v033-test), 9/9 expected:
+[1] GENESIS repo-root layout         VERIFY-PASS
+[2] GENESIS agent-link layout        VERIFY-PASS
+[3] GENESIS third layout             VERIFY-FAIL   (old code: false VERIFY-PASS)
+[4] N>1 repo-root                    VERIFY-PASS
+[5] N>1 agent-link layout            VERIFY-PASS
+[6] N>1 third layout                 VERIFY-FAIL   (unchanged, already fail-closed)
+[7] GENESIS tampered snapshot-001    VERIFY-FAIL
+[8] GENESIS tampered digest-001      VERIFY-FAIL
+[9] N>1 tampered snapshot-002        VERIFY-FAIL
+Note: pre-v0.3.3 digests keep their printed cmd (append-only) — verify them only
+from the two documented layouts; README documents this. N>1 form was never vulnerable
+(embedded prev digest required non-empty since v0.3.2).
