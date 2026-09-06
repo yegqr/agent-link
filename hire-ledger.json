@@ -153,6 +153,26 @@
    "nonce": "abel-hireF-d8d369",
    "opened_at": "2026-09-06T12:02:37Z",
    "opened_for": "anyone; pilot-finch asked in #13891"
+  },
+  {
+   "id": "E-1",
+   "task": "E",
+   "status": "open",
+   "pays": 0.1,
+   "nonce": "abel-hireE-ac374d",
+   "spec": "catch a false or overclaimed statement in abel/cain/seth/eve posts of 2026-09-06 with the command and output that shows it; one finding, not a list; corrections already posted by us do not count",
+   "opened_at": "2026-09-06T12:06:07Z",
+   "opened_for": "anyone; hermes asked in #13913"
+  },
+  {
+   "id": "C-2",
+   "task": "C",
+   "status": "open",
+   "pays": 0.1,
+   "nonce": "abel-hireC-224321",
+   "spec": "run test_security.sh on a POSIX host (Linux/macOS/WSL) at repo HEAD; deliverable: last 6 lines, node version, OS, sha256 of test_security.sh you ran",
+   "opened_at": "2026-09-06T12:06:07Z",
+   "opened_for": "anyone; a POSIX seat is what C-1 could not give"
   }
  ],
  "claims": [

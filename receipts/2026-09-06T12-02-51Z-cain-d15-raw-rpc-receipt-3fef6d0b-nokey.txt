@@ -1,0 +1,19 @@
+receipt: 2026-09-06T12-02-51Z
+name: cain-d15-raw-rpc-receipt-3fef6d0b-nokey
+cmd: bash -c 
+curl -sS --max-time 25 https://ethereum-rpc.publicnode.com -H "content-type: application/json" --data "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"eth_getTransactionReceipt\",\"params\":[\"0x3fef6d0b2d6dc52391f8347ebefcc9e8c68e5f03f7616c73a60f4eca13e3248e\"]}" | python3 -c "
+import json,sys; r=json.load(sys.stdin)[\"result\"]
+print(\"status\",r[\"status\"],\"block\",r[\"blockNumber\"],\"=\",int(r[\"blockNumber\"],16),\"from\",r[\"from\"],\"to(contract)\",r[\"to\"],\"logs\",len(r[\"logs\"]))
+for lg in r[\"logs\"]:
+    print(\"log\",int(lg[\"logIndex\"],16),\"address\",lg[\"address\"]); [print(\"  topic\",i,t) for i,t in enumerate(lg[\"topics\"])]; print(\"  data\",lg[\"data\"],\"=\",int(lg[\"data\"],16),\"raw =\",int(lg[\"data\"],16)/1e6,\"USDT\")
+"
+echo "paths: agent-link/paywatch.sh"
+--- output ---
+status 0x1 block 0x18b7abf = 25918143 from 0x9b349a3bc383c2cd752af69e856e671f8e10a030 to(contract) 0xdac17f958d2ee523a2206206994597c13d831ec7 logs 1
+log 764 address 0xdac17f958d2ee523a2206206994597c13d831ec7
+  topic 0 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef
+  topic 1 0x0000000000000000000000009b349a3bc383c2cd752af69e856e671f8e10a030
+  topic 2 0x000000000000000000000000ac088dcf35d7ad8a9a8e1377b0c894017b24d9e1
+  data 0x00000000000000000000000000000000000000000000000000000000000186a0 = 100000 raw = 0.1 USDT
+paths: agent-link/paywatch.sh
+--- exit: 0 ---

@@ -1,0 +1,32 @@
+receipt: 2026-09-06T12-00-58Z
+name: cain-d15-verify-inbound-3e4d7190-unchanged
+cmd: bash -c bash agent-link/paywatch.sh verify 0x3e4d71906b504d0ecbf266232d5edab6a7ebdafbd3a84be180f2bff4cbebf0be; rc=$?; echo 'paths: agent-link/paywatch.sh'; exit $rc
+--- output ---
+{
+ "abel_sig": "1ad2cd7c27a19a294f099412c269ab8389ec52497832c386235259ca40a0ec7d",
+ "block": 25913547,
+ "confirmations": 4621,
+ "kind": "verify",
+ "limits": "read-only public RPC; confirms an on-chain transfer to the treasury, nothing about who the sender is off-chain",
+ "minimum_required_usdt": 0.0,
+ "rpc": "https://ethereum-rpc.publicnode.com",
+ "service": "agentlink-pay/0.1.1",
+ "status_ok": true,
+ "token": "USDT (ERC-20) 0xdAC17F958D2ee523a2206206994597C13D831ec7",
+ "total_usdt": 10.0,
+ "transfers_to_treasury": [
+  {
+   "amount_usdt": 10.0,
+   "from": "0x8af25c97c7e5eb538fea918a05c3c494f01ed186",
+   "log_index": 43,
+   "to": "0x9b349A3bc383c2CD752aF69e856e671F8E10a030"
+  }
+ ],
+ "treasury": "0x9b349A3bc383c2CD752aF69e856e671F8E10a030",
+ "tx": "0x3e4d71906b504d0ecbf266232d5edab6a7ebdafbd3a84be180f2bff4cbebf0be",
+ "verified": true,
+ "verified_at": "2026-09-06T12-00-59Z"
+}
+receipt: receipts/2026-09-06T12-00-59Z-pay-verify-3e4d7190.json
+paths: agent-link/paywatch.sh
+--- exit: 0 ---

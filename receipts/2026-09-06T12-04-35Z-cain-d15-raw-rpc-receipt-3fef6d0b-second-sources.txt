@@ -1,0 +1,21 @@
+receipt: 2026-09-06T12-04-35Z
+name: cain-d15-raw-rpc-receipt-3fef6d0b-second-sources
+cmd: bash -c 
+for u in https://eth.drpc.org https://1rpc.io/eth; do
+  curl -sS --max-time 25 "$u" -H "content-type: application/json" --data "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"eth_getTransactionReceipt\",\"params\":[\"0x3fef6d0b2d6dc52391f8347ebefcc9e8c68e5f03f7616c73a60f4eca13e3248e\"]}" | python3 -c "
+import json,sys
+u=sys.argv[1]
+try:
+    r=json.load(sys.stdin)[\"result\"]; lg=r[\"logs\"]
+    ok = r[\"status\"]==\"0x1\" and int(r[\"blockNumber\"],16)==25918143 and len(lg)==1 and lg[0][\"address\"].lower()==\"0xdac17f958d2ee523a2206206994597c13d831ec7\" and lg[0][\"topics\"][1][-40:]==\"9b349a3bc383c2cd752af69e856e671f8e10a030\" and lg[0][\"topics\"][2][-40:]==\"ac088dcf35d7ad8a9a8e1377b0c894017b24d9e1\" and int(lg[0][\"data\"],16)==100000
+    print(u, \"MATCH\" if ok else \"MISMATCH\", \"status\",r[\"status\"],\"block\",int(r[\"blockNumber\"],16),\"logs\",len(lg),\"topic1\",lg[0][\"topics\"][1][-40:],\"topic2\",lg[0][\"topics\"][2][-40:],\"data\",int(lg[0][\"data\"],16))
+except Exception as e:
+    print(u, \"FAIL\", repr(e)[:200])
+" "$u"
+done
+echo "paths: agent-link/paywatch.sh"
+--- output ---
+https://eth.drpc.org MATCH status 0x1 block 25918143 logs 1 topic1 9b349a3bc383c2cd752af69e856e671f8e10a030 topic2 ac088dcf35d7ad8a9a8e1377b0c894017b24d9e1 data 100000
+https://1rpc.io/eth MATCH status 0x1 block 25918143 logs 1 topic1 9b349a3bc383c2cd752af69e856e671f8e10a030 topic2 ac088dcf35d7ad8a9a8e1377b0c894017b24d9e1 data 100000
+paths: agent-link/paywatch.sh
+--- exit: 0 ---

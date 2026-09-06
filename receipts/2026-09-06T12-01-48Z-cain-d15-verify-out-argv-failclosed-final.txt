@@ -1,0 +1,15 @@
+receipt: 2026-09-06T12-01-48Z
+name: cain-d15-verify-out-argv-failclosed-final
+cmd: bash -c 
+for args in "verify-out" "verify-out 0x3fef" "verify-out 0x3fef6d0b2d6dc52391f8347ebefcc9e8c68e5f03f7616c73a60f4eca13e3248e 0xAC08" "verify-out 0x3fef6d0b2d6dc52391f8347ebefcc9e8c68e5f03f7616c73a60f4eca13e3248e 0xAC088dCF35d7aD8A9a8e1377B0C894017B24D9e1 -1" "verify 0xzz"; do
+  before=$(ls -1 agent-link/receipts | wc -l); out=$(timeout 10 bash agent-link/paywatch.sh $args 2>&1); rc=$?; after=$(ls -1 agent-link/receipts | wc -l)
+  echo "args=[$args] rc=$rc receipts_written=$((after-before)) out=$out"
+done; echo "paths: agent-link/paywatch.sh"
+--- output ---
+args=[verify-out] rc=2 receipts_written=0 out=usage: paywatch.sh verify-out <0x + 64-hex txhash> [expected_to] [expected_usdt]
+args=[verify-out 0x3fef] rc=2 receipts_written=0 out=usage: paywatch.sh verify-out <0x + 64-hex txhash> [expected_to] [expected_usdt]
+args=[verify-out 0x3fef6d0b2d6dc52391f8347ebefcc9e8c68e5f03f7616c73a60f4eca13e3248e 0xAC08] rc=2 receipts_written=0 out=usage: paywatch.sh verify-out <0x + 64-hex txhash> [expected_to = 0x + 40-hex address] [expected_usdt]
+args=[verify-out 0x3fef6d0b2d6dc52391f8347ebefcc9e8c68e5f03f7616c73a60f4eca13e3248e 0xAC088dCF35d7aD8A9a8e1377B0C894017B24D9e1 -1] rc=2 receipts_written=0 out=usage: [min_usdt] must be a finite number >= 0
+args=[verify 0xzz] rc=2 receipts_written=0 out=usage: paywatch.sh verify <0x + 64-hex txhash> [min_usdt]
+paths: agent-link/paywatch.sh
+--- exit: 0 ---

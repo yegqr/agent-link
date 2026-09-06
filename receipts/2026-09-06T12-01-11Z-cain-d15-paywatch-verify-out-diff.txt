@@ -1,0 +1,91 @@
+receipt: 2026-09-06T12-01-11Z
+name: cain-d15-paywatch-verify-out-diff
+cmd: bash -c sha256sum /tmp/opencode/agent-link-repo/paywatch.sh agent-link/paywatch.sh; echo 'ref = /tmp/opencode/agent-link-repo/paywatch.sh (git HEAD e179fdc, identical to pre-edit agent-link/paywatch.sh sha256 1251614c32cae092347a906feecb8612c0ac299416d90bbbda5a3139af85f873)'; git diff --no-index /tmp/opencode/agent-link-repo/paywatch.sh agent-link/paywatch.sh; echo 'paths: agent-link/paywatch.sh'; exit 0
+--- output ---
+1251614c32cae092347a906feecb8612c0ac299416d90bbbda5a3139af85f873  /tmp/opencode/agent-link-repo/paywatch.sh
+d412493c78f366392d3a72d51d970461fcf874eb81a8c006d3ce5b0ddd001bc7  agent-link/paywatch.sh
+ref = /tmp/opencode/agent-link-repo/paywatch.sh (git HEAD e179fdc, identical to pre-edit agent-link/paywatch.sh sha256 1251614c32cae092347a906feecb8612c0ac299416d90bbbda5a3139af85f873)
+diff --git a/tmp/opencode/agent-link-repo/paywatch.sh b/agent-link/paywatch.sh
+index 90fdbd5..4ca9a38 100755
+--- a/tmp/opencode/agent-link-repo/paywatch.sh
++++ b/agent-link/paywatch.sh
+@@ -4,10 +4,16 @@
+ #   paywatch.sh balance                 ETH + USDT balance of the treasury
+ #   paywatch.sh verify <txhash> [min]   verify a claimed USDT payment (ERC-20 Transfer
+ #                                       to the treasury), emit a receipt JSON
++#   paywatch.sh verify-out <txhash> [expected_to] [expected_usdt]
++#                                       verify an OUTBOUND payout: status 1 and exactly one
++#                                       USDT Transfer FROM the treasury; reports to/amount/
++#                                       block, match/mismatch vs the expected values if given;
++#                                       exit 0 verified, 1 not, 2 usage. Emits a receipt JSON
+ #   paywatch.sh scan [blocks]           list incoming USDT transfers in the last N blocks
+ #                                       (default 7200 ~ 1 day), emit a receipt JSON
+-# Receipts: receipts/<UTCts>-pay-<verify|scan>-<id>.json, abel_sig = sha256 of the
+-# canonical body (sort_keys, no spaces) without abel_sig.
++# Receipts: receipts/<UTCts>-pay-<verify|verify-out|scan>-<id>.json, abel_sig = sha256 of
++# the canonical body (sort_keys, no spaces) without abel_sig.
++# v0.1.2 (2026-09-06, Cain dispatch 15): verify-out added; verify/scan/watch unchanged.
+ set -uo pipefail
+ cd "$(dirname "$0")"
+ ADDR="${TREASURY:-0x9b349A3bc383c2CD752aF69e856e671F8E10a030}"
+@@ -25,6 +31,11 @@ def need_min(s):
+     except Exception: print("usage: [min_usdt] must be a finite number >= 0"); sys.exit(2)
+     if not math.isfinite(m) or m<0: print("usage: [min_usdt] must be a finite number >= 0"); sys.exit(2)
+     return m
++def need_addr(s):
++    # fail-closed BEFORE any RPC: expected_to must be 0x + 40 hex chars (v0.1.2)
++    if not isinstance(s,str) or not re.fullmatch(r"0x[0-9a-fA-F]{40}",s):
++        print("usage: paywatch.sh verify-out <0x + 64-hex txhash> [expected_to = 0x + 40-hex address] [expected_usdt]"); sys.exit(2)
++    return s
+ def need_span(s):
+     try: n=int(s)
+     except Exception: print("usage: [blocks] must be an integer 1..2000000"); sys.exit(2)
+@@ -70,6 +81,39 @@ elif cmd=="verify":
+        "transfers_to_treasury":hits,"total_usdt":total,"minimum_required_usdt":minimum,"verified":ok,"treasury":ADDR,"token":"USDT (ERC-20) "+USDT,
+        "rpc":u,"verified_at":ts(),"limits":"read-only public RPC; confirms an on-chain transfer to the treasury, nothing about who the sender is off-chain"}
+     p=save("verify",tx[2:10],seal(r)); print(json.dumps(r,indent=1,sort_keys=True)); print("receipt:",p); sys.exit(0 if ok else 1)
++elif cmd=="verify-out":
++    # OUTBOUND payout check (v0.1.2): same receipt source as verify (public RPC list), but the
++    # Transfer log must be FROM the treasury (topics[1]) and there must be exactly one such log.
++    tx=need_tx(sys.argv[2] if len(sys.argv)>2 else "")
++    exp_to=need_addr(sys.argv[3]) if len(sys.argv)>3 else None
++    exp_usdt=need_min(sys.argv[4]) if len(sys.argv)>4 else None
++    rec,u=rpc("eth_getTransactionReceipt",[tx]); latest,_=rpc("eth_blockNumber",[])
++    blk=int(rec["blockNumber"],16); conf=int(latest,16)-blk+1
++    outs=[]
++    for lg in rec.get("logs",[]):
++        tp=lg.get("topics") or []
++        if lg["address"].lower()==USDT.lower() and len(tp)==3 and tp[0]==TRANSFER and tp[1].lower()==pad(ADDR):
++            raw=int(lg["data"],16)
++            outs.append({"from":ADDR,"to":"0x"+tp[2][-40:],"amount_usdt":raw/1e6,"amount_raw":raw,"log_index":int(lg["logIndex"],16)})
++    status_ok=rec.get("status")=="0x1"; one=len(outs)==1
++    hit=outs[0] if one else None
++    to_match=None if exp_to is None else (one and hit["to"].lower()==exp_to.lower())
++    amt_match=None if exp_usdt is None else (one and hit["amount_raw"]==int(round(exp_usdt*1e6)))
++    ok=status_ok and one and conf>=1 and to_match is not False and amt_match is not False
++    if not status_ok: reason="tx reverted (status != 0x1)"
++    elif len(outs)==0: reason="NOT an outbound transfer from the treasury: no USDT Transfer log FROM "+ADDR+" in this tx"
++    elif not one: reason=f"{len(outs)} USDT Transfer logs FROM the treasury; exactly one required"
++    elif to_match is False: reason="recipient mismatch: on-chain to="+hit["to"]+" expected_to="+exp_to
++    elif amt_match is False: reason=f"amount mismatch: on-chain {hit['amount_usdt']:.6f} USDT expected {exp_usdt:.6f}"
++    elif conf<1: reason="0 confirmations"
++    else: reason="ok"
++    r={"service":"agentlink-pay/0.1.2","kind":"verify-out","tx":tx,"block":blk,"confirmations":conf,"status_ok":status_ok,
++       "tx_from":rec.get("from"),"tx_to_contract":rec.get("to"),"transfers_from_treasury":outs,
++       "to":hit["to"] if one else None,"amount_usdt":hit["amount_usdt"] if one else None,
++       "expected_to":exp_to,"expected_usdt":exp_usdt,"to_match":to_match,"amount_match":amt_match,
++       "verified":ok,"reason":reason,"treasury":ADDR,"token":"USDT (ERC-20) "+USDT,"rpc":u,"verified_at":ts(),
++       "limits":"read-only public RPC; confirms one on-chain USDT transfer FROM the treasury to the reported address, nothing about who controls that address off-chain"}
++    p=save("verify-out",tx[2:10],seal(r)); print(json.dumps(r,indent=1,sort_keys=True)); print("receipt:",p); sys.exit(0 if ok else 1)
+ elif cmd=="scan":
+     # Primary: Blockscout public indexer (no key). Public RPCs measured 2026-09-06 either
+     # refuse eth_getLogs (publicnode: archive token; 1rpc: 50-block cap) or error on
+@@ -116,5 +160,5 @@ elif cmd=="watch":
+     open(seenf,"w").write("\n".join(sorted(seen|{x["tx"] for x in d["incoming"]}))+"\n")
+     print(f"watch: {len(new)} new, {len(d['incoming'])} total in window")
+ else:
+-    print("usage: paywatch.sh balance|verify <tx> [min]|scan [blocks]|watch [blocks]"); sys.exit(2)
++    print("usage: paywatch.sh balance|verify <tx> [min]|verify-out <tx> [to] [usdt]|scan [blocks]|watch [blocks]"); sys.exit(2)
+ PY
+paths: agent-link/paywatch.sh
+--- exit: 0 ---

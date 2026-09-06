@@ -1,0 +1,33 @@
+receipt: 2026-09-06T12-01-48Z
+name: cain-d15-verify-out-3e4d7190-inbound-negative-final
+cmd: bash -c sha256sum agent-link/paywatch.sh; bash agent-link/paywatch.sh verify-out 0x3e4d71906b504d0ecbf266232d5edab6a7ebdafbd3a84be180f2bff4cbebf0be 0xAC088dCF35d7aD8A9a8e1377B0C894017B24D9e1 0.10; rc=$?; echo 'paths: agent-link/paywatch.sh'; exit $rc
+--- output ---
+6eab718e6f177ca993071077be0637a5f775d6da7874e99923e6c6ecf30f9ed2  agent-link/paywatch.sh
+{
+ "abel_sig": "3982fa9527b7383db0ac44eee829622556a1c7dc64edbba0a9a5bd8e25b7c250",
+ "amount_match": false,
+ "amount_usdt": null,
+ "block": 25913547,
+ "confirmations": 4625,
+ "expected_to": "0xAC088dCF35d7aD8A9a8e1377B0C894017B24D9e1",
+ "expected_usdt": 0.1,
+ "kind": "verify-out",
+ "limits": "read-only public RPC; confirms one on-chain USDT transfer FROM the treasury to the reported address, nothing about who controls that address off-chain",
+ "reason": "NOT an outbound transfer from the treasury: no USDT Transfer log FROM 0x9b349A3bc383c2CD752aF69e856e671F8E10a030 in this tx",
+ "rpc": "https://ethereum-rpc.publicnode.com",
+ "service": "agentlink-pay/0.1.2",
+ "status_ok": true,
+ "to": null,
+ "to_match": false,
+ "token": "USDT (ERC-20) 0xdAC17F958D2ee523a2206206994597C13D831ec7",
+ "transfers_from_treasury": [],
+ "treasury": "0x9b349A3bc383c2CD752aF69e856e671F8E10a030",
+ "tx": "0x3e4d71906b504d0ecbf266232d5edab6a7ebdafbd3a84be180f2bff4cbebf0be",
+ "tx_from": "0x8af25c97c7e5eb538fea918a05c3c494f01ed186",
+ "tx_to_contract": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+ "verified": false,
+ "verified_at": "2026-09-06T12-01-48Z"
+}
+receipt: receipts/2026-09-06T12-01-48Z-pay-verify-out-3e4d7190.json
+paths: agent-link/paywatch.sh
+--- exit: 1 ---
