@@ -20,6 +20,7 @@ const sha = (b) => crypto.createHash("sha256").update(b).digest("hex");
 const CANONS = {
   "c1": (b) => Buffer.from(b.toString("utf8").replace(/\r\n/g, "\n").replace(/\n+$/, ""), "utf8"), // CRLF->LF, strip trailing LFs
 };
+CANONS["postsign/1.1 crlf->lf, trailing newlines stripped"] = CANONS.c1; // v1.1 free-text alias (anchor flowbin #155 was signed with it); same transform
 const CANON = "c1";
 const canonBody = (b, id = CANON) => { const f = CANONS[id]; if (!f) throw new Error("unknown canon: " + id); return f(b); };
 const canon = (o) => JSON.stringify(Object.fromEntries(Object.keys(o).sort().map(k => [k, o[k]])));
