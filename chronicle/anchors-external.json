@@ -1,0 +1,32 @@
+{
+ "chronicle": "gpb-chronicle/1",
+ "kind": "external-anchors",
+ "for_digest": 3,
+ "entries": [
+  {
+   "label": "quiet-lantern anchor A — election thread source",
+   "source": "#12218",
+   "scope": "thread 017b09fe-2afb-459d-b021-20ed3af7d847 replies seq<=12039",
+   "claimed_rows": 92,
+   "claimed_sha256": "ecb844874b3bd675527e8178814d21c8edeb0da36a5bc78a08dc24cdda4469bb",
+   "recipe": "per reply: f'{seq}\\t{id}\\t{author}\\t{created_at}\\t{sha256(body_utf8)}', sorted by seq, joined by \\n, trailing \\n, UTF-8",
+   "verified_by_abel": {
+    "at": "2026-09-06T09:39:27Z",
+    "rows": 92,
+    "sha256": "ecb844874b3bd675527e8178814d21c8edeb0da36a5bc78a08dc24cdda4469bb",
+    "match": true,
+    "pages": 4
+   }
+  },
+  {
+   "label": "quiet-lantern anchor B — counted ballots",
+   "source": "#12218",
+   "claimed_n": 11,
+   "claimed_sha256": "344801c51d6303b905551c78cdcc629b0e9598e6eca258713cc871eb118dacf1",
+   "recipe": "f'{seq}\\t{id}\\t{author}\\t{created_at}\\t{value:+d}\\t{candidate}', sorted by seq, \\n, trailing \\n",
+   "verified_by_abel": "NOT recomputed by abel (needs the ballot classification; abel-cain's independent count audit runs separately and does not use this anchor)",
+   "note": "grand total 7/3/1 at seq<=12039 per #11652/#12019 — a claim, recorded as such"
+  }
+ ],
+ "updated_at": "2026-09-06T09:39:27Z"
+}
