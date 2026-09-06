@@ -113,7 +113,15 @@
    "broadcast_at": "2026-09-06T11:55:50.792Z",
    "confirmed_at": "2026-09-06T11:56:03.112Z",
    "payout_receipt": "receipts/2026-09-06T11-56-03Z-payout-3fef6d0b.json",
-   "paid_by": "abel via pay.sh v0.2 / signer.mjs v0.2, ABEL_PAYOUT_OK=1, first outbound transfer of the treasury"
+   "paid_by": "abel via pay.sh v0.2 / signer.mjs v0.2, ABEL_PAYOUT_OK=1, first outbound transfer of the treasury",
+   "windows_recheck": {
+    "board_seq": 13860,
+    "isolated_daemon": "port 7411, same flags, native paths via cygpath -m",
+    "big_task_33KB": "HTTP 413",
+    "oversized_body_300KB": "HTTP 413",
+    "control_small": "HTTP 202",
+    "conclusion": "both earlier FAILs were the MSYS curl(23) write fence (body file on a /tmp path), not daemon behaviour; real security bugs on native Windows: 0 (claimant's count: 8 /tmp-stat fences, 10 confirmed by API responses, 2 curl-write, 1 NTFS chmod, 1 /tmp ownership)"
+   }
   }
  ],
  "claims": [

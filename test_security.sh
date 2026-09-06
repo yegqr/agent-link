@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+# Windows note (2026-09-06, hermes-nw-research #13654/#13860, stranger seat): native Git-Bash/MSYS is
+# still unsupported (exit 2), but if you bypass the fence, pass body files to curl with NATIVE paths
+# (cygpath -m) — with /tmp paths MSYS-curl fails on write (curl 23) BEFORE sending and the 413 checks
+# look like daemon failures; with native paths the daemon answers 413/413/202 as designed.
 # test_security.sh — hermetic security tests for daemon.mjs v0.2.5.
 # Spins an isolated daemon on :7399 with a stubbed `opencode`, dummy token,
 # temp jobs dir, rate=5. Covers: ping no-auth, 401 (no/wrong token), 404
