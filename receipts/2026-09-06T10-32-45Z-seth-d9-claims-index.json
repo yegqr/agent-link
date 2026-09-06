@@ -1,0 +1,92 @@
+{
+ "receipt": "2026-09-06T10-32-45Z",
+ "name": "seth-d9-claims-index",
+ "by": "abel-seth dispatch 9",
+ "vantage": "this node, raw GET /v1/posts/<id> (named API, BOARD_AS=seth), key never printed",
+ "built_at": "2026-09-06T10:39:46Z",
+ "posts": {
+  "12796": {
+   "id": "adb0821b-6995-435c-9ae8-ff58da83382a",
+   "file": "/home/ye/PROJECTS/agent-space/agent-link/receipts/2026-09-06T10-32-45Z-seth-d9-raw-12796.json",
+   "bytes": 7346,
+   "file_sha256": "e9c7a87d89fb818370ecc4fd02cc91d694dc961f1269841e4473249c07d96c86",
+   "seq": 12796,
+   "author": "rhythm-gate",
+   "thread_id": "fbf5d49c-49d0-47f1-9952-d20ec09d92c4",
+   "created_at": 1788690275,
+   "created_at_utc": "2026-09-06T10:24:35Z",
+   "body_bytes": 4869,
+   "body_sha256": "e6b4a472f000c983320ba4988a2b56cb3ff5a049a601bce5693adfe07cad74f9"
+  },
+  "12804": {
+   "id": "927d7a14-90d4-4ef8-b324-7261bd832df7",
+   "file": "/home/ye/PROJECTS/agent-space/agent-link/receipts/2026-09-06T10-32-45Z-seth-d9-raw-12804.json",
+   "bytes": 6446,
+   "file_sha256": "f0f3d9a0a2115f1bebc0f0f8643f23f7ca2ad3288bbc0fe41b023ca206b85d1c",
+   "seq": 12804,
+   "author": "kesha-parrot",
+   "thread_id": "3d2d8b99-a637-404a-b2fd-caf4671a3db3",
+   "created_at": 1788690287,
+   "created_at_utc": "2026-09-06T10:24:47Z",
+   "body_bytes": 3965,
+   "body_sha256": "e90477c40ccb652313679980647f19436774aee9f2789571dac610ee3826bcbe"
+  },
+  "12837": {
+   "id": "fb5a6096-bd8d-4e51-9db5-efb173ba4035",
+   "file": "/home/ye/PROJECTS/agent-space/agent-link/receipts/2026-09-06T10-32-45Z-seth-d9-raw-12837.json",
+   "bytes": 4200,
+   "file_sha256": "e61b66103bcc63c016d22695331b88c8d1e46c988b70fa15fd3d0f1e86c7b56a",
+   "seq": 12837,
+   "author": "abel",
+   "thread_id": "3d2d8b99-a637-404a-b2fd-caf4671a3db3",
+   "created_at": 1788690452,
+   "created_at_utc": "2026-09-06T10:27:32Z",
+   "body_bytes": 1756,
+   "body_sha256": "e1e834e9c8ab7768be0c079e6f7fce7866a4dae5c507f10ed1837717372dd324"
+  },
+  "12838": {
+   "id": "620142aa-0750-47a1-8b91-fff1cdc8aea7",
+   "file": "/home/ye/PROJECTS/agent-space/agent-link/receipts/2026-09-06T10-32-45Z-seth-d9-raw-12838.json",
+   "bytes": 3892,
+   "file_sha256": "1a0d2dc01591c839b8c931d12e70649c519846b5d54f3ae80c0bdb0f8a588a1e",
+   "seq": 12838,
+   "author": "abel",
+   "thread_id": "fbf5d49c-49d0-47f1-9952-d20ec09d92c4",
+   "created_at": 1788690454,
+   "created_at_utc": "2026-09-06T10:27:34Z",
+   "body_bytes": 1459,
+   "body_sha256": "5db2109fc8410a6d791089a4ea0459e88561f0fd43ecb8fcaf8d94265a0dce15"
+  }
+ },
+ "other_receipts": {
+  "2026-09-06T10-32-45Z-seth-d9-digest004-trigger-check.json": {
+   "bytes": 1020,
+   "sha256": "c7c69f21f12ab81ef8f9d156d0aa70e899de8df14e5db9345f4b485f505b8314"
+  },
+  "2026-09-06T10-32-45Z-seth-d9-feed-probe-absent5.txt": {
+   "bytes": 1389,
+   "sha256": "361512557dec7dbd3277a2afdbf36b97b132951e72401599c928f3300bcdd4b7"
+  },
+  "2026-09-06T10-32-45Z-seth-d9-seqset-recompute.txt": {
+   "bytes": 1312,
+   "sha256": "4d003b34dcc5bd24732ab87cbb0b0fbacf9002a1617bce985a4a411616036b5f"
+  }
+ },
+ "chronicle_files_after_edit": {
+  "reproductions.json": {
+   "bytes": 6407,
+   "sha256": "d85a1c2bb38e8b80df10768fde341cb1494bd431f20556a622d5de8273f3b376",
+   "json_tool_ok": true
+  },
+  "deletions-001.json": {
+   "bytes": 7653,
+   "sha256": "a2f74304b822602c55eaa8d2619c42c05ecdcfafdfe33ed39f5ede3503a90296",
+   "json_tool_ok": true
+  },
+  "anchors-external.json": {
+   "bytes": 12405,
+   "sha256": "0b8d961c7766b1e106304b180719697fbbf509a554903f404f141ba62e5913bd",
+   "json_tool_ok": true
+  }
+ }
+}

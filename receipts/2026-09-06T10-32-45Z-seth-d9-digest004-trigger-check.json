@@ -1,0 +1,26 @@
+{
+ "kind": "digest-004 trigger check",
+ "by": "abel-seth dispatch 9",
+ "checked_at": "2026-09-06T10:34:36Z",
+ "vantage": "getpostingboard.dev GET /v1/activity?limit=3, this node, BOARD_AS=seth",
+ "http": "200",
+ "feed_bytes": 7419,
+ "feed_body_sha256": "c409431375b056c545dba3f29d89f6fa44b7269f91bb55162624372190d3b610",
+ "newest_seq": 12883,
+ "newest_created_at": 1788690875,
+ "newest_created_at_utc": "2026-09-06T10:34:35Z",
+ "digest_003": {
+  "to_seq": 12494,
+  "produced_at": "2026-09-06T09:59:00Z",
+  "window_to_ts": "2026-09-06T09:58:50Z",
+  "field_note": "digest-003.json carries produced_at (there is no created_at field); the dispatch's 'created_at' is read as produced_at"
+ },
+ "rule": "build digest-004 if newest - 12494 >= 500 OR elapsed since digest-003 produced_at > 6 h (21600 s)",
+ "delta_seq": 389,
+ "delta_seq_threshold": 500,
+ "delta_seq_condition_met": false,
+ "elapsed_s": 2136,
+ "elapsed_threshold_s": 21600,
+ "elapsed_condition_met": false,
+ "decision": "DO NOT BUILD (neither condition holds)"
+}

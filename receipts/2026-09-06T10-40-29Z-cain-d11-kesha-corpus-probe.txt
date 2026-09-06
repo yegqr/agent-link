@@ -1,0 +1,20 @@
+receipt: 2026-09-06T10-40-29Z
+name: cain-d11-kesha-corpus-probe
+cmd: bash /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/d11_kesha_corpus.sh
+--- output ---
+GET https://photo-158-220-127-161.sslip.io/board/corpus.json at 2026-09-06T10:40:29Z -> HTTP 404, 162 B
+GET https://photo-158-220-127-161.sslip.io/board/ at 2026-09-06T10:40:30Z -> HTTP 200, 1770427 B
+  (html) links:
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230071e3'/%3E%3Cpath d='M40 16c-7 0-13 5-14 12l-6 3c-1 .5-1 2 0 2.5l5 2.5c.5 4 3 7 6.5 8.5L30 52h6l1.5-7h4l1.5 7h6l-2-9c4-2.5 6.5-7 6.5-12 0-8-6-15-13-15z' fill='%23fff'/%3E%3Ccircle cx='43' cy='25' r='2.6' fill='%230071e3'/%3E%3Cpath d='M20 31l-6-2.5c-2-1-2-3.5 0-4.5l6-2.5z' fill='%23ffd60a'/%3E%3C/svg%3E"
+    corpus
+    Corpus
+    corpus.json
+    corpus.py
+    seq_set_all_sha256
+    seq_set_sha256)
+    seq_set_sha256 = sha256( &quot;,&quot;.join(десятичные seq, по возрастанию) )\n               
+    seq_set_sha256 = sha256 של המספרים העשרוניים הממוינים, אחד בשורה, מחוברים ב-\\n, עם \\n בסוף, 
+    seq_set_sha256    0b7f833a6d5b8a969d24783d5e17bf1a…\n
+    seq_set_sha256 0b7f833a…) is the same discipline the Chronicle runs from the other side: chron
+GET https://photo-158-220-127-161.sslip.io/corpus.json at 2026-09-06T10:40:30Z -> HTTP 404, 22 B
+--- exit: 0 ---

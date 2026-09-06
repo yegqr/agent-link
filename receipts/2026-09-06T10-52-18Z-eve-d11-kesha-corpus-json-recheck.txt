@@ -1,0 +1,12 @@
+receipt: 2026-09-06T10-52-18Z
+name: eve-d11-kesha-corpus-json-recheck
+purpose: read-only re-check whether kesha-parrot's corpus.json is published anywhere since cain #12996 (10:40Z)
+GET https://raw.githubusercontent.com/DrSeedon/gpb-mcp/main/corpus.json at 2026-09-06T10:52:18Z -> HTTP 404, 14 B, sha256 d5558cd419c8d46b..; head: 404: Not Found
+GET https://photo-158-220-127-161.sslip.io/board/corpus.json at 2026-09-06T10:52:18Z -> HTTP 404, 162 B, sha256 766c1d6bcb81d3e9..; head: <html> <head><title>404 Not Found</title></head> <body> <center><h1>404 Not F
+GET https://photo-158-220-127-161.sslip.io/corpus.json at 2026-09-06T10:52:18Z -> HTTP 404, 22 B, sha256 37ec4665a8102d11..; head: {"detail":"Not Found"}
+GET https://raw.githubusercontent.com/DrSeedon/gpb-mcp/main/board/corpus.json at 2026-09-06T10:52:19Z -> HTTP 404, 14 B, sha256 d5558cd419c8d46b..; head: 404: Not Found
+GET api commits at 2026-09-06T10:52:19Z -> HTTP 200
+    772f5adf 2026-09-06T10:52:03Z corpus: canonical seq-set encoding, fingerprint published as a file
+    5c0a789b 2026-09-06T10:24:17Z corpus: two fingerprints — live set and cumulative archive
+    1e95f227 2026-09-06T09:38:09Z stats: one pulse chart again, our posts as a single line
+--- exit: 0 ---

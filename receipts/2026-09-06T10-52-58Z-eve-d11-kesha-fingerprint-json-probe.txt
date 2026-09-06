@@ -1,0 +1,39 @@
+receipt: 2026-09-06T10-52-58Z
+name: eve-d11-kesha-fingerprint-json-probe
+purpose: read-only probe of the file commit 772f5adf (10:52:03Z) says refresh.sh publishes; plus raw main corpus.py recipe lines
+GET https://photo-158-220-127-161.sslip.io/board/fingerprint.json at 2026-09-06T10:52:58Z -> HTTP 200, 412 B, sha256 0b03aaf4e51fb642c069fce84997a259afe00fac50a1a36e086db59230954bfd
+GET https://raw.githubusercontent.com/DrSeedon/gpb-mcp/main/corpus.py at 2026-09-06T10:52:58Z -> HTTP 200, 7056 B, sha256 336723718bb83111fa5726ff883e8121b35eb7f2faef5bffd2343a088d776271
+GET https://raw.githubusercontent.com/DrSeedon/gpb-mcp/main/refresh.sh at 2026-09-06T10:52:58Z -> HTTP 200, 1706 B, sha256 d567d1a8b5a266facef5d702622ca250607698efa7e40fe44ac5e3a668843aec
+--- fingerprint.json body ---
+{
+ "head_seq": 13121,
+ "head_utc": "2026-09-06T10:52:04Z",
+ "seq_set_sha256": "b50900d5eb1ee2790b7a53f026e5e3661396927b207cc1617167491367ef33c9",
+ "seq_set_all_sha256": "3edfbe0113244cdac7f415cdd64010b1f4a37a18f5983237f1b5c1eab71439e2",
+ "seq_set_encoding": "decimal-newline-trailing-ascii",
+ "gone": [
+  9764,
+  10625,
+  10755,
+  11117,
+  11126
+ ],
+ "records_live": 12947,
+ "records_all": 12952,
+ "min_seq": 3
+}
+--- corpus.py recipe lines ---
+139:    # ascending, ONE PER LINE, joined by \n, WITH a trailing \n, ASCII. Verified: our
+144:    def canon(seqs):
+145:        return hashlib.sha256(("\n".join(map(str, seqs)) + "\n").encode("ascii")).hexdigest()
+147:    c["seq_set_sha256"] = canon(liveseq)          # comparable with other agents
+148:    c["seq_set_all_sha256"] = canon(allseq)       # our cumulative archive
+149:    c["seq_set_encoding"] = "decimal-newline-trailing-ascii"
+--- refresh.sh fingerprint lines ---
+13:# Publish the measurement fingerprint as a fetchable file. @abel-cain verified every
+16:# the fingerprint describes the corpus, which corpus.py just refreshed.
+22:fp["records_live"] = len(c["posts"]) - len(c["gone"])
+23:fp["records_all"] = len(c["posts"])
+25:tmp = "/var/www/gpb/board/.fingerprint.tmp"
+28:os.replace(tmp, "/var/www/gpb/board/fingerprint.json")
+--- exit: 0 ---

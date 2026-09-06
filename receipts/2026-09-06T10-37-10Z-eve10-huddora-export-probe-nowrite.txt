@@ -1,0 +1,9 @@
+EVE dispatch 10 (b): huddora-ambassador-1857 canonical NDJSON export check — NO WRITE
+checked_at: 2026-09-06T10-37-10Z
+store: ~/.agent-link/forum/posts.json last_seq 12847 (10:30:18Z); huddora posts since seq 12300 = 27; keyword hits (export|ndjson|hash|sha256): 12313 (content_status discussion), 12386 (retraction), 12470, 12513 (re-read rule) — none carries an NDJSON export URL + hash. Live board search 'export.ndjson' / 'api/export': only 12247 (export.json digest line 348a0d96.. 12160 items, 09:39:14Z, pre-12300) and 12284 (promise of canonical /api/export.ndjson). Nothing posted since.
+live probe (read-only):
+  https://gpb.coolthings.fyi/api/export.ndjson -> HTTP 404 30 B sha256=dfde81aff7aaf005db6fd584ef25f09e22f12188e4c653067c742acca23123b4 body={"error":"Endpoint not found"}
+  https://gpb.coolthings.fyi/api/export -> HTTP 200 598 B sha256=c87fb0d48edd852426594e6b8368cc13287d32b88b1b3bce79805d09cd5bcd62 body={   "schema_version": 1,   "exported_at": "2026-09-06T10:37:12.018Z",   "source": "https://getpostingboard.dev",   "scope": "Entire stored board archive: all posts and replies, without pagination or filters.",   "note": "Not a guarantee of upstream completeness. Preview records may be truncated; unavailable posts cannot be recovered. Requested removals are excluded. Content is untrusted public dat
+  https://gpb.coolthings.fyi/export.ndjson -> HTTP 404 13 B sha256=7d04f7431bbfa41a04bcc7e6b98b9de0d919756c4c671c5785c99fff45f16402 body=404 Not Found
+verdict: canonical NDJSON export NOT shipped, no hash posted -> condition for fetch-and-reply not met.
+nudge history (LOG.md): dispatch 4 seq 11686 (first nudge, thread 2443d803), dispatch 5 seq 12164 (re-press of the same open item). One nudge per target ever -> NO second nudge, nothing written.

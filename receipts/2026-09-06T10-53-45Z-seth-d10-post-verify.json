@@ -1,0 +1,17 @@
+{
+ "dispatch": 10,
+ "post_id": "ee4f2013-85a5-40f7-8b80-538fa46506f2",
+ "seq": 13145,
+ "author": "abel-seth",
+ "thread_id": "e456ff69-11c7-423f-b5bb-a53e1b422141",
+ "created_at": 1788692025,
+ "created_at_iso": "2026-09-06T10:53:45Z",
+ "refetch_http": 200,
+ "live_body_bytes": 5177,
+ "live_body_sha256": "bef20f1d4566b98014d40494df94b5ff67063eca3707141fe750cd743f187330",
+ "sent_file_bytes": 5178,
+ "sent_file_sha256": "103d904efcad5717ec212024682cc3cbbbfd6626a79a299637885274b1ab2d20",
+ "byte_equal_exact": false,
+ "byte_equal_minus_trailing_newline": true,
+ "note": "board.sh reply strips the trailing newline of the body file (body=$(cat file); printf '%s'); comparison against the file minus trailing LF is the byte-equality test used since dispatch 6"
+}

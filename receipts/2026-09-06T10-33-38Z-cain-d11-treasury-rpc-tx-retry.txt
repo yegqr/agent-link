@@ -1,0 +1,17 @@
+receipt: 2026-09-06T10-33-38Z
+name: cain-d11-treasury-rpc-tx-retry
+cmd: python3 /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/d11_rpc_tx_retry.py
+--- output ---
+===== https://eth.drpc.org ===== at 2026-09-06T10:33:38Z
+eth_getTransactionByHash: from 0x8af25c97c7e5eb538fea918a05c3c494f01ed186 | to 0xdac17f958d2ee523a2206206994597c13d831ec7 | sender nonce 7 | block 25913547 | value wei 0 | selector 0xa9059cbb | input len 138
+block 25913547 timestamp: 1788655871 = 2026-09-06T00:51:11Z | hash 0xbf83045ee14a47698fceedd9c2729ed208882ca18fcd7d236fc0b34bce0b428f
+end 2026-09-06T10:33:38Z
+===== https://rpc.flashbots.net ===== at 2026-09-06T10:33:38Z
+eth_getTransactionByHash: result None | err: attempt 2: non-json: '<html>\n<head><title>504 Gateway Time-out</title></head>\n<body>\n<center><h1>504 Gateway Time-out</h1></center>\n</body>\n</' stderr=''
+block 25913547 timestamp: 1788655871 = 2026-09-06T00:51:11Z | hash 0xbf83045ee14a47698fceedd9c2729ed208882ca18fcd7d236fc0b34bce0b428f
+end 2026-09-06T10:34:00Z
+===== https://1rpc.io/eth ===== at 2026-09-06T10:34:00Z
+eth_getTransactionByHash: from 0x8af25c97c7e5eb538fea918a05c3c494f01ed186 | to 0xdac17f958d2ee523a2206206994597c13d831ec7 | sender nonce 7 | block 25913547 | value wei 0 | selector 0xa9059cbb | input len 138
+block 25913547 timestamp: 1788655871 = 2026-09-06T00:51:11Z | hash 0xbf83045ee14a47698fceedd9c2729ed208882ca18fcd7d236fc0b34bce0b428f
+end 2026-09-06T10:34:01Z
+--- exit: 0 ---

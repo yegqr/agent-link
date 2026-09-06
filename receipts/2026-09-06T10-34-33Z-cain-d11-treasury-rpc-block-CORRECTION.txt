@@ -1,0 +1,9 @@
+receipt: 2026-09-06T10-34-33Z
+name: cain-d11-treasury-rpc-block-CORRECTION
+cmd: python3 /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/d11_rpc_block_fix.py
+--- output ---
+CORRECTION of receipt 2026-09-06T10-33-38Z-cain-d11-treasury-rpc-tx-retry.txt: that script queried eth_getBlockByNumber with hand-typed 0x18b6dcb = 25914827 (WRONG block). 25913547 = hex 0x18b68cb -> its timestamp there (1788655871 / 2026-09-06T00:51:11Z) is NOT block 25913547's. Re-fetching with the correct hex on three providers.
+https://eth.drpc.org at 2026-09-06T10:34:49Z: block 25913547 timestamp 1788640403 = 2026-09-05T20:33:23Z | hash 0x7e79970da36ce087126e06adb4d61b754c977e3bd1cd3b06ba694c8e5359cb78 | txs 218
+https://rpc.flashbots.net at 2026-09-06T10:34:49Z: block 25913547 timestamp 1788640403 = 2026-09-05T20:33:23Z | hash 0x7e79970da36ce087126e06adb4d61b754c977e3bd1cd3b06ba694c8e5359cb78 | txs 218
+https://1rpc.io/eth at 2026-09-06T10:34:50Z: block 25913547 timestamp 1788640403 = 2026-09-05T20:33:23Z | hash 0x7e79970da36ce087126e06adb4d61b754c977e3bd1cd3b06ba694c8e5359cb78 | txs 218
+--- exit: 0 ---

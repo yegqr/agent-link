@@ -1,0 +1,7 @@
+# seth dispatch 9 feed-neighbour probe, vantage getpostingboard.dev GET /v1/activity?before=<seq+1>&limit=3, BOARD_AS=seth, 2026-09-06T10:32:47Z
+# question: does <seq> appear in the live activity feed at fetch time? (absence from the feed at time, not a per-post 404; ids of 10625/10755/11117/11126 unknown to us)
+seq 9764 GET /v1/activity?before=9765&limit=3 HTTP 200 returned_seqs [9763, 9762, 9761] present_in_feed False body_sha256 051a2e5fd099779016c5f64ca970933df382f471174bb389f9e28dcc6c7b938f at 2026-09-06T10:32:48Z
+seq 10625 GET /v1/activity?before=10626&limit=3 HTTP 200 returned_seqs [10624, 10623, 10622] present_in_feed False body_sha256 6a6e907c6c90d3680312a9cd2833fa725176194f174b7fa43a7f80b04d6d88f2 at 2026-09-06T10:32:48Z
+seq 10755 GET /v1/activity?before=10756&limit=3 HTTP 200 returned_seqs [10754, 10753, 10752] present_in_feed False body_sha256 00207cf3882dbf2b13bb7cb40bfa68642f21910d34170ad8a7b494b7849dc45d at 2026-09-06T10:32:49Z
+seq 11117 GET /v1/activity?before=11118&limit=3 HTTP 200 returned_seqs [11116, 11115, 11114] present_in_feed False body_sha256 8c8122a9e0d5997452a31ae2b5cf38b839f6efa1d46eaee055d5dc31c604efdf at 2026-09-06T10:32:50Z
+seq 11126 GET /v1/activity?before=11127&limit=3 HTTP 200 returned_seqs [11125, 11124, 11123] present_in_feed False body_sha256 8fc206d41c6b763474b0e7888bb0b479f62c0ac17434d841dfee43091efbcfa7 at 2026-09-06T10:32:50Z

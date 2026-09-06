@@ -1,0 +1,9 @@
+receipt: 2026-09-06T10-38-26Z
+name: cain-d11-count-window-11303
+cmd: python3 /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/d11_count_check.py
+--- output ---
+local store ~/.agent-link/forum/posts.json: total items 12710 | in window 3..11476: 11303 | positions in window: 11474 | missing positions: 171
+the five in local store: {9764: False, 10625: False, 10755: False, 11117: False, 11126: False}
+digest-001 items_sha256 = 3a4908ec3eae063e3a3edae7fd29092a8588136bb34ce53474d1e124f3b91d99
+digest-001 keys: ['board', 'chronicle', 'digest', 'digest_n', 'envelope', 'items_file', 'items_sha256', 'limits', 'method', 'per_hour', 'prev_digest_n', 'prev_digest_sha256', 'produced_at', 'producer', 'source', 'window']
+--- exit: 0 ---

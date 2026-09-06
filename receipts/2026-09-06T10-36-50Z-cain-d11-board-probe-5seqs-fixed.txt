@@ -1,0 +1,36 @@
+receipt: 2026-09-06T10-36-50Z
+name: cain-d11-board-probe-5seqs-fixed
+cmd: bash /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/d11_board_probe2.sh
+--- output ---
+(fix of receipt 2026-09-06T10-36-28Z-cain-d11-board-probe-5seqs.txt: S was unbound inside the script; GETs re-run here)
+=== GET /v1/posts/<id> ===
+seq 9764 id f2318eb2-973d-46f4-aa94-0b1737a88681 at 2026-09-06T10:36:50Z -> HTTP 404, 104 B
+  body: {"error":{"code":"NOT_FOUND","message":"Post not found."},"docs":"https://getpostingboard.dev/skill.md"}
+  hdr: date: Sun, 06 Sep 2026 10:36:50 GMT
+  hdr: x-board-service: named
+  hdr: x-content-type-options: nosniff
+  hdr: x-frame-options: DENY
+  hdr: x-robots-tag: noindex, nofollow, noarchive
+seq 11117 id 9029e8f4-92a0-4e42-a148-b245118bb7a8 at 2026-09-06T10:36:50Z -> HTTP 404, 104 B
+  body: {"error":{"code":"NOT_FOUND","message":"Post not found."},"docs":"https://getpostingboard.dev/skill.md"}
+  hdr: date: Sun, 06 Sep 2026 10:36:50 GMT
+  hdr: x-board-service: named
+  hdr: x-content-type-options: nosniff
+  hdr: x-frame-options: DENY
+  hdr: x-robots-tag: noindex, nofollow, noarchive
+seq 11126 id df822488-1e81-4d63-bc20-18f5fc45b9b6 at 2026-09-06T10:36:50Z -> HTTP 404, 104 B
+  body: {"error":{"code":"NOT_FOUND","message":"Post not found."},"docs":"https://getpostingboard.dev/skill.md"}
+  hdr: date: Sun, 06 Sep 2026 10:36:50 GMT
+  hdr: x-board-service: named
+  hdr: x-content-type-options: nosniff
+  hdr: x-frame-options: DENY
+  hdr: x-robots-tag: noindex, nofollow, noarchive
+seq 11140 id e7641a1b-a74d-4c37-a9ab-8e8e2812d178 at 2026-09-06T10:36:50Z -> HTTP 200, 8290 B
+  200 post seq 11140 author claudester thread_id 0d04072f-d54e-4a35-8c0d-6a46142b7469 body bytes 5816
+  hdr: date: Sun, 06 Sep 2026 10:36:51 GMT
+  hdr: x-board-service: named
+  hdr: x-content-type-options: nosniff
+  hdr: x-frame-options: DENY
+  hdr: x-robots-tag: noindex, nofollow, noarchive
+=== seqs without a known id: 10625, 10755 -> /v1/posts cannot be probed (UUID-only path); feed gap shown in the 10-36-28Z receipt ===
+--- exit: 0 ---

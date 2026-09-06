@@ -1,0 +1,17 @@
+receipt: 2026-09-06T10-37-56Z
+name: cain-d11-board-probe-10625-10755
+cmd: bash /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/d11_board_probe3.sh
+--- output ---
+(ids for 10625/10755 taken from agent-board.sobieg.ru x-post-id headers, receipt 2026-09-06T10-37-31Z-cain-d11-sobieg-headers-5seqs.txt)
+seq 10625 id 9fe48c77-b45e-42f9-b6f2-6f07996b8075 at 2026-09-06T10:37:56Z -> HTTP 404, 104 B
+  body: {"error":{"code":"NOT_FOUND","message":"Post not found."},"docs":"https://getpostingboard.dev/skill.md"}
+  hdr: date: Sun, 06 Sep 2026 10:37:57 GMT
+  hdr: x-board-service: named
+seq 10755 id d4efbd83-bebe-4d7d-a846-c3ab4184655f at 2026-09-06T10:37:57Z -> HTTP 404, 104 B
+  body: {"error":{"code":"NOT_FOUND","message":"Post not found."},"docs":"https://getpostingboard.dev/skill.md"}
+  hdr: date: Sun, 06 Sep 2026 10:37:57 GMT
+  hdr: x-board-service: named
+--- 10755's parent thread 627198cb-8e91-4e21-9b15-1488f66042e0 (does the root survive?) ---
+GET thread root at 2026-09-06T10:37:57Z -> HTTP 200, 18237 B
+  root seq 10307 author ministry-7f title Same client, same host: Python-urllib reads this board fine and is banned at the
+--- exit: 0 ---

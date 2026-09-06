@@ -1,0 +1,56 @@
+receipt: 2026-09-06T10-32-22Z
+name: cain-d11-treasury-rpc-4providers
+cmd: python3 /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/d11_rpc_probe.py
+--- output ---
+treasury 0x9b349A3bc383c2CD752aF69e856e671F8E10a030 | usdt 0xdAC17F958D2ee523a2206206994597C13D831ec7 | tx 0x3e4d71906b504d0ecbf266232d5edab6a7ebdafbd3a84be180f2bff4cbebf0be
+===== provider https://eth.drpc.org =====
+start 2026-09-06T10:32:22Z
+eth_blockNumber: 0x18b791e = 25917726 | err: None
+eth_getBalance: 0x2dd0a711bb497 = 0.000806 ETH | err: None
+eth_getTransactionCount: 0x0 = nonce 0 | err: None
+eth_call USDT balanceOf: 0x0000000000000000000000000000000000000000000000000000000000989680 = 10.000000 USDT | err: None
+eth_getTransactionReceipt: block 25913547 | status 0x1 | tx.from 0x8af25c97c7e5eb538fea918a05c3c494f01ed186 | tx.to 0xdac17f958d2ee523a2206206994597c13d831ec7 | logs 1
+  USDT Transfer logIndex 43: from 0x8af25c97c7e5eb538fea918a05c3c494f01ed186 -> to 0x9b349a3bc383c2cd752af69e856e671f8e10a030 | raw 10000000 = 10.000000 USDT | to==treasury: True
+confirmations: 4180
+block timestamp: 1788640403 = 2026-09-05T20:33:23Z
+eth_getTransactionByHash: result None | err: non-json http reply: '' stderr='curl: (35) TLS connect error: error:0A000126:SSL routines::unexpected eof while reading\n'
+end 2026-09-06T10:32:38Z
+
+===== provider https://rpc.flashbots.net =====
+start 2026-09-06T10:32:38Z
+eth_blockNumber: 0x18b7920 = 25917728 | err: None
+eth_getBalance: None = None ETH | err: non-json http reply: '<html>\n<head><title>504 Gateway Time-out</title></head>\n<body>\n<center><h1>504 Gateway Time-out</h1></center>\n</body>\n</html>\n' stderr=''
+eth_getTransactionCount: 0x0 = nonce 0 | err: None
+eth_call USDT balanceOf: None = None USDT | err: {'code': -32601, 'message': 'rpc method is not whitelisted'}
+eth_getTransactionReceipt: block 25913547 | status 0x1 | tx.from 0x8af25c97c7e5eb538fea918a05c3c494f01ed186 | tx.to 0xdac17f958d2ee523a2206206994597c13d831ec7 | logs 1
+  USDT Transfer logIndex 43: from 0x8af25c97c7e5eb538fea918a05c3c494f01ed186 -> to 0x9b349a3bc383c2cd752af69e856e671f8e10a030 | raw 10000000 = 10.000000 USDT | to==treasury: True
+confirmations: 4182
+block timestamp: 1788640403 = 2026-09-05T20:33:23Z
+eth_getTransactionByHash: result None | err: non-json http reply: '<html>\n<head><title>504 Gateway Time-out</title></head>\n<body>\n<center><h1>504 Gateway Time-out</h1></center>\n</body>\n</html>\n' stderr=''
+end 2026-09-06T10:33:00Z
+
+===== provider https://cloudflare-eth.com =====
+start 2026-09-06T10:33:00Z
+eth_blockNumber: None = None | err: {'code': -32046, 'message': 'Cannot fulfill request'}
+eth_getBalance: None = None ETH | err: {'code': -32603, 'message': 'Internal error'}
+eth_getTransactionCount: None = nonce None | err: {'code': -32603, 'message': 'Internal error'}
+eth_call USDT balanceOf: None = None USDT | err: {'code': -32603, 'message': 'Internal error'}
+eth_getTransactionReceipt: result None | err: None
+eth_getTransactionByHash: result None | err: None
+end 2026-09-06T10:33:01Z
+
+===== provider https://1rpc.io/eth =====
+start 2026-09-06T10:33:01Z
+eth_blockNumber: 0x18b7921 = 25917729 | err: None
+eth_getBalance: 0x2dd0a711bb497 = 0.000806 ETH | err: None
+eth_getTransactionCount: 0x0 = nonce 0 | err: None
+eth_call USDT balanceOf: None = None USDT | err: This endpoint has been discontinued.
+eth_getTransactionReceipt: block 25913547 | status 0x1 | tx.from 0x8af25c97c7e5eb538fea918a05c3c494f01ed186 | tx.to 0xdac17f958d2ee523a2206206994597c13d831ec7 | logs 1
+  USDT Transfer logIndex 43: from 0x8af25c97c7e5eb538fea918a05c3c494f01ed186 -> to 0x9b349a3bc383c2cd752af69e856e671f8e10a030 | raw 10000000 = 10.000000 USDT | to==treasury: True
+confirmations: 4183
+Traceback (most recent call last):
+  File "/tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/d11_rpc_probe.py", line 37, in <module>
+    if b: print("block timestamp:", int(b["timestamp"],16), "=", datetime.datetime.fromtimestamp(int(b["timestamp"],16),datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"))
+                                        ~^^^^^^^^^^^^^
+KeyError: 'timestamp'
+--- exit: 1 ---

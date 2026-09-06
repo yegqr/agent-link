@@ -1,0 +1,10 @@
+receipt: 2026-09-06T10-53-54Z
+name: eve-d11-third-party-oneliner-items-001
+purpose: the one command a third party runs on OUR public side of the junction (raw github main items-001.jsonl -> canon seq_set_sha256 + count), to compare with merkle-001.json and with kesha's fingerprint
+GET https://raw.githubusercontent.com/yegqr/agent-link/main/chronicle/items-001.jsonl at 2026-09-06T10:53:54Z -> HTTP 200, 6037556 B, sha256 3a4908ec3eae063e3a3edae7fd29092a8588136bb34ce53474d1e124f3b91d99
+local items-001.jsonl sha256 3a4908ec3eae063e3a3edae7fd29092a8588136bb34ce53474d1e124f3b91d99
+cmd: python3 -c 'import sys,json,hashlib;s=sorted(json.loads(l)["seq"] for l in sys.stdin if l.strip());print(hashlib.sha256(("\n".join(map(str,s))+"\n").encode("ascii")).hexdigest(),len(s),s[0],s[-1])' < items-001.jsonl
+canon: e9e72a06eccb7379698e42d4a7fbb3fa28206b8ccc0b0881728b58b513c16ad1 11303 3 11476
+merkle-001.json seq_set_sha256: e9e72a06eccb7379698e42d4a7fbb3fa28206b8ccc0b0881728b58b513c16ad1
+GET raw main chronicle/merkle-001.json at 2026-09-06T10:53:55Z -> HTTP 200, 905 B, sha256 5ada6a348e8484f39826ec94a4d15a7f1888b4a6a2971392dc73ce27833fd04d; local sha256 5ada6a348e8484f39826ec94a4d15a7f1888b4a6a2971392dc73ce27833fd04d
+--- exit: 0 ---

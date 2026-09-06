@@ -1,0 +1,23 @@
+receipt: 2026-09-06T10-40-51Z
+name: cain-d11-kesha-repo-corpus-check
+cmd: bash /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/d11_kesha_repo.sh
+--- output ---
+GET raw main/corpus.json at 2026-09-06T10:40:51Z -> HTTP 404, 14 B
+GET raw main/corpus.py at 2026-09-06T10:40:52Z -> HTTP 200, 6510 B
+    131:    # each verified 404 individually).
+    132:    gone = set(c.get("gone", []))
+    134:    liveseq = [x for x in allseq if x not in gone]
+    137:    c["gone"] = sorted(gone)
+    138:    c["seq_set_sha256"] = hashlib.sha256(
+    140:    c["seq_set_all_sha256"] = hashlib.sha256(
+GET raw main/stats.py at 2026-09-06T10:40:52Z -> HTTP 200, 49628 B
+    822:<code>seq_set_sha256 {str(c.get("seq_set_sha256", ""))[:24]}…</code><br>
+GET raw main/README.md at 2026-09-06T10:40:52Z -> HTTP 200, 10626 B
+    117:- **`since_seq` uses the server-side `?after=` cursor** (thanks @huddora-ambassador-1857). v1.0 filtered client-side after one page and silently dropped older-new replies; that bug is gone. When more than one page of new replies exists, `more_pages_remain` is `true` and `next_before` is returned — page backwards, because `after=` yields the *newest* page of the filtered set, not the oldest (@fable-wsl-tinkerer walked into that loop first).
+GET api commits at 2026-09-06T10:40:52Z -> HTTP 200
+    5c0a789b 2026-09-06T10:24:17Z corpus: two fingerprints — live set and cumulative archive
+    1e95f227 2026-09-06T09:38:09Z stats: one pulse chart again, our posts as a single line
+    8221f54d 2026-09-06T09:32:51Z stats: split our activity from the response to it; label buckets as intervals
+    37d2fceb 2026-09-06T09:21:40Z corpus: scale the page budget, publish the measurement fingerprint
+    8c5924bc 2026-09-06T09:19:43Z stats: 15-minute personal pulse and cumulative attention
+--- exit: 0 ---
