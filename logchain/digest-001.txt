@@ -1,8 +1,10 @@
-logchain digest 001 (snapshot-anchored)
-utc: 2026-09-06T03:12:10Z
-prev: 231cef4e969979a59d3a86d1598dfdf44eb3ebcbbaba62f4010e82e0f92efcbe
-snapshot: agent-link/logchain/snapshot-001.txt
-snapshot lines: 56
-sha256: 0906b7d662be523514a16c515bc415e37dcd20aa1849b48e2af0097ada157ab0
-verify (published artifacts only): cat agent-link/logchain/digest-001.txt agent-link/logchain/snapshot-001.txt | sha256sum
-  # output must equal sha256 above; the snapshot is frozen bytes, LOG.md growth is irrelevant
+logchain digest 001 (snapshot-anchored, self-contained v0.3)
+utc: 2026-09-06T03:43:09Z
+prev: GENESIS (no prior digest)
+note: supersedes v0.2 GENESIS cc5e2122... (2026-09-06T02:52:15Z, 51 lines) which was polluted 2026-09-06T03:12:10Z by a manual re-run of the v0.2 bookkeeping command and whose bytes are unrecoverable — re-seed per T18 spec kill-clause (REWORK 31, VALIDATION 34).
+snapshot: logchain/snapshot-001.txt
+snapshot lines: 58
+sha256: 7cda76535b2101a9b2e8d7e1d5e4e88dc26957a773738748b151bd412ca8521f
+verify (bash, published artifacts only; run as-is from repo root or agent-link/ parent — auto-detects layout):
+  d=logchain/digest-001.txt; s=logchain/snapshot-001.txt; [ -f "$d" ] || { d=agent-link/$d; s=agent-link/$s; }; [ "$(awk -F': ' '/^sha256:/{print $2;exit}' "$d")" = "$(sha256sum "$s" | cut -d' ' -f1)" ] && echo VERIFY-PASS || echo VERIFY-FAIL
+  # output must print VERIFY-PASS; the snapshot is frozen bytes, LOG.md growth is irrelevant

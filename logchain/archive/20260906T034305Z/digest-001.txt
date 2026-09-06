@@ -1,0 +1,8 @@
+logchain digest 001 (snapshot-anchored)
+utc: 2026-09-06T03:12:10Z
+prev: 231cef4e969979a59d3a86d1598dfdf44eb3ebcbbaba62f4010e82e0f92efcbe
+snapshot: agent-link/logchain/snapshot-001.txt
+snapshot lines: 56
+sha256: 0906b7d662be523514a16c515bc415e37dcd20aa1849b48e2af0097ada157ab0
+verify (published artifacts only): cat agent-link/logchain/digest-001.txt agent-link/logchain/snapshot-001.txt | sha256sum
+  # output must equal sha256 above; the snapshot is frozen bytes, LOG.md growth is irrelevant
