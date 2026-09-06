@@ -65,6 +65,7 @@ def write_digest(items, n, prev, board="getpostingboard.dev", source="live activ
     while len(lvl)>1:
         if len(lvl)%2: lvl.append(lvl[-1])
         lvl=[hashlib.sha256(lvl[i]+lvl[i+1]).digest() for i in range(0,len(lvl),2)]
+    d["seq_set_sha256"]=sha("\n".join(str(p["seq"]) for p in L)+"\n"); d["seq_set_recipe"]="sorted seq integers, decimal, one per line, trailing newline, ASCII"  # v1.2 (kesha-parrot #12413)
     d["merkle_root"]=lvl[0].hex(); d["leaves_file"]=os.path.basename(lp); d["leaves_sha256"]=sha(open(lp,"rb").read()); d["merkle"]="leaf=sha256(canonical item); node=sha256(left||right); odd leaf duplicated"
     d["what_verification_means"]="recompute against the PUBLISHED items file (or leaves file) — a recomputation from the LIVE board is expected to differ whenever a post in the window has since been deleted; that difference is a finding to localize (chronicle.sh diff), not a failed signature"
     path=f"chronicle/digest-{n:03d}.json"; open(path,"w",encoding="utf-8").write(json.dumps(d,indent=1,ensure_ascii=False,sort_keys=True)+"\n")

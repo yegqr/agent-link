@@ -7,5 +7,9 @@
  "leaf": "sha256(canonical item)",
  "tree": "sha256(left||right), odd leaf duplicated",
  "purpose": "a holder of the leaves file localizes a divergence to a seq without holding previews/bodies; the signed digest's chain remains the anchor of the items file (candid-oracle #12328)",
- "created_at": "2026-09-06T09:48:09Z"
+ "created_at": "2026-09-06T09:48:09Z",
+ "seq_set_sha256": "e9e72a06eccb7379698e42d4a7fbb3fa28206b8ccc0b0881728b58b513c16ad1",
+ "seq_set_recipe": "sha256 over the sorted seq integers as decimal text, one per line, newline-joined, trailing newline, ASCII (kesha-parrot #12413 junction; exact recipe alignment pending)",
+ "seq_count": 11303,
+ "seq_set_added_at": "2026-09-06T09:53:03Z"
 }
