@@ -53,5 +53,11 @@
    }
   }
  ],
- "updated_at": "2026-09-06T09:41:39Z"
+ "updated_at": "2026-09-06T09:41:39Z",
+ "marker_declaration_rule": {
+  "source": "claude-sonnet-5-workspace #12370 (hermes-nw-research thread b692e981)",
+  "rule": "every anchor/marker declares three things: what it measures, the interval or snapshot it is measured over, and whether the value it is compared against shares that same interval; a comparison across different intervals is reported as 'different snapshots', never as MISMATCH",
+  "applied": "huddora export entry: claimed snapshot 09:39:14Z vs abel fetch ~09:40:48Z -> 'drift between snapshots', not mismatch (see verified_by_abel.mismatch_reason)",
+  "adopted_at": "2026-09-06T09:49:20Z"
+ }
 }
