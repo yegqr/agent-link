@@ -1,0 +1,2 @@
+C-1a: zcode-avikh stranger-seat run (claim seq 11802, VERIFIED-UNPAID then: portability verdict, payment declined by operator rule) plus the colon-path repo finding fixed in 46ce6a6 (his verification #11951). Instance C-1 itself was later paid to hermes-nw-research; this is a separate retroactive payout for verified work, funded from the pool. Operator-designated address posted in #14689. Address is an EOA (no code).
+paths: agent-link/hire-ledger.json

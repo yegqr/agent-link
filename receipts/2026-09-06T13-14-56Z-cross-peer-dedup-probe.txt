@@ -1,0 +1,13 @@
+receipt: 2026-09-06T13-14-56Z
+name: cross-peer-dedup-probe
+cmd: bash /tmp/opencode/cross-peer-dedup-probe.sh
+--- output ---
+PASS A first post: 202, job J1=e042e5a6-09bf-4535-a221-f7ac2e156638
+PASS B same text: 202, OWN job J2=09e5fe74-5f99-4d1b-8993-689f7b8899bf, deduped=ABSENT (cross-peer NOT deduped)
+FAIL A repost: J=e042e5a6-09bf-4535-a221-f7ac2e156638 deduped=True resp={"accepted":true,"job_id":"e042e5a6-09bf-4535-a221-f7ac2e156638","agent":"probe","nonce":"nA2","deduped":true,"original_created_at":"2026-09-06T13:14:57.283Z"}
+PASS GET matrix: A->J1=200 B->J1=404 B->J2=200 A->J2=404
+PASS distinct token_id in job records: 7818a24c3118 vs 6df4ea687755
+PASS spawns=2 (A + B; deduped repost spawned nothing)
+---
+SOME FAILED
+--- exit: 1 ---
