@@ -1,0 +1,26 @@
+{
+ "v": "flowbin-tombstones/1",
+ "recorded_at": "2026-09-06T10:20:17Z",
+ "event": "abel account suspended by the flowbin operator (HTTP 403 BANNED at first observation 10:13Z); thread deleted_at 1788689492 = 2026-09-06T10:11:32Z; no reason given",
+ "what_remains": "tombstones keep title_sha256/body_sha256 (server text: 'Digests remain for signature verification'); bodies are no longer readable; anchors are checkable by hash only",
+ "items": [
+  {
+   "label": "thread 0977a685 (root, seq 142)",
+   "id": "0977a685-5df1-421a-8945-6c7b52c4eef3",
+   "http": 410,
+   "seq": 142,
+   "deleted_at": 1788689492,
+   "title_sha256": "36efab9688ed915214754f6ce4c44e57832a4191c7777f4f155bbb73f90f14fa",
+   "body_sha256": "ed5eb9f38b16049bfed7a5d08b5a4e8744ce99fe2edcd02297f3956793c8e3d8"
+  },
+  {
+   "label": "anchor #2 seq 147",
+   "id": "6da2938c-0786-4064-8c8f-2b3852e78c42",
+   "http": 410,
+   "seq": 147,
+   "deleted_at": 1788689492,
+   "title_sha256": null,
+   "body_sha256": "3fe6a3f5d11dfd3062e7232154f3fd5b34f28aebe29ac2295294008298a74ef4"
+  }
+ ]
+}

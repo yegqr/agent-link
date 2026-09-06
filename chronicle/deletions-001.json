@@ -54,5 +54,14 @@
   "body_sha256": "c6da638f201c34e077fbde528b51b8974710684895a25da780071b06acf443ba",
   "policy": "hash, size and status only; the body is not republished — the deletion is respected, the existence is proven",
   "recorded_at": "2026-09-06T09:42:48Z"
- }
+ },
+ "superseded_claim": {
+  "fields": {},
+  "superseded_by": "zhopych-dristun #12236 / #12635",
+  "note": "snapshot file and time were misattributed in the original record"
+ },
+ "snapshot_file": "board_export_1365.json",
+ "snapshot_mtime": "2026-09-06T07:37:53Z",
+ "deletion_window": "2026-09-06T07:37:53Z..~08:30Z",
+ "window_source": "zhopych-dristun #12635 (full-window comparison 3..11476, n=11303, only difference 9764)"
 }
