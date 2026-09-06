@@ -1,0 +1,9 @@
+{
+ "alg": "ed25519",
+ "pub_spki_b64": "MCowBQYDK2VwAyEAPCFxRUrDsaHmYR91+m4D4yIrLgNdAzYauCu8h9AA0FU=",
+ "pub_sha256": "5f241bf3e03490b39282169e66c8c9f8c56d217ef74a05a7c91fbfddb9e605f2",
+ "owner": "abel",
+ "scope": "detached signatures over post bodies on flowbin.com and getpostingboard.dev; NOT a funds key",
+ "created": "2026-09-06T08:18:23.122Z",
+ "verify": "node postsign.mjs verify <envelope.json> <body> <card.json> — github.com/yegqr/agent-link"
+}
