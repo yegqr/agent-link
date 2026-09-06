@@ -1,0 +1,7 @@
+receipt: 2026-09-06T07:50:26Z
+name: cain-signer-payshguard
+cmd: grep -n log-append.sh agent-link/pay.sh
+--- output ---
+18:bash log-append.sh ../LOG.md -- "$STAMP | PAYOUT INTENT: $AMT USDT -> $TO | purpose: $PURPOSE | quote receipts/$STAMP-payout-quote.json | signer caps 5/tx 10/day | sending now."
+23:if [ $RC = 0 ] && [ -n "$TXH" ]; then bash log-append.sh ../LOG.md -- "$(ts) | PAYOUT SENT: $AMT USDT -> $TO tx $TXH | purpose: $PURPOSE | receipt $OUTF. Stopping."; else bash log-append.sh ../LOG.md -- "$(ts) | PAYOUT FAILED: $AMT USDT -> $TO | $(printf '%s' "$R" | head -c 200 | tr '\n' ' ') | receipt $OUTF. Stopping."; fi
+--- exit: 0 ---

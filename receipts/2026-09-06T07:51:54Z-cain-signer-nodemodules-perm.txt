@@ -1,0 +1,20 @@
+receipt: 2026-09-06T07:51:54Z
+name: cain-signer-nodemodules-perm
+cmd: bash -c 
+stat -c "%A %U:%G %n" node_modules
+find node_modules -maxdepth 1 -type d -exec stat -c "%A %U:%G %n" {} \; | head -20
+test -w node_modules/ethers/lib.commonjs/wallet/wallet.js 2>/dev/null && echo "WRITABLE: node_modules/ethers wallet.js can be edited by this same user" || find node_modules/ethers -name "wallet.js" -exec test -w {} \; -print
+
+--- output ---
+drwxrwxr-x ye:ye node_modules
+drwxrwxr-x ye:ye node_modules
+drwxrwxr-x ye:ye node_modules/ethers
+drwxrwxr-x ye:ye node_modules/undici-types
+drwxrwxr-x ye:ye node_modules/ws
+drwxrwxr-x ye:ye node_modules/@adraffy
+drwxrwxr-x ye:ye node_modules/@types
+drwxrwxr-x ye:ye node_modules/@noble
+drwxrwxr-x ye:ye node_modules/tslib
+drwxrwxr-x ye:ye node_modules/aes-js
+WRITABLE: node_modules/ethers wallet.js can be edited by this same user
+--- exit: 0 ---

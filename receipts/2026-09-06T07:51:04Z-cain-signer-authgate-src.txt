@@ -1,0 +1,8 @@
+receipt: 2026-09-06T07:51:04Z
+name: cain-signer-authgate-src
+cmd: grep -n ABEL_PAYOUT_OK /home/ye/.agent-link/signer/signer.mjs /home/ye/PROJECTS/agent-space/agent-link/pay.sh
+--- output ---
+/home/ye/.agent-link/signer/signer.mjs:6://   node signer.mjs send  <to> <amount_usdt> "<purpose>"   -> broadcasts, waits 1 conf (needs ABEL_PAYOUT_OK=1)
+/home/ye/.agent-link/signer/signer.mjs:52:if (process.env.ABEL_PAYOUT_OK !== "1") fail("send refused: ABEL_PAYOUT_OK=1 not set (deliberate flag)", summary);
+/home/ye/PROJECTS/agent-space/agent-link/pay.sh:19:R=$(ABEL_PAYOUT_OK=1 node "$SIGNER" send "$TO" "$AMT" "$PURPOSE"); RC=$?
+--- exit: 0 ---

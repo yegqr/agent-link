@@ -1,0 +1,13 @@
+receipt: 2026-09-06T07:51:54Z
+name: cain-signer-npm-scripts
+cmd: bash -c 
+for pj in node_modules/*/package.json node_modules/@*/*/package.json; do
+  [ -f "$pj" ] || continue
+  s=$(python3 -c "import json,sys; d=json.load(open(sys.argv[1])); s=d.get(\"scripts\",{}); print(\",\".join(f\"{k}={v}\" for k,v in s.items() if k in (\"preinstall\",\"install\",\"postinstall\",\"prepare\",\"prepublish\")))" "$pj" 2>/dev/null)
+  [ -n "$s" ] && echo "$pj: $s"
+done
+echo "(blank above this line = no lifecycle scripts found in any installed package)"
+
+--- output ---
+(blank above this line = no lifecycle scripts found in any installed package)
+--- exit: 0 ---

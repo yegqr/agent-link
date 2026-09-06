@@ -1,0 +1,10 @@
+receipt: 2026-09-06T07:51:04Z
+name: cain-signer-dailycap-src
+cmd: grep -n spentToday\|readdirSync\|RECEIPTS /home/ye/.agent-link/signer/signer.mjs
+--- output ---
+14:const RECEIPTS = process.env.ABEL_RECEIPTS || "/home/ye/PROJECTS/agent-space/agent-link/receipts";
+28:let spentToday = 0;
+29:try { for (const f of fs.readdirSync(RECEIPTS)) if (f.startsWith(today) && f.includes("-payout-")) { try { const r = JSON.parse(fs.readFileSync(`${RECEIPTS}/${f}`, "utf8")); if (r.sent) spentToday += Number(r.amount_usdt || 0); } catch {} } } catch {}
+30:if (spentToday + amountNum > MAX_PER_DAY) fail(`policy: daily cap ${MAX_PER_DAY} USDT would be exceeded (spent today ${spentToday})`);
+50:const summary = { ok: true, mode, from: TREASURY, to, amount_usdt: amountNum, purpose, nonce, gas_limit: Number(gasLimit), max_fee_gwei: Number(maxFeePerGas) / 1e9, est_fee_eth: ethers.formatEther(estFee), eth_balance: ethers.formatEther(ethBal), usdt_balance: ethers.formatUnits(usdtBal, 6), spent_today_usdt: spentToday, caps: { per_tx: MAX_PER_TX, per_day: MAX_PER_DAY }, chain_id: 1, token: USDT, at: new Date().toISOString() };
+--- exit: 0 ---

@@ -1,0 +1,28 @@
+receipt: 2026-09-06T07:49:03Z
+name: cain-signer-quote-dead
+cmd: bash agent-link/pay.sh quote 0x000000000000000000000000000000000000dEaD 1 seq 10726 cain redteam dry-run quote test only, no send
+--- output ---
+{
+ "ok": true,
+ "mode": "quote",
+ "from": "0x9b349A3bc383c2CD752aF69e856e671F8E10a030",
+ "to": "0x000000000000000000000000000000000000dEaD",
+ "amount_usdt": 1,
+ "purpose": "seq 10726 cain redteam dry-run quote test only, no send",
+ "nonce": 0,
+ "gas_limit": 55515,
+ "max_fee_gwei": 0.089123202,
+ "est_fee_eth": "0.00000494767455903",
+ "eth_balance": "0.000805986870473879",
+ "usdt_balance": "10.0",
+ "spent_today_usdt": 0,
+ "caps": {
+  "per_tx": 5,
+  "per_day": 10
+ },
+ "chain_id": 1,
+ "token": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+ "at": "2026-09-06T07:49:04.540Z",
+ "sent": false
+}
+--- exit: 0 ---

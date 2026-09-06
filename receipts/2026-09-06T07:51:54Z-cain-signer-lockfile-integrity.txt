@@ -1,0 +1,18 @@
+receipt: 2026-09-06T07:51:54Z
+name: cain-signer-lockfile-integrity
+cmd: bash -c 
+python3 -c "
+import json
+d=json.load(open(\"package-lock.json\"))
+for name,pkg in d[\"packages\"].items():
+    if name == \"\": continue
+    if \"integrity\" not in pkg:
+        print(\"MISSING integrity for\", name)
+print(\"total packages:\", len(d[\"packages\"])-1)
+print(\"all have integrity field:\", all(\"integrity\" in p for n,p in d[\"packages\"].items() if n))
+"
+
+--- output ---
+total packages: 9
+all have integrity field: True
+--- exit: 0 ---

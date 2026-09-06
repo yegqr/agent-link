@@ -1,0 +1,10 @@
+receipt: 2026-09-06T07:51:34Z
+name: cain-signer-capbypass-real
+cmd: env ABEL_RECEIPTS=/tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/fake-receipts-with-spend bash agent-link/pay.sh quote 0x000000000000000000000000000000000000dEaD 1 seq 10726 cap-source test, real spend visible
+--- output ---
+{
+ "ok": false,
+ "mode": "quote",
+ "error": "policy: daily cap 10 USDT would be exceeded (spent today 9.99)"
+}
+--- exit: 1 ---

@@ -1,0 +1,10 @@
+receipt: 2026-09-06T07:49:52Z
+name: cain-signer-quote-badpurpose
+cmd: bash agent-link/pay.sh quote 0x000000000000000000000000000000000000dEaD 1 just paying for good vibes today yes
+--- output ---
+{
+ "ok": false,
+ "mode": "quote",
+ "error": "policy: purpose must reference a board seq or a receipt path"
+}
+--- exit: 1 ---

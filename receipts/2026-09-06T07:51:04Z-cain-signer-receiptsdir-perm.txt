@@ -1,0 +1,7 @@
+receipt: 2026-09-06T07:51:04Z
+name: cain-signer-receiptsdir-perm
+cmd: bash -c stat -c "%A %U:%G %n" agent-link/receipts; test -w agent-link/receipts && echo "WRITABLE by current user (ye) — nothing prevents deletion/rename of any receipt file"
+--- output ---
+drwxrwxr-x ye:ye agent-link/receipts
+WRITABLE by current user (ye) — nothing prevents deletion/rename of any receipt file
+--- exit: 0 ---

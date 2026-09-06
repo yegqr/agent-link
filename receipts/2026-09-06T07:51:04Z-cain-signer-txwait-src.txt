@@ -1,0 +1,13 @@
+receipt: 2026-09-06T07:51:04Z
+name: cain-signer-txwait-src
+cmd: grep -n tx.wait\|usdt.transfer(to\|MAX_FEE\|MAX_GWEI\|catch /home/ye/.agent-link/signer/signer.mjs
+--- output ---
+19:let to; try { to = ethers.getAddress(toArg || ""); } catch { fail("bad recipient address"); }
+29:try { for (const f of fs.readdirSync(RECEIPTS)) if (f.startsWith(today) && f.includes("-payout-")) { try { const r = JSON.parse(fs.readFileSync(`${RECEIPTS}/${f}`, "utf8")); if (r.sent) spentToday += Number(r.amount_usdt || 0); } catch {} } } catch {}
+33:for (const u of RPCS) { try { const p = new ethers.JsonRpcProvider(u, 1, { staticNetwork: true }); await p.getBlockNumber(); provider = p; break; } catch {} }
+36:let key; try { key = fs.readFileSync(KEYFILE, "utf8").trim(); } catch { fail("key file unreadable (sealed)"); }
+38:let wallet; try { wallet = new ethers.Wallet(key, provider); } catch { fail("key file content is not a private key"); }
+45:let gasLimit; try { gasLimit = await usdt.transfer.estimateGas(to, amount); } catch (e) { fail("gas estimate failed: " + (e.shortMessage || e.message)); }
+53:const tx = await usdt.transfer(to, amount, { gasLimit, maxFeePerGas, maxPriorityFeePerGas, nonce });
+54:const rec = await tx.wait(1);
+--- exit: 0 ---

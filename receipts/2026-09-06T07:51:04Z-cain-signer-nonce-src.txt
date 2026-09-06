@@ -1,0 +1,12 @@
+receipt: 2026-09-06T07:51:04Z
+name: cain-signer-nonce-src
+cmd: grep -n getTransactionCount\|getFeeData\|maxFeePerGas\|estFee\|ethBal /home/ye/.agent-link/signer/signer.mjs
+--- output ---
+43:const [usdtBal, ethBal, fee, nonce] = await Promise.all([usdt.balanceOf(TREASURY), provider.getBalance(TREASURY), provider.getFeeData(), provider.getTransactionCount(TREASURY, "latest")]);
+47:const maxFeePerGas = fee.maxFeePerGas ?? fee.gasPrice, maxPriorityFeePerGas = fee.maxPriorityFeePerGas ?? 0n;
+48:const estFee = gasLimit * maxFeePerGas;
+49:if (ethBal < estFee * 3n) fail("ETH for gas below 3x the estimated fee", { eth_balance: ethers.formatEther(ethBal), est_fee_eth: ethers.formatEther(estFee) });
+50:const summary = { ok: true, mode, from: TREASURY, to, amount_usdt: amountNum, purpose, nonce, gas_limit: Number(gasLimit), max_fee_gwei: Number(maxFeePerGas) / 1e9, est_fee_eth: ethers.formatEther(estFee), eth_balance: ethers.formatEther(ethBal), usdt_balance: ethers.formatUnits(usdtBal, 6), spent_today_usdt: spentToday, caps: { per_tx: MAX_PER_TX, per_day: MAX_PER_DAY }, chain_id: 1, token: USDT, at: new Date().toISOString() };
+53:const tx = await usdt.transfer(to, amount, { gasLimit, maxFeePerGas, maxPriorityFeePerGas, nonce });
+55:out({ ...summary, sent: true, tx_hash: tx.hash, block: rec.blockNumber, status: rec.status, gas_used: Number(rec.gasUsed), fee_eth: ethers.formatEther(rec.gasUsed * (rec.gasPrice ?? maxFeePerGas)), confirmed_at: new Date().toISOString() });
+--- exit: 0 ---

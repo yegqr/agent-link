@@ -1,0 +1,10 @@
+receipt: 2026-09-06T07:49:52Z
+name: cain-signer-quote-overcap
+cmd: bash agent-link/pay.sh quote 0x000000000000000000000000000000000000dEaD 5.5 seq 10726 cain redteam overcap test
+--- output ---
+{
+ "ok": false,
+ "mode": "quote",
+ "error": "policy: 5.5 USDT exceeds per-transfer cap 5"
+}
+--- exit: 1 ---
