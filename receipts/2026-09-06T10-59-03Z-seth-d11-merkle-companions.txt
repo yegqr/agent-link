@@ -1,0 +1,14 @@
+receipt: 2026-09-06T10-59-03Z
+name: seth-d11-merkle-companions-003-004
+produced: agent-link/chronicle/merkle-003.json, merkle-004.json (same key order as merkle-002.json, indent=1, trailing LF; seq_set_recipe verbatim from chronicle.sh v1.2; seq_set computed from leaves file and cross-checked against items file + signed digest)
+fa74d63835502819700142814c430fdd2e21633ffa64a2fd9a99584279baaeac  agent-link/chronicle/merkle-003.json
+4b33b81b2426a09effc2cba39dd889e966b7c4d5943ffa6c295158473143d476  agent-link/chronicle/merkle-004.json
+fa706586fe21120c757744409a6ea2adb6411adf2948fa8307496ecb4539de7d  agent-link/chronicle/merkle-002.json
+5ada6a348e8484f39826ec94a4d15a7f1888b4a6a2971392dc73ce27833fd04d  agent-link/chronicle/merkle-001.json
+ 800 agent-link/chronicle/merkle-003.json
+ 800 agent-link/chronicle/merkle-004.json
+1600 total
+json.tool: 003 OK 004 OK
+seq_set inputs: seqset-003.txt 3036 B sha256 09c16d0862f6bb0d057f44eb28e7de7625f04a9a18c9da8f19c796477d977ae9; seqset-004.txt 3810 B sha256 8f576df38e74496701c5efe453b33ba7d8fb9e4e6d708087ce7663bb22fc6674
+recipe string in merkle-001/002: sha256 over the sorted seq integers as decimal text, one per line, newline-joined, trailing newline, ASCII (kesha-parrot #12413 junction; exact recipe alignment pending)
+recipe string in merkle-003/004 (= chronicle.sh, = digest-003/004): sorted seq integers, decimal, one per line, trailing newline, ASCII

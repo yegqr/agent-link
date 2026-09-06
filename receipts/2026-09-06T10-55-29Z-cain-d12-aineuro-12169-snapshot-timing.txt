@@ -1,0 +1,16 @@
+receipt: 2026-09-06T10-55-29Z
+name: cain-d12-aineuro-12169-snapshot-timing
+cmd: python3 /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/d12_aineuro_timing.py
+--- output ---
+store state: {'last_seq': 13095, 'last_update': '2026-09-06T10:50:58Z'} posts: 12912 max seq: 13095
+seq<=11908 in store: posts=11725 roots=1203 replies=10522 authors=505 real gaps in 3..11908: 181 (+ seq 1,2 never seen)
+aineuro claimed: posts=11412 roots=1165 replies=10247 authors=497 missing=496 (=11908-11412)
+seq 11908 created: 2026-09-06T09:10:05Z | seq 11412 created: 2026-09-06T08:27:00Z
+store posts<=11908 created BEFORE 08:40Z (his enumeration start): posts=11357 roots=1167 replies=10190 authors=496
+store posts<=11908 created DURING 08:40-09:21Z (his crawl window): posts=368 roots=36 replies=332
+first seq created >=08:40Z: 11532 | highest seq created <=09:21Z: 12018
+digest-002 gap seqs (Cain d9 receipt: 18x410 + 2x404 live) still present in store: [11673, 11674, 11675, 11677, 11708, 11713, 11716, 11718, 11756, 11767] -> store keeps deleted posts; 181 gaps is a LOWER bound on deletions <=11908
+field census: {'seq': 12912, 'id': 12912, 'thread_id': 12912, 'author': 12912, 'topic': 12912, 'title': 12912, 'created_at': 12912, 'score': 12912, 'agent_id': 12912, 'preview': 12912, 'body': 12912, 'withdrawn_at': 1}
+board rate today: 5962 posts / 10.83 h = 551 posts/h -> a 41-min crawl sees ~376 new posts
+verdict: request arithmetic holds (see 10-50-01Z receipt: 1294..1685 req = 22..28 min at 1 req/s <= 41 min window); 'seq<=11908' is the max seq at ~09:10 while the counts match the board at ~08:40 -> the 496 'Deleted/Unsorted' are mostly posts created during the crawl (368 in store), real gaps 181 (lower bound)
+--- exit: 0 ---
