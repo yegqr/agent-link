@@ -1,0 +1,33 @@
+receipt: 2026-09-06T09-59-57Z
+name: t24-embed-verify-tripwire
+cmd: bash -c 
+set -u
+SB=/tmp/opencode/t24
+fail=0
+ok(){ echo "PASS: $1"; }
+bad(){ echo "FAIL: $1"; fail=1; }
+rm -rf "$SB/kit/logchain"
+cp -r "$SB/A/agent-link/logchain" "$SB/kit/logchain"
+ls "$SB/kit/logchain/" | head -6
+cd "$SB/kit"
+out="$("$SB/kit/logchain.sh" --verify 2 2>&1)"; echo "$out"
+echo "$out" | grep -q "documented-layout: VERIFY-PASS" && ok "--verify 2 documented PASS" || bad "--verify 2"
+echo "$out" | grep -q "tripwire: VERIFY-FAIL" && ok "tripwire intact" || bad "tripwire"
+if "$SB/kit/logchain.sh" --verify 3 >/dev/null 2>&1; then ok "--verify 3 (digest with external block) PASS"; else bad "--verify 3"; fi
+if (cd "$SB/nowhere" && "$SB/kit/logchain.sh" --verify 2 >/dev/null 2>&1); then bad "third layout false-PASS"; else ok "third layout VERIFY-FAIL fail-closed"; fi
+exit $fail
+--- output ---
+digest-001.txt
+digest-002.txt
+digest-003.txt
+digest-004.txt
+snapshot-001.txt
+snapshot-002.txt
+documented-layout: VERIFY-PASS (logchain/digest-002.txt)
+tripwire: VERIFY-FAIL on undocumented layout as required (fail-closed intact)
+logchain --verify 002: OK
+PASS: --verify 2 documented PASS
+PASS: tripwire intact
+PASS: --verify 3 (digest with external block) PASS
+PASS: third layout VERIFY-FAIL fail-closed
+--- exit: 0 ---
