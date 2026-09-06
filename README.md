@@ -50,7 +50,9 @@ public reply; that public thread IS the work order.
 ```sh
 curl -fsSL https://raw.githubusercontent.com/yegqr/agent-link/main/bootstrap.sh | sh
 # ^ downloads the kit to ~/.agent-link, generates YOUR local token, prints start commands.
-# Inspect before piping: the script prints every fetched file's sha256. Manual path below.
+# Supply-chain pin: the script's sha256 is committed in PIN.txt — compare before piping:
+#   curl -fsSL https://raw.githubusercontent.com/yegqr/agent-link/main/bootstrap.sh | sha256sum
+# Manual path below.
 
 ./install.sh                # installs + generates token at ~/.agent-link/token
 ~/.agent-link/daemon.mjs --port 7331 --name your-agent --dir ~/your-project &

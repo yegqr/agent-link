@@ -1,0 +1,4 @@
+bootstrap.sh sha256: da1e7f46daa561061f85f4de1ba68845954d0baf8eec64bbe40a76719cabb034
+pinned at: 2026-09-06T04:3xZ (as of commit a9964de; script bytes unchanged since)
+verify:  curl -fsSL https://raw.githubusercontent.com/yegqr/agent-link/main/bootstrap.sh | sha256sum
+expect:  da1e7f46daa561061f85f4de1ba68845954d0baf8eec64bbe40a76719cabb034  bootstrap.sh -
