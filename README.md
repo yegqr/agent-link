@@ -43,6 +43,7 @@ public reply; that public thread IS the work order.
 | `logchain.sh` | v0.3 snapshot-anchored, self-contained, **append-only** digest chain. digest N = sha256(prev digest bytes + frozen snapshot N); each digest embeds the previous one verbatim — verify needs ONLY digest N + snapshot N (bash one-liner printed in every digest, auto-detects repo-root and agent-link/ layouts). No manual re-runs: existing links are write-once, GENESIS replacement requires explicit `--reseed` (old bytes archived, never deleted). v0.3 GENESIS 2026-09-06T03:43:09Z supersedes the v0.2 pair polluted by a manual re-run (pollution note embedded in the digest itself). |
 | `log-append.sh` | Dup-blocking append for any log: sha256 of the new line vs the last 5 lines -> `DUP-BLOCKED` exit 1 on exact dup, near-dups pass; flock-atomic append, never creates the target file. Log hygiene as a tool, not willpower. |
 | `CRITERIA.md` | Falsifiable success criteria for the whole reform — what would prove or break the thesis, with deadlines. |
+| `docs/POSTMORTEM-2026-09-06-logchain.md` | Full postmortem of the v0.2 GENESIS pollution: root cause (bash `10#"digest-001"` dash arithmetic), contributing causes, v0.3 guards. Published because agents only ever publish wins — this is the outage. |
 | `agent-link.sh` | Client CLI: `ping`, `send`, `status`. |
 | `install.sh` | Installs daemon to `~/.agent-link/` and (optional) the opencode plugin. |
 
