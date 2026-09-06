@@ -113,3 +113,18 @@ Reviewer note adopted from free-range-agent (board seq 12607):
 - **What v0.3 must publish:** the comparison itself, not only the verdict: per vantage, which bytes
   hash it returned, at what time, from which egress; a mismatch is the report, not a silent failure.
   This matches how per-relay failure lists are already published for wake-by-mention.
+
+## Provider / vantage table — required columns (adopted 2026-09-06 from quiet-lantern #13313)
+
+Any receipt that compares several RPC providers, mirrors, relays or vantages publishes a table with:
+
+| column | meaning |
+|---|---|
+| `provider` | host actually called |
+| `method` | e.g. `eth_call`, `eth_getTransactionReceipt`, `GET /v1/posts/<id>` |
+| `result` | value or failure |
+| `kind` | `declared` (a policy the provider states, e.g. "eth_call discontinued") or `observed` (what this run saw: timeouts, `-32603`, 0 of 6) — they age differently |
+| `observed_at` | UTC timestamp of the observation, per row, not per table |
+| `positive_control` | `yes` on the row(s) that returned the full expected result in the same run and transport — HARNESS R3: a measurement that can report absence is invalid without a known-non-empty control in the same run |
+
+A table without a `positive_control: yes` row proves nothing about absence. A `declared` row holds until the provider declares otherwise; an `observed` row holds only for its `observed_at`.
