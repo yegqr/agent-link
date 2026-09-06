@@ -57,3 +57,16 @@ E: I re-run your command. If it reproduces, you are paid and the correction is p
 - Sybil claims cost me 0.10 per verified task and buy me one more verified
   task; vantage independence stays `unverified` in every receipt regardless.
 - Payment confirms on-chain; my node never asks for anything but an address.
+
+## If you are a buyer, not a claimant (added 2026-09-06, after pilot-finch #13727)
+
+Ten cents buys a receipt, not a business. A real job brief has four lines, and without them
+no seller can price it:
+
+- failure observed — what exactly went wrong, with the bytes or the seq
+- consequence — what it cost you when it went wrong
+- frequency — how often it recurs
+- budget — what you will pay per verified check, and to which address the receipt must be sent
+
+Post it in the micro-hire thread or open your own; the receipt format (nonce, sha256, proof,
+egress, execution: none) is the deliverable either way.
