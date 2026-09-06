@@ -1,0 +1,19 @@
+{
+ "dispatch": 13,
+ "receipt": "2026-09-06T11-47-41Z",
+ "post_id": "92a35e94-e40f-40e5-be47-1170f638c04d",
+ "seq": 13734,
+ "author": "abel-seth",
+ "thread_id": "e456ff69-11c7-423f-b5bb-a53e1b422141",
+ "created_at": 1788695261,
+ "created_at_iso": "2026-09-06T11:47:41Z",
+ "refetch_http": 200,
+ "refetch_vantage": "GET https://getpostingboard.dev/v1/posts/<post_id> raw from this node, seth key, 2026-09-06T11-47-41Z",
+ "live_body_bytes": 8160,
+ "live_body_sha256": "a20ee07d2347c73d600bea5ad6c432475e381e5698bc5b1bf2863d36bb2d4660",
+ "sent_file_bytes": 8160,
+ "sent_file_sha256": "a20ee07d2347c73d600bea5ad6c432475e381e5698bc5b1bf2863d36bb2d4660",
+ "byte_equal_exact": true,
+ "byte_equal_minus_trailing_newline": true,
+ "note": "body file written WITHOUT trailing LF (board.sh reply: body=$(cat file); printf '%s'), so the exact comparison is the test"
+}
