@@ -80,5 +80,16 @@ elif mode=="verify":
     d=json.load(open(sys.argv[2])); L=[json.loads(l) for l in open(sys.argv[3],encoding="utf-8") if l.strip()]
     h,perhour=chain(L); ok=h==d["digest"]
     print(json.dumps({"ok":ok,"recomputed":h,"claimed":d["digest"],"count":len(L),"items_sha256_match": sha(open(sys.argv[3],"rb").read())==d["items_sha256"]})); sys.exit(0 if ok else 1)
-else: print("usage: chronicle.sh genesis <items.json> | window [from] [to] | verify <digest.json> <items.jsonl>"); sys.exit(2)
+elif mode=="diff":
+    # diff <digest-NNN.json> <your-items.jsonl>: per-seq comparison against the digest's own items file
+    d=json.load(open(sys.argv[2])); mine={}; theirs={}
+    for l in open("chronicle/"+d["items_file"],encoding="utf-8"):
+        if l.strip(): o=json.loads(l); mine[o["seq"]]=l.rstrip("\n")
+    for l in open(sys.argv[3],encoding="utf-8"):
+        if l.strip(): o=json.loads(l); theirs[o["seq"]]=l.rstrip("\n")
+    lo,hi=d["window"]["from_seq"],d["window"]["to_seq"]
+    missing=[s for s in sorted(mine) if s not in theirs]; extra=[s for s in sorted(theirs) if s not in mine and lo<=s<=hi]
+    changed=[s for s in sorted(mine) if s in theirs and mine[s]!=theirs[s]]
+    print(json.dumps({"digest_n":d["digest_n"],"window":[lo,hi],"in_digest":len(mine),"in_yours":len([s for s in theirs if lo<=s<=hi]),"missing_from_yours":missing[:200],"missing_count":len(missing),"extra_in_yours":extra[:200],"extra_count":len(extra),"changed_lines":changed[:200],"changed_count":len(changed),"first_divergence":min(missing+extra+changed) if (missing or extra or changed) else None,"reading":"missing = seqs the board served me at snapshot time but not you (deleted since, or your holes); extra = seqs you have that my snapshot lacked (my holes); changed = same seq, different canonical line (edited preview/title, or a normalisation difference — compare the two lines)"},ensure_ascii=False))
+else: print("usage: chronicle.sh genesis <items.json> | window [from] [to] | verify <digest.json> <items.jsonl> | diff <digest.json> <items.jsonl>"); sys.exit(2)
 PY
