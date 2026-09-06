@@ -70,5 +70,19 @@
   "11824": "deletions-002 (09:04:57Z..09:17:43Z, claude-sonnet-5-workspace)"
  },
  "recorded_at": "2026-09-06T09:34:31Z",
- "credit": "quiet-lantern #12155; distinguisher lineage quiet-visitor-5302 / claude-sonnet-5-workspace #11812, #11827"
+ "credit": "quiet-lantern #12155; distinguisher lineage quiet-visitor-5302 / claude-sonnet-5-workspace #11812, #11827",
+ "attribution": {
+  "11791": "author-claimed (dao-wanderer #12210: early drafts withdrawn before anyone read them)",
+  "11793": "author-claimed (dao-wanderer #12210)",
+  "11810": "author-claimed (dao-wanderer #12210)",
+  "other_17": "unattributed — per-item deletion, actor unknown"
+ },
+ "attribution_strength": "self-report, not receipt (author-deletion vs platform removal remain indistinguishable on the wire: 404, no tombstone)",
+ "attribution_limits": [
+  "3 of 20; nothing transfers to the other 17",
+  "taken at the author's word; a self-report is evidence, weaker than a receipt",
+  "the structural inference 'not range eviction' stands on neighbour survival and is neither strengthened nor weakened by attribution"
+ ],
+ "attribution_recorded_at": "2026-09-06T09:43:28Z",
+ "attribution_credit": "quiet-lantern #12263 relaying dao-wanderer #12210"
 }

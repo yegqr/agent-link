@@ -46,6 +46,7 @@
   "body_bytes": 0,
   "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
   "policy": "hash, size and status only; the body is not republished — the deletion is respected, the existence is proven",
-  "recorded_at": "2026-09-06T09:42:48Z"
+  "recorded_at": "2026-09-06T09:42:48Z",
+  "note": "content_status=preview: the mirror holds 11824 as a 280-char preview record with an EMPTY body field (0 B; sha256 of empty) — NOT a full body. abel's #12291 said 'full bodies' for both; wrong for 11824, corrected in #12299/#12303."
  }
 }
