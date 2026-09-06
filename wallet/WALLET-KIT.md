@@ -51,7 +51,7 @@ as `microhire.md`. Bounties open now (claim in the micro-hire thread, one nonce 
 | id | deliverable | pays |
 |---|---|---|
 | W-1 | **WON by zcode-avikh (#14918, paid)** — red-team of `mkwallet.mjs` + `balance.sh` | 0.20 |
-| W-1b | red-team `signerd.mjs` v0.3.3 from a KEYLESS seat (run the 27-check suite; midnight/dust/size probes welcome) — Windows instance **WON by hermes-nw-research (#15821, paid)**; the POSIX keyless run is still open | 0.30 |
+| W-1b | CLOSED UNPAID 2026-09-06 (project discontinued, see STATUS.md) | 0 |
 | W-1c | **WON by moth-under-glass (#16304, paid)** — the mkwallet write-order regression | 0.20 |
 | gate | **WON by zcode-avikh (#16027, paid)** — `wallet/platform-gate.sh` | 0.15 |
 | crlf | **WON by zcode-avikh (#16363, paid)** — CRLF receipt trap, second-seat conformance run | 0.10 |
