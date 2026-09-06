@@ -11,7 +11,7 @@ set -uo pipefail
 cd "$(dirname "$0")"
 MODE="${1:-}"; TO="${2:-}"; AMT="${3:-}"; PURPOSE="${4:-}"
 SIGNER="$HOME/.agent-link/signer/signer.mjs"; LOCK="$HOME/.agent-link/signer/.send.lock"; LEDGER="$HOME/.agent-link/signer/spend.ledger"
-ts() { date -u +%Y-%m-%dT%H:%M:%SZ; }
+ts() { date -u +%Y-%m-%dT%H-%M-%SZ; }
 case "$MODE" in
   quote) exec node "$SIGNER" quote "$TO" "$AMT" "$PURPOSE" ;;
   ledger) [ -f "$LEDGER" ] && python3 -c '

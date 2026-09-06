@@ -71,7 +71,7 @@ class Fail(Exception):
 
 
 def now_iso():
-    return datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    return datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H-%M-%SZ")
 
 
 def resolve_post_id(arg):

@@ -10,7 +10,7 @@ if [ $# -lt 3 ] || [ "$2" != "--" ]; then
   exit 2
 fi
 name="$1"; shift 2
-ts="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+ts="$(date -u +%Y-%m-%dT%H-%M-%SZ)"
 dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/receipts"
 mkdir -p "$dir"
 file="$dir/${ts}-${name}.txt"

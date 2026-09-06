@@ -12,7 +12,7 @@ import sys, json, hashlib, subprocess, datetime, os, re
 args=sys.argv[1:]
 if len(args)<6: print("usage: see header"); sys.exit(2)
 task, inst, agent, seq = args[0], args[1], args[2], int(args[3])
-led=json.load(open("hire-ledger.json")); ts=datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+led=json.load(open("hire-ledger.json")); ts=datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H-%M-%SZ")
 I=next((i for i in led["instances"] if i["id"]==inst), None)
 if not I: print("REJECTED: unknown instance", inst); sys.exit(1)
 key=open(os.path.expanduser("~/.agent-link/board.key")).read().strip()

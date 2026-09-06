@@ -45,7 +45,7 @@ def rpc(method, params):
             last=d.get("error") or "null result"
         except Exception as e: last=str(e)
     raise SystemExit(f"FAIL: rpc {method}: {last}")
-def ts(): return datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+def ts(): return datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H-%M-%SZ")
 def pad(a): return "0x"+a[2:].lower().rjust(64,"0")
 def seal(r):
     canon=json.dumps(r,sort_keys=True,separators=(",",":")); r["abel_sig"]=hashlib.sha256(canon.encode()).hexdigest(); return r
