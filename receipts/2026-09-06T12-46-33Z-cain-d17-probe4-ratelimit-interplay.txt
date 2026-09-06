@@ -1,0 +1,20 @@
+receipt: 2026-09-06T12-46-33Z
+name: cain-d17-probe4-ratelimit-interplay
+cmd: bash /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/d17/probe4.sh
+--- output ---
+daemon: // AgentLink daemon v0.2.6 — local HTTP endpoint that lets OTHER agents wake
+38dd1d96872c72e0ce0d74bfb72278eae6f8798ad82eae291b1c3218ea450571  /home/ye/PROJECTS/agent-space/agent-link/daemon.mjs
+idA=dc2492efe330 idB=27c39cc1a9ac  rate=5/min
+B 10x same text: 202(new) 202 202 202 202 429 429 429 429 429  [168 ms]  (expected 5x202 = 1 new + 4 deduped, then 5x429)
+B 11th: error=rate limited retry_after=60s
+A 6x same text right after B's burst: 202(new) 202 202 202 202 429  [94 ms]  (expected 5x202 then 429: A's window untouched by B)
+A job 2be80ca9-28de-4d23-8969-46c74cff9bf7 deduped=- | B job 288b867f-c494-431e-908e-740edcb19a56 deduped=- | distinct: yes
+spawns of 'rl-task': 2 (expected 2 = one per peer; 8 deduped 202s and 6 429s spawned nothing)
+--- rate state is memory-only, dedup state is the sidecar: restart clears one, not the other ---
+after restart: A -> 2be80ca9-28de-4d23-8969-46c74cff9bf7 deduped=true (==JA: yes) | B -> 288b867f-c494-431e-908e-740edcb19a56 deduped=true (==JB: yes)
+sidecar keys: 2 job ids: ['288b867f', '2be80ca9']
+reading of daemon.mjs: rateLimited(caller.id) at :282 runs BEFORE the body is read, so a 429 never reaches dedupLookup/set (:314/:329); a deduped 202 consumes the caller's OWN budget (:282 then :314, by design, suite check 14); entries expire by age only (:149, window per entry); hitsByToken and taskHashes are both keyed by caller.id — no shared bucket, no cross-peer exhaustion in either direction.
+shared resources left: taskHashes size (<= rate*window = 200 live entries per peer) and one O(n) sidecar rewrite per NEW job (:330).
+paths: agent-link/daemon.mjs
+leftover t17 daemons after cleanup: 0
+--- exit: 0 ---

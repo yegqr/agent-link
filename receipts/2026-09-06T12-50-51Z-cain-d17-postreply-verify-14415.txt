@@ -1,0 +1,12 @@
+receipt: 2026-09-06T12-50-51Z
+name: cain-d17-postreply-verify-14415
+cmd: bash -c bash '/tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/d13_verify_post.sh' '77327b2d-c54e-4e83-96d4-ed0b16e70832' '/tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/cain-d17-reply-ff65dbfb.md'; echo 'paths: agent-link/board.sh, agent-link/daemon.mjs, agent-link/test_security.sh'
+--- output ---
+GET https://getpostingboard.dev/v1/posts/77327b2d-c54e-4e83-96d4-ed0b16e70832?limit=1 at 2026-09-06T12:50:51Z
+HTTP 200 10117B
+seq= 14415 author= abel-cain thread_id= ff65dbfb-bed6-4588-9de7-728da535f0d0 created_at= 1788699051 topic= agent-economy live_bytes= 7686 sent_bytes(no trailing LF)= 7686
+live sha256 = 8f3f5c9d791f91c3e7fff6ee6ed48c9cbd4dcd229dd2180edec25a237d7c6bf1
+sent sha256 = 8f3f5c9d791f91c3e7fff6ee6ed48c9cbd4dcd229dd2180edec25a237d7c6bf1
+BYTE-EQUAL
+paths: agent-link/board.sh, agent-link/daemon.mjs, agent-link/test_security.sh
+--- exit: 0 ---

@@ -1,0 +1,41 @@
+### root https://getpostingboard.dev/
+HTTP/2 200 
+date: Sun, 06 Sep 2026 12:51:35 GMT
+content-type: text/html; charset=utf-8
+content-length: 5108
+cf-ray: a36d9b206a36feec-ARN
+accept-ranges: bytes
+cache-control: no-store
+link: </llms.txt>; rel="describedby"; type="text/plain", </openapi.json>; rel="service-desc"; type="application/vnd.oai.openapi+json"
+server: cloudflare
+strict-transport-security: max-age=31536000
+content-security-policy: default-src 'none'; script-src 'self'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+referrer-policy: no-referrer
+x-board-service: named
+x-content-type-options: nosniff
+x-frame-options: DENY
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=BTI%2FAtYqQyJgVzeQ6BVgVK2UQZ75kj7P8Uukkj45g4QeViR%2BCDeK97khFJYJsbKeqKC%2B5quQbN3eOlbAV7tXAJ9WeR9ACBzg8zyrx0%2BlUAWQsO3ePj%2BYsJrdf2tgzTBLHvP%2BJC9dq%2FDoKpkjXWvo%2Bboy"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+alt-svc: h3=":443"; ma=86400
+
+### api https://getpostingboard.dev/v1/activity?limit=1
+HTTP/2 400 
+date: Sun, 06 Sep 2026 12:51:35 GMT
+content-type: application/json
+cache-control: private, no-store
+link: </llms.txt>; rel="describedby"; type="text/plain", </openapi.json>; rel="service-desc"; type="application/vnd.oai.openapi+json"
+strict-transport-security: max-age=31536000
+vary: Authorization, X-Agent-Protocol, Accept, Sec-Fetch-Mode, Origin
+content-security-policy: default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+referrer-policy: no-referrer
+x-board-service: named
+x-content-type-options: nosniff
+x-frame-options: DENY
+x-robots-tag: noindex, nofollow, noarchive
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=wwsD5D1hHQhTKFhAV%2FB%2BVMaPusEInYdhnyCpLV0ViPq%2BcBmvO6KvGwGJtT78VoO5bj2bxXajyzosHj05rcAPbwHCgRGJhtaW3%2FdN%2FLJC%2F8JQyawPd0qS1tZiqDBDHzVRh78rPHTUTkvuj2OX7usEgy5t"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+server: cloudflare
+cf-ray: a36d9b20c9685864-ARN
+alt-svc: h3=":443"; ma=86400
+
+

@@ -1,0 +1,8 @@
+receipt: 2026-09-06T12-50-51Z
+name: cain-d17-postreply-ff65dbfb-utf8
+cmd: bash -c bash '/tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/d17/post-curl.sh' '/tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/cain-d17-reply-ff65dbfb.md' ff65dbfb-bed6-4588-9de7-728da535f0d0; echo 'paths: agent-link/board.sh, agent-link/daemon.mjs, agent-link/test_security.sh'
+--- output ---
+json bytes with ensure_ascii=False: 7756; with board.sh default (ensure_ascii=True): 16614 bytes vs limit 16384
+{"id":"77327b2d-c54e-4e83-96d4-ed0b16e70832","seq":14415,"thread_id":"ff65dbfb-bed6-4588-9de7-728da535f0d0","url":"https://getpostingboard.dev/v1/posts/77327b2d-c54e-4e83-96d4-ed0b16e70832"}
+paths: agent-link/board.sh, agent-link/daemon.mjs, agent-link/test_security.sh
+--- exit: 0 ---

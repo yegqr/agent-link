@@ -1,0 +1,41 @@
+receipt: 2026-09-06T12-46-32Z
+name: cain-d17-probe3-ownership-AAB
+cmd: bash /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/d17/probe3.sh
+--- output ---
+daemon: // AgentLink daemon v0.2.6 — local HTTP endpoint that lets OTHER agents wake
+38dd1d96872c72e0ce0d74bfb72278eae6f8798ad82eae291b1c3218ea450571  /home/ye/PROJECTS/agent-space/agent-link/daemon.mjs
+idA=3efb1ce2a4a1 idB=344a9207cdfc
+A#1 -> b9911d0f-b5c0-44a5-9529-0bc37d6e3663 deduped=- nonce=n1  keys={accepted,agent,job_id,nonce}
+A#2 -> b9911d0f-b5c0-44a5-9529-0bc37d6e3663 deduped=true nonce=n2 original_created_at=2026-09-06T12:46:32.683Z  keys={accepted,agent,deduped,job_id,nonce,original_created_at}
+A GET /jobs/J1 -> 200  record: nonce=n1 token_id=3efb1ce2a4a1 peer=peerA from=peerA status=done
+B#1 -> dbb30935-ec6d-42da-a4ad-27207a8a5e89 deduped=- nonce=n3  keys={accepted,agent,job_id,nonce}
+B GET /jobs/J3 -> 200  record: nonce=n3 token_id=344a9207cdfc peer=peerB from=peerB status=done
+cross: B GET /jobs/J1 -> 404   A GET /jobs/J3 -> 404
+spawns of 'own-task': 2 (expected 2: A once, B once)
+RESULT 3a: A deduped to own job (original nonce n1 kept in record, fresh nonce echoed), A GET 200; B own job, GET 200; cross GETs 404
+--- route inventory (daemon.mjs) ---
+  260:  if (req.method === "GET" && url.pathname === "/ping") {
+  270:  if (req.method === "GET" && url.pathname.startsWith("/jobs/")) {
+  271:    const id = url.pathname.split("/")[2] || "";
+  281:  if (req.method === "POST" && url.pathname === "/challenge") {
+--- receipt/listing endpoint probe with B's token ---
+  GET  /receipts                                                  -> 404
+  GET  /receipt                                                   -> 404
+  GET  /jobs                                                      -> 404
+  GET  /jobs/                                                     -> 404
+  GET  /dedup                                                     -> 404
+  GET  /dedup.json                                                -> 404
+  GET  /jobs/b9911d0f-b5c0-44a5-9529-0bc37d6e3663/receipt         -> 404
+  GET  /jobs/b9911d0f-b5c0-44a5-9529-0bc37d6e3663/log             -> 404
+  GET  /jobs/b9911d0f-b5c0-44a5-9529-0bc37d6e3663.log             -> 404
+  GET  /jobs/B9911D0F-B5C0-44A5-9529-0BC37D6E3663                 -> 404
+  GET  /jobs/b9911d0f-b5c0-44a5-9529-0bc37d6e3663?peer=peerA      -> 404
+  GET  /challenge                                                 -> 404
+  POST /jobs/b9911d0f-b5c0-44a5-9529-0bc37d6e3663                 -> 404
+  GET  /ping                                                      -> 200 (no auth, by design)
+no receipt endpoint exists; the only per-job read is GET /jobs/<uuid>, owner-gated (daemon.mjs:277).
+sidecar mode 600; plaintext 'own-task' in sidecar: 0 (keys are hashes, values job_id+at); job files: 600 600
+what B ever receives about A: nothing — B's 202 keys are {accepted,agent,job_id,nonce}; original_created_at appears only in the same-peer dedup reply.
+paths: agent-link/daemon.mjs
+leftover t17 daemons after cleanup: 0
+--- exit: 0 ---

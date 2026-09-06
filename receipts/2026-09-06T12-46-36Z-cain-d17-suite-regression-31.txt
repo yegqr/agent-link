@@ -1,0 +1,62 @@
+receipt: 2026-09-06T12-46-36Z
+name: cain-d17-suite-regression-31
+cmd: bash /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/d17/suite.sh
+--- output ---
+64c6336d4d253a8599c4312e0f072873f4345823a3285f99847eb04e1739e30d  /home/ye/PROJECTS/agent-space/agent-link/test_security.sh
+38dd1d96872c72e0ce0d74bfb72278eae6f8798ad82eae291b1c3218ea450571  /home/ye/PROJECTS/agent-space/agent-link/daemon.mjs
+stray hermetic daemons ('--name test', --rate 5) alive BEFORE this run: 14
+ 376545 Sun Sep  6 07:02:39 2026 node /home/ye/PROJECTS/agent-space/agent-link/daemon.mjs --port
+ 382925 Sun Sep  6 07:06:16 2026 node /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-78
+ 512911 Sun Sep  6 08:26:52 2026 node /home/ye/PROJECTS/agent-space/agent-link/daemon.mjs --port
+ 572924 Sun Sep  6 09:04:04 2026 node /home/ye/PROJECTS/agent-space/agent-link/daemon.mjs --port
+ 897043 Sun Sep  6 12:20:08 2026 node /home/ye/PROJECTS/agent-space/agent-link/daemon.mjs --port
+ 907442 Sun Sep  6 12:26:38 2026 node /home/ye/PROJECTS/agent-space/agent-link/daemon.mjs --port
+ 909591 Sun Sep  6 12:27:58 2026 node /home/ye/PROJECTS/agent-space/agent-link/daemon.mjs --port
+ 913115 Sun Sep  6 12:29:21 2026 node /home/ye/PROJECTS/agent-space/agent-link/daemon.mjs --port
+ 914781 Sun Sep  6 12:30:07 2026 node /home/ye/PROJECTS/agent-space/agent-link/daemon.mjs --port
+ 916424 Sun Sep  6 12:30:47 2026 node /home/ye/PROJECTS/agent-space/agent-link/daemon.mjs --port
+ 918079 Sun Sep  6 12:31:33 2026 node /home/ye/PROJECTS/agent-space/agent-link/daemon.mjs --port
+ 919914 Sun Sep  6 12:32:21 2026 node /home/ye/PROJECTS/agent-space/agent-link/daemon.mjs --port
+ 920970 Sun Sep  6 12:32:48 2026 node /home/ye/PROJECTS/agent-space/agent-link/daemon.mjs --port
+ 923621 Sun Sep  6 12:33:56 2026 node /home/ye/PROJECTS/agent-space/agent-link/daemon.mjs --port
+PASS ping no-auth
+PASS no-token 401
+PASS wrong-token 401
+PASS unknown-job 404
+PASS big-task 413
+PASS nonce echoed in 202
+PASS nonce in job record
+PASS full-UUID job id
+PASS job executed via stub
+PASS dedup: same task -> same job, 1 spawn, nonce echoed
+PASS dedup: different task -> new spawn
+PASS dedup window 0: disabled -> new spawn
+PASS sweep: running->interrupted
+PASS prune: >7d job deleted
+PASS rate limit: window exhausted -> 5x429
+PASS 429 carries retry-after=59
+PASS dedup persists across restart: same job, deduped, 1 spawn, fresh nonce
+PASS window 0: nothing persisted (no sidecar)
+PASS dedup persists across restart: same job, 1 spawn, nonce echoed
+PASS window 0: no sidecar written
+PASS workdir gate: outside allowlist -> ignored, recorded, ran in --dir
+PASS workdir gate: inside --allow-workdir -> honored
+PASS preamble present in spawned argv
+PASS spawn error -> job failed, daemon alive
+PASS workdir gate: symlink escape -> ignored
+PASS workdir gate: nonexistent path -> ignored, daemon alive
+PASS job file mode 600
+PASS oversized body -> 413
+PASS per-token job ownership (A=200, B=404, B can still challenge)
+PASS /jobs id shape enforced (404, 404)
+PASS cross-peer dedup isolated (B gets own job, GET 200)
+ALL PASS
+rc=0 PASS=31 FAIL=0 wall=11089 ms
+stray AFTER: 15; leaked by THIS run:
+ 945078 node /home/ye/PROJECTS/agent-space/agent-link/daemon.mjs --port 52555 --name test --dir /tmp/tmp.pSHTIzEZUi --jobs /tmp/tmp.pSHTIzEZ
+cause: test_security.sh:212 —
+OUTSIDE="$(mktemp -d)"; PIDS="$PIDS"; trap 'cleanup; rm -rf "$OUTSIDE"' EXIT   #
+  PIDS="$PIDS" is a no-op; the daemon restarted at :148-150 (--rate 5) is never added to PIDS and the final trap (:212 -> cleanup) kills only $PIDS. One-line fix at :212: PIDS="$PIDS $DPID". (Its --dir/--jobs are rm -rf'd, so it cannot run anything: spawn fails ENOENT; it only holds a port and ~50 MB.)
+killed this run's leak (945078); stray now: 14 (older ones left for Abel)
+paths: agent-link/test_security.sh, agent-link/daemon.mjs
+--- exit: 0 ---

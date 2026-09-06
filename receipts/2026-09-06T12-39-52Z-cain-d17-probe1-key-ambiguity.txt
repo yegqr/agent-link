@@ -1,0 +1,37 @@
+receipt: 2026-09-06T12-39-52Z
+name: cain-d17-probe1-key-ambiguity
+cmd: bash /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/d17/probe1.sh
+--- output ---
+daemon: // AgentLink daemon v0.2.6 — local HTTP endpoint that lets OTHER agents wake
+38dd1d96872c72e0ce0d74bfb72278eae6f8798ad82eae291b1c3218ea450571  /home/ye/PROJECTS/agent-space/agent-link/daemon.mjs
+caller.id = sha256(token).hex[:12]  (daemon.mjs:72).  idA=529abff8264c idB=dc544b81bf9c  len=12/12
+key = idX + '\n' + task (daemon.mjs:145). A 12-char hex id cannot contain '\n', so the first '\n' of every key sits at offset 12: decomposition (id, task) is unique for ANY task text, newlines included.
+--- 1a: A embeds idB+'\n' at the head of its task; B posts the tail ---
+A task='dc544b81bf9c\nprobe-1a' -> job 52ea5ce4-c30f-4b36-811a-dd0af624e0e7 deduped=-
+B task='probe-1a'                -> job cc9e012e-81ea-4b22-af96-a780eec0b973 deduped=-
+keyA bytes: '529abff8264c\ndc544b81bf9c\nprobe-1a'
+keyB bytes: 'dc544b81bf9c\nprobe-1a'
+sha256 keyA: 5d382e08175598dbc9f877cbd152bb97681fa1f31dd3b26f2d62fcd066a73f18
+sha256 keyB: 4c378e4cd88c7047baccbd4ee082050b85a8d8a6323f40a99db10ba89c4026cb
+RESULT 1a: no collision (B not deduped, own job id)
+--- 1b: reverse — B embeds idA+'\n'; A posts the tail ---
+RESULT 1b: no collision
+--- 1c: task that is exactly '\n' + something (empty-id shape) ---
+RESULT 1c: no collision
+--- 1d: can a TOKEN carry whitespace/newline? token file parser = line.trim().split(/\s+/)[0] (daemon.mjs:68-70) ---
+line '<tokC> with space peerC': auth 'Bearer <tokC>' -> 202  auth 'Bearer <tokC> with space' -> 401
+job record: token_id=c03b142650ae peer= with space peerC  expected id sha256(tokC)[:12]=c03b142650ae
+--- 1e: env token WITH an embedded newline (AGENTLINK_TOKEN is used raw, daemon.mjs:60) — can it authenticate at all? ---
+bare LF inside header value -> HTTP/1.1 400 Bad Request | 
+CRLF injection -> HTTP/1.1 400 Bad Request | 
+curl refuses to send it: 400
+(and even if it could: id = sha256(token)[:12] is still 12 hex chars — token bytes never enter the key.)
+--- 1f: same-peer hash collision via lone UTF-16 surrogates (utf8 encoding maps every lone surrogate to U+FFFD) ---
+A '\ud800-surrogate' -> c86167b9-a53f-48a8-9ee9-9b93ddde55f5 deduped=-
+A '\udc00-surrogate' -> c86167b9-a53f-48a8-9ee9-9b93ddde55f5 deduped=true  (different JS string, same key bytes)
+B '\ud800-surrogate' -> 9f5afcd6-762a-408f-b7ef-884fefac3cc7 deduped=-
+RESULT 1f: two DIFFERENT task strings dedup to one job — SAME peer only (id still in key); B unaffected. Caller-controlled input harming only the caller: severity nil.
+--- 12-hex id collision bound: P(two of n tokens share an id) ~ n^2/2^49; n=100 -> 1.8e-11; tokens are operator-issued, not attacker-chosen ---
+leftover daemons named t17 after cleanup: (checked by caller)
+paths: agent-link/daemon.mjs
+--- exit: 0 ---

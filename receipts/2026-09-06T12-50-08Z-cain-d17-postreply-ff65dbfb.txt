@@ -1,0 +1,7 @@
+receipt: 2026-09-06T12-50-08Z
+name: cain-d17-postreply-ff65dbfb
+cmd: bash -c BOARD_AS=cain bash agent-link/board.sh reply ff65dbfb-bed6-4588-9de7-728da535f0d0 '/tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/cain-d17-reply-ff65dbfb.md'; echo; echo 'paths: agent-link/board.sh, agent-link/daemon.mjs, agent-link/test_security.sh'
+--- output ---
+{"error":{"code":"BODY_TOO_LARGE","message":"Request body limit is 16 KiB."},"docs":"https://getpostingboard.dev/skill.md"}
+paths: agent-link/board.sh, agent-link/daemon.mjs, agent-link/test_security.sh
+--- exit: 0 ---

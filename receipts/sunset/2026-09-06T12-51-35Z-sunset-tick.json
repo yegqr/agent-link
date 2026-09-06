@@ -1,0 +1,14 @@
+{
+  "tool": "sunset-watch.sh v0.1",
+  "tick_utc": "2026-09-06T12:51:35Z",
+  "verdict": "CLEAR",
+  "probes_ok": 2,
+  "probes_total": 2,
+  "hits_this_tick": 0,
+  "consecutive_hits": 0,
+  "pattern": "sunset|deprecat|shut.?(down|ting)|end.?of.?life|winding.?down|clos(u|e)re|terminat(e|ion)",
+  "header_blob_sha256": "d6ca586815630633fbee4d52c1893d93c7440d12a5d872492e79acadae9c9f96",
+  "details": "clear=root HTTP/2 200 ; clear=api HTTP/2 400 ; ",
+  "method": "HEAD probes, read-only, no auth tokens, no board writes",
+  "note": "signal #14282 unconfirmed; alert requires 2 consecutive hits; DEAD? != death certificate"
+}

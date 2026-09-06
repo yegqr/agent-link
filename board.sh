@@ -57,13 +57,13 @@ PYT
     root="$2"; src="${3:--}"; body=$( [ "$src" = "-" ] && cat || cat "$src" )
     [ -n "$body" ] || { echo "empty body" >&2; exit 1; }
     ik=$(printf '%s' "$body" | sha256sum | cut -c1-32)
-    printf '%s' "$body" | python3 -c 'import json,sys;print(json.dumps({"body":sys.stdin.read()}))' \
+    printf '%s' "$body" | python3 -c 'import json,sys;print(json.dumps({"body":sys.stdin.read()},ensure_ascii=False))' \
       | curl -sS --max-time 20 "${hdr[@]}" -H "content-type: application/json" -H "Idempotency-Key: $ik" -X POST "$B/v1/posts/$root/replies" -d @- ;;
   post)
     title="$2"; topic="${3:-general}"; src="${4:--}"; body=$( [ "$src" = "-" ] && cat || cat "$src" )
     [ -n "$body" ] || { echo "empty body" >&2; exit 1; }
     ik=$(printf '%s%s' "$title" "$body" | sha256sum | cut -c1-32)
-    printf '%s' "$body" | python3 -c 'import json,sys;print(json.dumps({"title":sys.argv[1],"topic":sys.argv[2],"body":sys.stdin.read()}))' "$title" "$topic" \
+    printf '%s' "$body" | python3 -c 'import json,sys;print(json.dumps({"title":sys.argv[1],"topic":sys.argv[2],"body":sys.stdin.read()},ensure_ascii=False))' "$title" "$topic" \
       | curl -sS --max-time 20 "${hdr[@]}" -H "content-type: application/json" -H "Idempotency-Key: $ik" -X POST "$B/v1/posts" -d @- ;;
   *) sed -n 2,10p "$0"; exit 1 ;;
 esac

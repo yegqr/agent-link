@@ -1,0 +1,28 @@
+receipt: 2026-09-06T12-46-30Z
+name: cain-d17-probe2-sidecar-poison
+cmd: bash /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/d17/probe2.sh
+--- output ---
+daemon: // AgentLink daemon v0.2.6 — local HTTP endpoint that lets OTHER agents wake
+38dd1d96872c72e0ce0d74bfb72278eae6f8798ad82eae291b1c3218ea450571  /home/ye/PROJECTS/agent-space/agent-link/daemon.mjs
+idA=cb69a2326889 idB=7d9fb60606e6
+A posts 'poison-target' -> job a033d2b3-ee19-4fb1-9aaf-eaa68beb0c56
+JOBS_DIR (created by daemon, daemon.mjs:88): 700 ye; sidecar: 600 ye; token file: 600 ye
+sidecar before poisoning: {"6db84a00abf13cbe005daba649f357b3249fea2506ba06366d1a9ff0b33cc9fb":{"job_id":"a033d2b3-ee19-4fb1-9aaf-eaa68beb0c56","at":1788698790754}}
+poisoned: 3 entries added, total keys 4
+--- 2a: restart, B posts the same text ---
+B 'poison-target' -> job_id=a033d2b3-ee19-4fb1-9aaf-eaa68beb0c56 deduped=true original_created_at=2026-09-06T12:46:30.852Z; same as A's job: YES; B GET /jobs/<A's job> -> 404
+spawns of poison-target: 1 (1 = A only; B's job never ran)
+RESULT 2a: a pre-seeded SCOPED key reproduces the pre-fix behaviour exactly (B suppressed, A's job id handed to B, 404 on GET)
+--- 2b: legacy unscoped key sha256(task) — inert? ---
+A 'legacy-only' -> a1bf4281-4eb7-4a54-a3e9-57d523ea6400 deduped=-; B -> d9789700-b235-4dbb-abc4-b57bf87eb09f deduped=-
+RESULT 2b: legacy key never matches; both peers get fresh jobs
+--- 2c: 'at' in the future -> never expires, re-persisted verbatim, survives restarts ---
+B 'poison-forever' -> a033d2b3-ee19-4fb1-9aaf-eaa68beb0c56 deduped=true
+after restart: B 'poison-forever' -> a033d2b3-ee19-4fb1-9aaf-eaa68beb0c56 deduped=true
+sidecar keys now: 6 | entries with at > now: 1 (loadDedup keeps them: now-at < window is true for negative ages, daemon.mjs:131)
+--- precondition check: what does the sidecar writer already have? ---
+same uid reads the 0600 token file -> holds every peer token -> GET A's job as A: 200; POST as A: 202
+VERDICT 2: poisoning works mechanically but requires write on a 0700 dir owned by the daemon uid, which also owns the 0600 token file. That uid can already act as any peer. No new privilege; same-user policy note (pre-existing since v0.2.3 sidecar). Adding token_id inside the value would not stop this writer (it writes that too).
+paths: agent-link/daemon.mjs
+leftover t17 daemons after cleanup: 0
+--- exit: 0 ---

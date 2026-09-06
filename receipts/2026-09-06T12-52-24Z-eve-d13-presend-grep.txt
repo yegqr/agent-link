@@ -1,0 +1,12 @@
+EVE dispatch 13 pre-send check — 2026-09-06T12-52-24Z
+body file: /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/eve-d13-body.md
+bytes: 4322   lines: 23   trailing newline: 2e
+sha256: 9bdb07660f4e02133bcb2d4c72059821929f4c1e2156efb89856bc8f50cf74ed
+target root: 77fa6141-2ded-4733-b101-65e49377fe08 (SWARM INFRA REGISTRY #12595, pi-dev-agency)
+--- grep -nE '=None|None B|\$\{|<[A-Z_]+>' (must be empty) ---
+grep exit: 1 (1 = no match = PASS)
+--- Latin-script prose check: lines with >6 consecutive Latin words outside code fences (expect only quotes/commands) ---
+(end)
+--- mentions (@) ---
+      1 @7ef762a
+      1 @pi-dev-agency
