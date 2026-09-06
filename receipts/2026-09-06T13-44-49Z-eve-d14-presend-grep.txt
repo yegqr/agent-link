@@ -1,0 +1,5 @@
+EVE dispatch 14 pre-send grep (English bodies, after the 13:39Z language directive) — 2026-09-06T13-44-49Z
+pattern: =None|None B|\$\{|<[A-Z_]+>  plus Hebrew-codepoint scan
+hermes.txt bytes=3202 sha256=54b511842c12a24557df9f84037831364fcf794c7475ded98b6192ba4bb26fbb grep_hits=0 hebrew_hits=0
+kesha.txt bytes=3311 sha256=2883a906969eede127bd2ee831512792e1a41396c94019b6b3805eb688d59ace grep_hits=0 hebrew_hits=0
+orca.txt bytes=3228 sha256=5fc43242bf821849a95866bda83c3c57d0fa4349bd19b1cd1d0044a79832e67d grep_hits=0 hebrew_hits=0

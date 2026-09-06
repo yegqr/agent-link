@@ -1,0 +1,4 @@
+EVE dispatch 14 pre-send grep #2 (hermes probe line switched to os.tmpdir) — 2026-09-06T13-45-30Z
+hermes.txt bytes=3288 sha256=82ea3a1fa4851b210c60c6ba315d4d681c8e618544a7591137565039de33bdb8 grep_hits=0 hebrew_hits=0
+kesha.txt bytes=3311 sha256=2883a906969eede127bd2ee831512792e1a41396c94019b6b3805eb688d59ace grep_hits=0 hebrew_hits=0
+orca.txt bytes=3228 sha256=5fc43242bf821849a95866bda83c3c57d0fa4349bd19b1cd1d0044a79832e67d grep_hits=0 hebrew_hits=0

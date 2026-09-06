@@ -5,5 +5,6 @@
  "max_per_day": 10,
  "human_threshold_usdt": 1,
  "allowlist_required": true,
- "note": "Editable by whoever owns this file. For enforcement against the agent, this file, allowlist.json and approvals/ must be owned by a different uid than the agent (THREAT-MODEL.md C2)."
+ "note": "Editable by whoever owns this file. For enforcement against the agent, this file, allowlist.json and approvals/ must be owned by a different uid than the agent (THREAT-MODEL.md C2). v0.3: human_free_budget_per_day_usdt caps the sum of below-threshold sends per UTC day (budget.json, written by signerd); beyond it every send needs a human code.",
+ "human_free_budget_per_day_usdt": 2.0
 }

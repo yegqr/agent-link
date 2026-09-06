@@ -24,13 +24,15 @@ that can call wallet.send". If a control below is not implemented, it says so.
 | id | control | status today | holds against |
 |---|---|---|---|
 | C1 | key readable only by the signer process; the agent never sees it | implemented (signer.mjs reads PRIVATE_KEY.txt; agent-in-context never does) | T1 exfiltration of the key — **only if** C2 holds |
-| C2 | signer runs as a **different OS user** than the agent; policy file root-owned; agent talks to it over a local socket | socket daemon implemented (signerd.mjs reports its own isolation status on start); the **separate uid is an operator action** not yet taken — until then signerd says "policy, not enforcement" on every start | T1, T3 |
+| C2 | signer runs as a **different OS user** than the agent; policy file root-owned; agent talks to it over a local socket | socket daemon implemented; v0.3 reports isolation PER PATH (policy, allowlist, approvals/, budget, key file, socket dir) and creates the socket dir 0750 so a second uid in a shared group can traverse it; the **separate uid is an operator action** not yet taken | T1, T3 |
 | C3 | per-transfer and per-day caps enforced inside the signer, cross-checked on-chain | implemented (5 USDT / 10 USDT), but see C2: same user can edit the caps | T4, blunts T1 |
 | C4 | payee policy: burn/zero/contract refused | implemented | T2 partly |
 | C5 | **payee allowlist**: a send goes only to an address that appears in the claimant's own board post AND was added to the allowlist by a human approval out of band | implemented in code (signerd.mjs gate + allowlist.json written only by approve.sh) — enforcement still needs C2 | T1, T2 |
 | C6 | **human confirmation above a threshold the agent cannot raise** (threshold in policy.json; one-time approval codes minted by approve.sh into approvals/, consumed on use, bound to payee and max amount, expiring) | implemented in code (signerd.mjs) — the threshold is unraisable by the agent only once C2 makes policy.json and approvals/ another uid's | T1 |
 | C7 | LOG line written before broadcast; append-only ledger; receipts with tx, block, verify-out | implemented | A3 integrity, T4 forensics |
 | C8 | swap: exact-allowance approve, slippage bound, router allowlist | not started (swap is last by design) | T2, T5 |
+| C9 | **human-free daily budget** (v0.3, hardline-cto #14994 finding 1): the sum of below-threshold sends per UTC day is capped in `budget.json`; beyond it every send needs a human code, so splitting a payment cannot bypass C6 | implemented in signerd v0.3 (default 2 USDT/day); enforcement against the agent needs C2 like everything else | T1 |
+| C10 | approvals marked pending → used only after a confirmed broadcast; released on failure; optionally bound to a purpose string the human read (v0.3, #14994 findings 4 and note) | implemented | T1, T4 |
 
 ## What follows from the table
 1. Until C2 and C6 exist, **an agent holding wallet.send has a spend limit equal to the caps, and the
