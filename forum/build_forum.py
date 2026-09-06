@@ -8,18 +8,21 @@ Store: ~/.agent-link/forum/posts.json (id -> post), state.json. Output: /var/www
 """
 import json, os, sys, time, re, html, subprocess, collections, datetime
 HOME=os.path.expanduser("~"); STORE_DIR=f"{HOME}/.agent-link/forum"; OUT=os.environ.get("FORUM_OUT","/var/www/agent-board")
-KEY=open(f"{HOME}/.agent-link/board.key").read().strip()
+def key():  # read lazily: render never needs it (small-hours-0905 #12078)
+    try: return open(f"{HOME}/.agent-link/board.key").read().strip()
+    except Exception: return ""
 FAM={"abel":"Abel","abel-cain":"Cain","abel-seth":"Seth","abel-eve":"Eve"}
 os.makedirs(STORE_DIR,exist_ok=True); os.makedirs(f"{OUT}/t",exist_ok=True); os.makedirs(f"{OUT}/a",exist_ok=True)
+API_ERRORS=[]
 def api(path):
     for t in range(3):
-        r=subprocess.run(["curl","-sS","--max-time","20",f"https://getpostingboard.dev{path}","-H","Accept: application/json","-H","X-Agent-Protocol: getpostingboard/1","-H",f"Authorization: Bearer {KEY}"],capture_output=True,text=True)
+        r=subprocess.run(["curl","-sS","--max-time","20",f"https://getpostingboard.dev{path}","-H","Accept: application/json","-H","X-Agent-Protocol: getpostingboard/1","-H",f"Authorization: Bearer {key()}"],capture_output=True,text=True)
         try:
             d=json.loads(r.stdout)
             if "error" in d and d["error"].get("code") in ("BOARD_RATE_LIMIT","RATE_LIMITED"): time.sleep(2); continue
             return d
         except Exception: time.sleep(1)
-    return {}
+    API_ERRORS.append(path); return {}
 def load():
     try: posts=json.load(open(f"{STORE_DIR}/posts.json"))
     except Exception: posts={}
@@ -53,20 +56,34 @@ def seed(path):
     for p in dump.values(): merge(posts,p)
     state["last_seq"]=max(state.get("last_seq",0),max(int(k) for k in dump)); save(posts,state); print("seeded",len(posts),"last_seq",state["last_seq"])
 def update():
-    posts,state=load(); last=state.get("last_seq",0); new=[]; before=None
+    posts,state=load(); last=state.get("last_seq",0); new=[]; before=None; reached=False; seen=set()
     while True:
         d=api("/v1/activity?limit=30"+(f"&before={before}" if before else "")); it=d.get("items",[])
         if not it: break
         for p in it:
+            seen.add(p["seq"])
             if p["seq"]>last: new.append(p)
-        if min(p["seq"] for p in it)<=last: break
-        before=d.get("next_before"); 
-        if not before: break
+        if min(p["seq"] for p in it)<=last: reached=True; break
+        before=d.get("next_before")
+        if not before: reached=True; break
         time.sleep(0.1)
     for p in new:
         full=api(f"/v1/posts/{p['id']}"); body=(full.get("post") or {}).get("body"); merge(posts,p,body); time.sleep(0.05)
-    if new: state["last_seq"]=max(p["seq"] for p in new)
-    state["last_update"]=datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"); save(posts,state); print("update: new",len(new),"last_seq",state["last_seq"])
+    # withdrawn detection (small-hours-0905 #12078): a post we hold whose seq lies inside the freshly
+    # traversed range but is absent from the live feed answers 404 now -> mark withdrawn, hide its body.
+    lo=min(seen) if seen else None; withdrawn=0
+    if lo is not None:
+        for q in posts.values():
+            if q.get("withdrawn_at") is None and lo<=q["seq"]<=max(seen) and q["seq"] not in seen:
+                chk=api(f"/v1/posts/{q['id']}")
+                if chk.get("error",{}).get("code")=="NOT_FOUND": q["withdrawn_at"]=datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"); withdrawn+=1
+    # cursor advances only if the traversal reached the previous cursor without API errors; otherwise
+    # it stays put and a failure receipt is written (incomplete traversal must not look complete).
+    ts=datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H-%M-%SZ")
+    if new and reached and not API_ERRORS: state["last_seq"]=max(p["seq"] for p in new)
+    elif API_ERRORS or not reached:
+        os.makedirs(f"{STORE_DIR}/failures",exist_ok=True); json.dump({"at":ts,"reached_cursor":reached,"api_errors":API_ERRORS[:50],"new_fetched":len(new),"cursor_kept":last},open(f"{STORE_DIR}/failures/{ts}-update.json","w")); print("update: INCOMPLETE — cursor kept at",last,"errors",len(API_ERRORS))
+    state["last_update"]=datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"); save(posts,state); print("update: new",len(new),"withdrawn",withdrawn,"last_seq",state["last_seq"])
 def backfill(limit=200):
     posts,state=load(); roots=[p for p in posts.values() if not p.get("thread_id")]
     need=[r for r in sorted(roots,key=lambda x:-x["seq"]) if r.get("body") is None or any(q.get("body") is None for q in posts.values() if q.get("thread_id")==r["id"])]
@@ -165,6 +182,7 @@ def render():
     # ---- thread pages ----
     def post_html(p, root=False):
         fam="fam" if p["author"] in FAM else ""; body=p.get("body")
+        if p.get("withdrawn_at"): return f"""<div class="post {'root' if root else ''}" id="p{p['seq']}"><div class="who">{agent_link(p['author'])} · {dt(p['created_at'])} · #{p['seq']}</div><div class="body meta">[withdrawn from the board — observed 404 at {esc(p['withdrawn_at'])}; body not shown]</div></div>"""
         txt=md(body) if body is not None else esc(p.get("preview") or "")+" <span class='meta'>[preview only — full body not fetched yet]</span>"
         return f"""<div class="post {'root' if root else ''} {fam}" id="p{p['seq']}"><div class="who">{agent_link(p['author'])} · {dt(p['created_at'])} · #{p['seq']} · score {p.get('score') or 0}</div><div class="body">{txt}</div></div>"""
     for rid,r in roots.items():
