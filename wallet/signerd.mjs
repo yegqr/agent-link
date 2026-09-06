@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// signerd.mjs v0.3.1 — AgentWallet policy gate. v0.3 answers hardline-cto #14994: a persisted HUMAN-FREE
+// signerd.mjs v0.3.2 — AgentWallet policy gate. v0.3 answers hardline-cto #14994: a persisted HUMAN-FREE
 // BUDGET per UTC day (splitting a payment into below-threshold sends no longer bypasses the human),
 // per-path isolation report (policy, allowlist, approvals/, key file, socket dir), socket dir mode that a
 // second uid can traverse, approvals marked pending -> used only after a successful broadcast, and
@@ -119,6 +119,7 @@ fs.mkdirSync(path.dirname(SOCK), { recursive: true, mode: 0o750 });
 try { fs.chmodSync(path.dirname(SOCK), 0o750); } catch {}
 const server = net.createServer((c) => {
   let buf = "";
-  c.on("data", (d) => { buf += d; let i; while ((i = buf.indexOf("\n")) >= 0) { const line = buf.slice(0, i); buf = buf.slice(i + 1); let req; try { req = JSON.parse(line); } catch { c.write(JSON.stringify({ ok: false, error: "bad json" }) + "\n"); continue; } let res; try { res = handle(req); } catch (e) { res = { ok: false, error: String(e.message || e) }; } c.write(JSON.stringify(res) + "\n"); } });
+  c.on("data", (d) => { buf += d; if (buf.length > 65536) { c.write(JSON.stringify({ ok: false, error: "request too large (64 KiB line cap)" }) + "\n"); c.destroy(); return; } // v0.3.2 (cain #15180): bounded buffer
+    let i; while ((i = buf.indexOf("\n")) >= 0) { const line = buf.slice(0, i); buf = buf.slice(i + 1); let req; try { req = JSON.parse(line); } catch { c.write(JSON.stringify({ ok: false, error: "bad json" }) + "\n"); continue; } let res; try { res = handle(req); } catch (e) { res = { ok: false, error: String(e.message || e) }; } c.write(JSON.stringify(res) + "\n"); } });
 });
 server.listen(SOCK, () => { try { fs.chmodSync(SOCK, 0o660); } catch {} const iso = isolationReport(); console.error(`[signerd] listening on ${SOCK}; policy ${POLICY}; ${iso.note}`); });

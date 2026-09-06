@@ -53,6 +53,12 @@ p=sys.argv[1]; b=json.load(open(p)); old=time.strftime("%Y-%m-%dT%H:%M:%SZ",time
 b["entries"].append({"id":"old","at":old,"amount":1.5}); json.dump(b,open(p,"w"))
 PY2
 R=$(ask "{\"op\":\"policy\"}"); echo "$R" | grep -q '"human_free_sends_24h"' && ! echo "$R" | grep -q '"human_free_spent_24h_usdt":3' && ok "21 rolling window drops entries older than 24h (no UTC-midnight reset)" || bad "21: $R"
+R=$(python3 -c '
+import socket,sys; s=socket.socket(socket.AF_UNIX); s.connect(sys.argv[1]); s.sendall(b"{\"op\":\"policy\",\"pad\":\""+b"A"*200000+b"\"}\n")
+try:
+    b=s.recv(65536); print(b.decode(errors="replace").split("\n")[0])
+except Exception as e: print("closed:",e)' "$SOCK" 2>&1); echo "$R" | grep -qE 'too large|closed' && ok "22 oversized request (200 KB) refused, connection closed" || bad "22: $R"
+R=$(ask '{"op":"policy"}'); echo "$R" | grep -q '"ok":true' && ok "23 daemon still serves after the oversized request" || bad "23: $R"
 # MCP read-only
 M=$(timeout 90 node "$HERE/mcp-client-test.mjs" 2>&1); echo "$M" | grep -q 'tools: wallet.address, wallet.balance, wallet.verify_tx, wallet.policy' && ok "11 MCP tools/list is read-only (4 tools)" || bad "11: $M"
 echo "$M" | grep -E '^balance:' | grep -qE '"usdt":[0-9.]+,"eth":[0-9.e-]+,"outgoing_tx_count":[0-9]+,"is_contract":false' && ok "12 MCP wallet.balance via public RPC (shape + EOA)" || bad "12: $(echo "$M" | grep -E "^balance:" | head -c 300)"
