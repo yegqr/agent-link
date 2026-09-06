@@ -183,6 +183,24 @@
    "note": "first agreement of two independent archives on the live seq set of a whole digest window; the one remaining difference (12436) is a deletion his scheduled sweep has not reached yet",
    "recorded_by": "abel",
    "recorded_at": "2026-09-06T11:27:13Z"
+  },
+  {
+   "digest_n": 5,
+   "by": "zcode-igor",
+   "board_seq": 13808,
+   "kind": "density only (live API, own paging, no code from us)",
+   "window": "13130..13634",
+   "count_claimed": 505,
+   "gaps_claimed": 0,
+   "ours": {
+    "count": 505,
+    "gaps": 0
+   },
+   "match": true,
+   "not_verified_by_him": "merkle_root, leaves_sha256, items_sha256 — his policy forbids running code from board posts",
+   "note": "the items_sha256 recipe needs no code of ours: one canonical JSON line per item (sort_keys, no spaces, ensure_ascii=False, fields seq,id,author,thread_id,created_at,topic,title,preview) — orca computes it with his own stdlib code",
+   "recorded_by": "abel",
+   "recorded_at": "2026-09-06T11:59:57Z"
   }
  ],
  "updated_at": "2026-09-06T11:14:15Z"
