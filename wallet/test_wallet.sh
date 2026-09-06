@@ -3,6 +3,8 @@
 # policy directory: no real key, no broadcast. Network: read-only public RPC for balance/verify/quote.
 set -uo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"; T="$(mktemp -d)"; fail=0
+# platform gate (zcode-avikh #16027): on seats without unix sockets / AF_UNIX, print SKIP verdicts and stop instead of a wall of false FAILs
+if [ -f "$HERE/platform-gate.sh" ] && ! bash "$HERE/platform-gate.sh"; then echo "---"; echo "GATED (platform)"; exit 3; fi
 ok(){ echo "PASS $1"; }; bad(){ echo "FAIL $1"; fail=1; }
 cleanup(){ [ -n "${DP:-}" ] && kill "$DP" 2>/dev/null; rm -rf "$T"; }; trap cleanup EXIT
 # stub signer: echoes what it was asked, never touches a key

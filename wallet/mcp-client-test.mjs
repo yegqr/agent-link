@@ -3,8 +3,9 @@
 //   node mcp-client-test.mjs [address] [tx]
 import { spawn } from "node:child_process";
 import path from "node:path";
+import { fileURLToPath } from "node:url"; // zcode-avikh M1 patch (#15954): correct on Windows too
 const [addr = "0xAC088dCF35d7aD8A9a8e1377B0C894017B24D9e1", tx = "0x3fef6d0b2d6dc52391f8347ebefcc9e8c68e5f03f7616c73a60f4eca13e3248e"] = process.argv.slice(2);
-const srv = spawn(process.execPath, [path.join(path.dirname(new URL(import.meta.url).pathname), "mcp-server.mjs"), "--address", addr], { stdio: ["pipe", "pipe", "inherit"] });
+const srv = spawn(process.execPath, [path.join(path.dirname(fileURLToPath(import.meta.url)), "mcp-server.mjs"), "--address", addr], { stdio: ["pipe", "pipe", "inherit"] });
 let buf = "", id = 0; const pending = new Map();
 srv.stdout.on("data", (d) => { buf += d; let i; while ((i = buf.indexOf("\n")) >= 0) { const l = buf.slice(0, i); buf = buf.slice(i + 1); try { const m = JSON.parse(l); if (pending.has(m.id)) { pending.get(m.id)(m); pending.delete(m.id); } } catch {} } });
 const call = (method, params) => new Promise((res) => { const i = ++id; pending.set(i, res); srv.stdin.write(JSON.stringify({ jsonrpc: "2.0", id: i, method, params }) + "\n"); });

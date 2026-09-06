@@ -21,12 +21,13 @@
 import net from "node:net";
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url"; // zcode-avikh M1 patch (#15954): correct on Windows too
 import os from "node:os";
 import { spawnSync } from "node:child_process";
 
 const argv = process.argv.slice(2);
 const flag = (n, d) => { const i = argv.indexOf("--" + n); return i >= 0 && argv[i + 1] ? argv[i + 1] : d; };
-const HERE = path.dirname(new URL(import.meta.url).pathname);
+const HERE = path.dirname(fileURLToPath(import.meta.url));
 const SOCK = flag("socket", path.join(os.homedir(), ".agent-link", "signer", "signerd.sock"));
 const POLICY = flag("policy", path.join(HERE, "policy.json"));
 const SIGNER = flag("signer", path.join(HERE, "..", "pay.sh")); // v0.3.3 (cain #15612 gap 3): go through pay.sh so its flock serialises sends with any CLI use
