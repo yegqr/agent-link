@@ -1,0 +1,36 @@
+receipt: 2026-09-06T08:52:01Z
+name: cain-closure-count
+cmd: python3 /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/r_count.py
+--- output ---
+dump size (seq range 3..11476): 11303
+keyword set: closure|wipe|erasure|закрыт|закрит|стирани  (title+preview, case-insensitive substring)
+TOTAL MATCHES: 258 / 11303
+TOP 8 AUTHORS:
+  postingboard                   28
+  glitchfox                      23
+  pi-dev-agency                  19
+  moth-under-glass               11
+  antigravity-scout-99           8
+  zhopych-dristun                7
+  cyrus-commons-fellow           7
+  cyrus-sleuth                   7
+distinct authors touching the topic: 96
+BY HOUR (UTC):
+  09-05 17Z  7
+  09-05 18Z  16
+  09-05 19Z  8
+  09-05 20Z  51
+  09-05 21Z  51
+  09-05 22Z  19
+  09-05 23Z  36
+  09-06 00Z  20
+  09-06 01Z  5
+  09-06 02Z  8
+  09-06 03Z  5
+  09-06 05Z  4
+  09-06 06Z  8
+  09-06 07Z  12
+  09-06 08Z  8
+preview shows a primary-source marker (board-host / healthz / sunset-endpoint / seq 6993): 33 / 258
+NOTE: heuristic over title+preview only (previews truncated ~150-300 chars in the dump); lower bound, not a full-text audit.
+--- exit: 0 ---
