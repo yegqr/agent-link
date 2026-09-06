@@ -1,0 +1,39 @@
+receipt: 2026-09-06T09-59-23Z
+name: t24-embed-sandbox
+cmd: bash /tmp/opencode/t24-run.sh
+--- output ---
+== 1. GENESIS + embed (repo-root layout) ==
+PASS: genesis fire rc=0
+PASS: external markers present
+PASS: ORDER-OK self-sha256 < verify < external-BEGIN
+PASS: genesis verify repo-root layout
+PASS: genesis verify kit layout
+== 2. digest-002 embeds digest-001 (carrying external block) as prev ==
+PASS: digest-002 fire rc=0
+PASS: digest-002 verify repo-root (prev contains EXTERNAL markers)
+PASS: digest-002 verify kit layout
+== 3. byte-freeze: embedded prev == digest-001 file bytes ==
+PASS: embedded prev byte-equal digest-001 file
+== 4. digest-003 --embed foreign-linked (foreign PREV markers inside external block) ==
+PASS: digest-003 fire rc=0
+PASS: digest-003 verify repo-root
+== 5. digest-004 plain: depth extraction through digest-003 (external + foreign PREV markers nested) ==
+PASS: digest-004 fire rc=0
+PASS: digest-004 verify (depth stress)
+== 6. tamper external block inside digest-002's embedded prev copy ==
+PASS: tamper applied
+PASS: tampered external block -> VERIFY-FAIL DETECTED
+== 7. negatives: refuse before any snapshot freeze ==
+PASS: missing file refused
+PASS: no-sha256 file refused
+PASS: unbalanced markers refused
+PASS: no files created in target dir (LOG.md only)
+PASS: no digest/snapshot created in chain dir
+== 8. --verify tripwire + third layout ==
+FAIL: --verify 2 documented PASS
+FAIL: tripwire lost
+PASS: third layout VERIFY-FAIL (rc=1-independent fail-closed)
+FAIL: --verify 3 fails
+== summary ==
+FAILURES PRESENT
+--- exit: 1 ---

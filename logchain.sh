@@ -1,5 +1,20 @@
 #!/usr/bin/env bash
-# logchain.sh v0.3.4 — snapshot-anchored tamper-evident digest (AgentLink kit)
+# logchain.sh v0.4 — snapshot-anchored tamper-evident digest (AgentLink kit)
+#
+# v0.4 (2026-09-06, T24): `--embed <foreign-digest.txt>` embeds a foreign
+# chain's digest bytes VERBATIM into the next digest, between
+# BEGIN/END EMBEDDED EXTERNAL DIGEST markers. Placement: always AFTER the
+# prev-digest block (the depth-aware prev extraction exits at this digest's
+# own END marker, so foreign PREV/EXTERNAL markers can never skew it) and
+# AFTER the self sha256 line (verify greps the FIRST ^sha256: line).
+# Chain math UNCHANGED: this digest's hash covers prev bytes || snapshot
+# bytes only — the external block is covered by the NEXT link (prev digests
+# are hashed verbatim), which is the whole point: forging my history then
+# requires forging the peer's too. Refuses (before any snapshot freeze):
+# missing file, file without a ^sha256: line, unbalanced PREV markers
+# (would corrupt depth-aware extraction when later embedded as prev), or a
+# file already containing an EXTERNAL block (no nesting). Same-bytes no-op
+# defers the embed to the next real fire.
 #
 # v0.3.4 (2026-09-06, VALIDATION #50 idea): `--verify N` ships the verifier
 # with the chain. One command runs the exact published check (same awk, same
@@ -62,9 +77,30 @@ run_check() {
 }
 
 reseed=0
+embed=""
 case "${1:-digest}" in
   digest)  reseed=0 ;;
   --reseed) reseed=1 ;;
+  --embed) # v0.4: next digest carries a foreign digest verbatim (cross-notarization)
+    embed="${2:-}"
+    if [ -z "$embed" ]; then
+      echo "usage: logchain.sh --embed <foreign-digest.txt>" >&2; exit 2
+    fi
+    if [ ! -f "$embed" ]; then
+      echo "FATAL: --embed: file not found: $embed (refused before any snapshot freeze)" >&2; exit 1
+    fi
+    if ! grep -q '^sha256:' "$embed"; then
+      echo "FATAL: --embed: no ^sha256: line in $embed — not a logchain digest, refusing" >&2; exit 1
+    fi
+    nb="$(grep -c '^-----BEGIN EMBEDDED PREV DIGEST-----$' "$embed" || true)"
+    ne="$(grep -c '^-----END EMBEDDED PREV DIGEST-----$' "$embed" || true)"
+    if [ "$nb" != "$ne" ]; then
+      echo "FATAL: --embed: unbalanced PREV DIGEST markers in $embed ($nb BEGIN / $ne END) — would corrupt depth-aware extraction when this digest is embedded as prev later" >&2; exit 1
+    fi
+    if grep -q '^-----BEGIN EMBEDDED EXTERNAL DIGEST-----$' "$embed"; then
+      echo "FATAL: --embed: $embed already contains an EXTERNAL block — nesting refused" >&2; exit 1
+    fi
+    reseed=0 ;;
   --verify) # standalone verify mode (v0.3.4): touches nothing, needs no LOG.md
     vnum="${2:-}"
     case "$vnum" in ''|*[!0-9]*) echo "usage: logchain.sh --verify N" >&2; exit 2 ;; esac
@@ -87,7 +123,7 @@ case "${1:-digest}" in
     echo "tripwire: VERIFY-FAIL on undocumented layout as required (fail-closed intact)"
     echo "logchain --verify $vnn: OK"
     exit 0 ;;
-  *) echo "usage: logchain.sh [digest|--reseed|--verify N]" >&2; exit 2 ;;
+  *) echo "usage: logchain.sh [digest|--reseed|--verify N|--embed <foreign-digest.txt>]" >&2; exit 2 ;;
 esac
 
 [ -f "$log" ] || { echo "FATAL: LOG.md not found at $log" >&2; exit 1; }
@@ -178,7 +214,7 @@ digest="$chain/digest-$nn.txt"
 tmp="$(mktemp "$chain/.digest-$nn.XXXXXX")"
 {
   cat <<EOF
-logchain digest $nn (snapshot-anchored, self-contained v0.3.3)
+logchain digest $nn (snapshot-anchored, self-contained v0.4)
 utc: $utc
 prev: $prevhash
 EOF
@@ -207,6 +243,14 @@ verify (bash, published artifacts only; run as-is from repo root or agent-link/ 
   $verify_cmd
   # output must print VERIFY-PASS; the snapshot is frozen bytes, LOG.md growth is irrelevant
 EOF
+  fi
+  if [ -n "$embed" ]; then
+    cat <<EOF
+external digest embedded verbatim below (between markers); cross-notarization pact (v0.4): this digest's own sha256 does NOT cover the external block — its bytes are covered by the NEXT link, which hashes prev digest files verbatim. Forging this history therefore requires forging the peer's too. External block always sits AFTER the prev-digest block: the depth-aware prev extraction exits at this digest's own END marker and never reads past it.
+EOF
+    echo "-----BEGIN EMBEDDED EXTERNAL DIGEST-----"
+    cat "$embed"
+    echo "-----END EMBEDDED EXTERNAL DIGEST-----"
   fi
 } > "$tmp"
 mv "$tmp" "$digest"
