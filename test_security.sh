@@ -19,14 +19,17 @@ fmode() { stat -c %a "$1" 2>/dev/null || stat -f %A "$1"; }
 # allowlist -> ignored + recorded; inside --allow-workdir -> honored), v0.2.5:
 # preamble actually spawned, spawn-error survival, symlink escape, nonexistent
 # workdir, job-file mode 600, 413 on oversized body, per-token job ownership,
-# /jobs id shape. 30 checks. Ports are picked free at start (concurrent runs OK).
+# /jobs id shape, v0.2.6 cross-peer dedup, v0.2.7 executor lifecycle guard
+# (SIGTERM reaps live child, boot sweep reaps planted orphan + spares a
+# done-record child, --max-runtime timeout, pgrep -x opencode delta == 0).
+# 33 checks. Ports are picked free at start (concurrent runs OK).
 # Hermetic: isolated daemon :7399/:$PORT2, stubbed opencode, temp jobs dir.
 set -uo pipefail
 DIR="$(cd "$(dirname "$0")" && pwd)"
 # Free ports, so two suites (or a stray daemon) never collide (board #10317).
-read -r PORT PORT2 PORT3 PORT4 <<<"$(python3 -c '
+read -r PORT PORT2 PORT3 PORT4 PORT5 PORT6 <<<"$(python3 -c '
 import socket
-ss=[socket.socket() for _ in range(4)]
+ss=[socket.socket() for _ in range(6)]
 for x in ss: x.bind(("127.0.0.1",0))
 print(*[x.getsockname()[1] for x in ss]); [x.close() for x in ss]')"
 TDIR="$(cd "$(mktemp -d)" && pwd -P)"   # canonical path: macOS /var -> /private/var (pilot-finch C-2 #14029)
@@ -255,15 +258,118 @@ C30b=$(curl -sS -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $TOKEN"
 
 # 31. v0.2.6 (pilot-finch E-1 #14121): dedup is scoped per token — peer B posting the SAME text as
 #     peer A must get its OWN job id (not deduped), and B can read it.
+#     2026-09-06T13:2xZ incident: this daemon was the ONLY one spawned WITHOUT the stubbed
+#     PATH -> every suite run leaked TWO REAL `opencode run` agent sessions (detached+unref'd
+#     in daemon.mjs, PPID 1 after the daemon died), each re-running the suite -> exponential
+#     agent fork-bomb (~15 live orphans swept). Fix: stub PATH here like every other daemon,
+#     plus a stub-served assertion (spawns.log count == 2) so a regression FAILs the check
+#     instead of re-igniting the bomb.
 T31=$(mktemp -d); mkdir -p "$T31/jobs"; TOKB31="tokB-$RANDOM$RANDOM"; printf '%s peerB\n' "$TOKB31" > "$T31/tokens"; chmod 600 "$T31/tokens"
-P31=$(python3 -c 'import socket;s=socket.socket();s.bind(("127.0.0.1",0));print(s.getsockname()[1]);s.close()'); ( AGENTLINK_TOKEN="$TOKEN" node "$DIR/daemon.mjs" --port $P31 --dir "$TDIR" --jobs "$T31/jobs" --token-file "$T31/tokens" --rate 100 >"$T31/log" 2>&1 & echo $! > "$T31/pid" ); sleep 1.5
+P31=$(python3 -c 'import socket;s=socket.socket();s.bind(("127.0.0.1",0));print(s.getsockname()[1]);s.close()'); ( AGENTLINK_TOKEN="$TOKEN" PATH="$TDIR/bin:$PATH" node "$DIR/daemon.mjs" --port $P31 --dir "$TDIR" --jobs "$T31/jobs" --token-file "$T31/tokens" --rate 100 >"$T31/log" 2>&1 & echo $! > "$T31/pid" ); sleep 1.5
 JA31=$(curl -sS -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -d '{"task":"cross-peer dedup probe"}' http://127.0.0.1:$P31/challenge | python3 -c 'import json,sys;print(json.load(sys.stdin).get("job_id",""))')
 RB31=$(curl -sS -H "Authorization: Bearer $TOKB31" -H 'Content-Type: application/json' -d '{"task":"cross-peer dedup probe"}' http://127.0.0.1:$P31/challenge)
 JB31=$(printf '%s' "$RB31" | python3 -c 'import json,sys;j=json.load(sys.stdin);print(j.get("job_id",""),j.get("deduped",False))')
 GB31=$(curl -sS -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $TOKB31" http://127.0.0.1:$P31/jobs/${JB31%% *})
+for _i in $(seq 1 30); do [ "$(grep -c 'cross-peer dedup probe' "$TDIR/spawns.log" 2>/dev/null)" = 2 ] && break; sleep 0.1; done
 kill "$(cat "$T31/pid")" 2>/dev/null; sleep 0.5
-[ -n "$JA31" ] && [ "${JB31%% *}" != "$JA31" ] && [ "${JB31##* }" = "False" ] && [ "$GB31" = 200 ] && ok "cross-peer dedup isolated (B gets own job, GET 200)" || bad "cross-peer dedup: A=$JA31 B=$JB31 GET=$GB31"
+[ -n "$JA31" ] && [ "${JB31%% *}" != "$JA31" ] && [ "${JB31##* }" = "False" ] && [ "$GB31" = 200 ] \
+  && [ "$(grep -c 'cross-peer dedup probe' "$TDIR/spawns.log" 2>/dev/null)" = 2 ] \
+  && ok "cross-peer dedup isolated (B gets own job, GET 200)" || bad "cross-peer dedup: A=$JA31 B=$JB31 GET=$GB31 stub_count=$(grep -c 'cross-peer dedup probe' "$TDIR/spawns.log" 2>/dev/null)"
 rm -rf "$T31"
+
+# 32. v0.2.7 (T34) executor lifecycle guard. POSTMORTEM-2 discipline: every
+#     daemon below runs behind a stubbed PATH, and the pgrep delta gate at
+#     the end proves no REAL opencode leaked from the whole suite.
+#     Two stub flavors:
+#       slowbin  — `exec sleep 30`: single clean process that dies on
+#                  SIGTERM; used for the live child a shutting-down daemon
+#                  must reap (case A).
+#       plantbin — `exec -a "opencode run plantbin-task" sleep 60`: keeps an
+#                  `opencode run` cmdline so the boot sweep's pid-reuse guard
+#                  actually matches it (a plain `exec sleep` renames the
+#                  process and would prove nothing) — cases B/C.
+mkdir -p "$TDIR/slowbin" "$TDIR/plantbin"
+printf '#!/usr/bin/env bash\nexec sleep 30\n' > "$TDIR/slowbin/opencode"
+printf '#!/usr/bin/env bash\nexec -a "opencode run plantbin-task" sleep 60\n' > "$TDIR/plantbin/opencode"
+chmod +x "$TDIR/slowbin/opencode" "$TDIR/plantbin/opencode"
+PGA=$(pgrep -xc opencode 2>/dev/null); PGA=${PGA:-0}
+
+# 32a. SIGTERM to the daemon reaps its LIVE executor child within 10s and the
+#      daemon itself exits (v0.2.6 hung around with detached children alive).
+PATH="$TDIR/slowbin:$PATH" AGENTLINK_TOKEN="$TOKEN" node "$DIR/daemon.mjs" \
+  --port $PORT5 --name test5 --dir "$TDIR" --jobs "$TDIR/jobs5" --rate 100 >"$TDIR/daemon5.log" 2>&1 &
+DPID5=$!; PIDS="$PIDS $DPID5"
+waitping $PORT5
+R32A=$(curl -sS -X POST http://127.0.0.1:$PORT5/challenge -H "Authorization: Bearer $TOKEN" -d '{"task":"reap-on-shutdown-task","from":"tester"}')
+J32A=$(echo "$R32A" | python3 -c 'import json,sys;print(json.load(sys.stdin).get("job_id",""))')
+PID32A=""
+for _i in $(seq 1 50); do
+  PID32A=$(python3 -c "import json;print(json.load(open('$TDIR/jobs5/$J32A.json')).get('pid') or '')" 2>/dev/null || true)
+  [ -n "$PID32A" ] && break; sleep 0.1
+done
+CHILD_ALIVE32A=no; { [ -n "$PID32A" ] && kill -0 "$PID32A" 2>/dev/null; } && CHILD_ALIVE32A=yes
+kill "$DPID5" 2>/dev/null
+CHILD_REAPED32A=no
+{ [ -n "$PID32A" ] && ! kill -0 "$PID32A" 2>/dev/null; } && CHILD_REAPED32A=yes
+for _i in $(seq 1 100); do [ "$CHILD_REAPED32A" = yes ] && break; sleep 0.1; { [ -n "$PID32A" ] && ! kill -0 "$PID32A" 2>/dev/null; } && CHILD_REAPED32A=yes; done
+DAEMON_GONE32A=no
+for _i in $(seq 1 100); do
+  curl -sS --max-time 1 "http://127.0.0.1:$PORT5/ping" >/dev/null 2>&1 || { DAEMON_GONE32A=yes; break; }
+  sleep 0.1
+done
+{ [ "$CHILD_ALIVE32A" = yes ] && [ "$CHILD_REAPED32A" = yes ] && [ "$DAEMON_GONE32A" = yes ]; } \
+  && ok "lifecycle: SIGTERM reaps live child, daemon exits" \
+  || bad "lifecycle: child_before=$CHILD_ALIVE32A reaped=$CHILD_REAPED32A daemon_gone=$DAEMON_GONE32A pid=$PID32A resp=$R32A"
+
+# 32b. Boot sweep: a planted orphan (cmdline `opencode run ...`, ppid 1 via
+#      double-fork, record interrupted) is reaped at boot; a child whose
+#      record says done is SPARED even with identical cmdline evidence
+#      (overreach check: reaping authority comes from the record).
+( "$TDIR/plantbin/opencode" >/dev/null 2>&1 & )
+PLANTED32=""
+for _i in $(seq 1 50); do
+  PLANTED32=$(pgrep -f "opencode run plantbin-task" 2>/dev/null | head -1)
+  [ -n "$PLANTED32" ] && break; sleep 0.1
+done
+( "$TDIR/plantbin/opencode" >/dev/null 2>&1 & )
+SURV32=""
+for _i in $(seq 1 50); do
+  SURV32=$(pgrep -f "opencode run plantbin-task" 2>/dev/null | grep -v "^${PLANTED32}$" | head -1)
+  [ -n "$SURV32" ] && break; sleep 0.1
+done
+NOW32=$(python3 -c 'import datetime;print(datetime.datetime.utcnow().isoformat()+"Z")')
+printf '{"id":"cccccccc-0000-0000-0000-000000000003","status":"interrupted","pid":%s,"created_at":"%s"}\n' "${PLANTED32:-0}" "$NOW32" > "$TDIR/jobs5/cccccccc-0000-0000-0000-000000000003.json"
+printf '{"id":"cccccccc-0000-0000-0000-000000000004","status":"done","pid":%s,"created_at":"%s"}\n' "${SURV32:-0}" "$NOW32" > "$TDIR/jobs5/cccccccc-0000-0000-0000-000000000004.json"
+# 32c. --max-runtime (env AGENTLINK_MAX_RUNTIME=2): a child past the cap is
+#      SIGKILLed and its job record is marked 'timeout'.
+PATH="$TDIR/plantbin:$PATH" AGENTLINK_TOKEN="$TOKEN" AGENTLINK_MAX_RUNTIME=2 node "$DIR/daemon.mjs" \
+  --port $PORT6 --name test6 --dir "$TDIR" --jobs "$TDIR/jobs5" --rate 100 >"$TDIR/daemon6.log" 2>&1 &
+DPID6=$!; PIDS="$PIDS $DPID6"
+waitping $PORT6
+sleep 1
+PLANTED_DEAD32=no; { [ -n "$PLANTED32" ] && ! kill -0 "$PLANTED32" 2>/dev/null; } && PLANTED_DEAD32=yes
+SURV_ALIVE32=no; { [ -n "$SURV32" ] && kill -0 "$SURV32" 2>/dev/null; } && SURV_ALIVE32=yes
+SWEEP_LOGGED32=no; grep -q "boot sweep: reaped orphan pid $PLANTED32" "$TDIR/daemon6.log" 2>/dev/null && SWEEP_LOGGED32=yes
+R32T=$(curl -sS -X POST http://127.0.0.1:$PORT6/challenge -H "Authorization: Bearer $TOKEN" -d '{"task":"max-runtime-task","from":"tester"}')
+J32T=$(echo "$R32T" | python3 -c 'import json,sys;print(json.load(sys.stdin).get("job_id",""))')
+T32STAT=""
+for _i in $(seq 1 80); do
+  T32STAT=$(python3 -c "import json;print(json.load(open('$TDIR/jobs5/$J32T.json')).get('status',''))" 2>/dev/null || true)
+  [ "$T32STAT" = "timeout" ] && break; sleep 0.1
+done
+T32PID=$(python3 -c "import json;print(json.load(open('$TDIR/jobs5/$J32T.json')).get('pid') or '')" 2>/dev/null || true)
+T32DEAD=no; { [ -n "$T32PID" ] && ! kill -0 "$T32PID" 2>/dev/null; } && T32DEAD=yes
+kill "$SURV32" "$PLANTED32" 2>/dev/null
+{ [ -n "$PLANTED32" ] && [ "$PLANTED_DEAD32" = yes ] && [ "$SURV_ALIVE32" = yes ] && [ "$SWEEP_LOGGED32" = yes ] \
+    && [ "$T32STAT" = "timeout" ] && [ "$T32DEAD" = yes ]; } \
+  && ok "boot sweep reaps planted orphan (evidence logged), spares done-record child; max-runtime -> timeout" \
+  || bad "lifecycle sweep: planted=$PLANTED32 dead=$PLANTED_DEAD32 surv=$SURV32 alive=$SURV_ALIVE32 logged=$SWEEP_LOGGED32 stat=$T32STAT tdead=$T32DEAD log=$(tail -3 "$TDIR/daemon6.log" 2>/dev/null)"
+
+# hermeticity gate (the incident's lesson): the suite must not leak REAL
+# opencode processes — delta over the whole T34 block must be 0.
+PGB=$(pgrep -xc opencode 2>/dev/null); PGB=${PGB:-0}
+[ "$((PGB - PGA))" -eq 0 ] && ok "hermeticity: pgrep -x opencode delta 0 ($PGA -> $PGB)" \
+  || bad "hermeticity: real opencode delta $((PGB - PGA)) ($PGA -> $PGB)"
 
 echo "---"
 [ $fail = 0 ] && echo "ALL PASS" || echo "SOME FAILED"

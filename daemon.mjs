@@ -1,7 +1,24 @@
 #!/usr/bin/env node
-// AgentLink daemon v0.2.6 — local HTTP endpoint that lets OTHER agents wake
+// AgentLink daemon v0.2.7 — local HTTP endpoint that lets OTHER agents wake
 // THIS agent with a task. Runs on 127.0.0.1 only. Token-authenticated.
 // Zero dependencies. Each agent deploys this in its OWN environment.
+//
+// v0.2.7 (T34, executor lifecycle guard — POSTMORTEM-2 follow-up):
+//   1. Live child registry: every spawned executor is tracked; on
+//      SIGTERM/SIGINT all live children get SIGTERM, 5s grace, SIGKILL
+//      stragglers. detached:true STAYS — the guard is tracking, not
+//      de-detaching.
+//   2. --max-runtime N (env AGENTLINK_MAX_RUNTIME, default 900s): per-child
+//      watchdog; a child exceeding the cap is SIGKILLed and its job record
+//      is marked 'timeout'. 0 disables the watchdog.
+//   3. Boot sweep: at startup, orphans of a DEAD daemon are reaped (SIGTERM)
+//      only when ALL evidence agrees (pid-reuse guard): /proc/<pid> exists
+//      AND cmdline matches `opencode run` AND ppid==1 AND the job record is
+//      interrupted. Corrupt records give no reaping authority. A deliberate
+//      deploy writes JOBS_DIR/boot-sweep-grace.json {"pids":[..],"at":..}
+//      (TTL 30min) listing pids the sweep must skip — above all the wake
+//      performing the restart itself, whose parent daemon dies mid-deploy.
+//      Every reap and every grace-skip is logged.
 
 import http from "node:http";
 import { spawn } from "node:child_process";
@@ -22,6 +39,10 @@ const WORKDIR = path.resolve(flag("dir", process.cwd()));
 const MODEL = flag("model", "");           // e.g. "openrouter/z-ai/glm-5.3-flash"
 const AGENT_PROFILE = flag("agent", "");   // opencode agent (persona) name
 const JOBS_DIR = flag("jobs", path.join(os.homedir(), ".agent-link", "jobs"));
+// v0.2.7: per-child runtime cap in seconds. --max-runtime N overrides, env
+// AGENTLINK_MAX_RUNTIME is the fallback default (900s), 0 disables.
+const MAX_RUNTIME_S = parseInt(flag("max-runtime", process.env.AGENTLINK_MAX_RUNTIME || "900"), 10);
+const MAX_RUNTIME_MS = (Number.isFinite(MAX_RUNTIME_S) && MAX_RUNTIME_S > 0 ? MAX_RUNTIME_S : 0) * 1000;
 
 // v0.2.4 (free-range-agent, board #7436): a caller-supplied `workdir` is a
 // REQUEST, not a right. Authentication is provenance, not permission. Only
@@ -187,6 +208,62 @@ function pruneJobs() {
 loadDedup(); // v0.2.3: restore non-expired dedup entries before serving
 sweepInterrupted();
 
+// v0.2.7 (T34) boot sweep: reap orphans a DEAD daemon left behind. Reaping
+// (SIGTERM) happens only when ALL evidence agrees — pid-reuse guard:
+//   /proc/<pid> exists AND cmdline matches `opencode run` AND ppid == 1
+//   AND the job record says interrupted. A record that cannot be parsed
+// gives no reaping authority. boot-sweep-grace.json in JOBS_DIR
+// ({"pids":[..], "at": ISO}, TTL 30min) lists pids a deliberate deploy
+// protects — the wake performing the restart becomes an orphan (ppid 1,
+// record interrupted) the moment its parent daemon dies, and must survive.
+const GRACE_FILE = path.join(JOBS_DIR, "boot-sweep-grace.json");
+const GRACE_TTL_MS = 30 * 60000;
+function loadGracePids() {
+  try {
+    const g = JSON.parse(fs.readFileSync(GRACE_FILE, "utf8"));
+    if (!Array.isArray(g.pids)) return [];
+    if (g.at && Date.now() - new Date(g.at).getTime() > GRACE_TTL_MS) {
+      try { fs.unlinkSync(GRACE_FILE); } catch {}
+      return [];
+    }
+    return g.pids.filter((p) => Number.isInteger(p) && p > 1);
+  } catch { return []; } // missing/corrupt grace file = no protection
+}
+function bootSweepReap() {
+  const grace = loadGracePids();
+  let reaped = 0;
+  for (const f of fs.readdirSync(JOBS_DIR)) {
+    if (!f.endsWith(".json") || f === "dedup.json" || f === "boot-sweep-grace.json") continue;
+    let j;
+    try { j = JSON.parse(fs.readFileSync(path.join(JOBS_DIR, f), "utf8")); } catch { continue; }
+    if (!j || j.status !== "interrupted" || !Number.isInteger(j.pid) || j.pid <= 1) continue;
+    const pid = j.pid;
+    if (grace.includes(pid)) {
+      console.log(`[agent-link] boot sweep: pid ${pid} (job ${j.id}) is grace-listed for a deliberate deploy — NOT reaped`);
+      continue;
+    }
+    const evidence = [`job ${j.id} record interrupted`];
+    let ok = true;
+    try {
+      const cmdline = fs.readFileSync(`/proc/${pid}/cmdline`, "utf8").replace(/\0/g, " ").trim();
+      if (!/opencode\s+run/.test(cmdline)) ok = false;
+      else evidence.push(`cmdline "${cmdline.slice(0, 80)}"`);
+      const stat = fs.readFileSync(`/proc/${pid}/stat`, "utf8");
+      const ppid = parseInt(stat.slice(stat.lastIndexOf(")") + 2).trim().split(" ")[1], 10);
+      if (ppid !== 1) ok = false;
+      else evidence.push("ppid 1");
+    } catch { ok = false; }
+    if (!ok) continue;
+    try {
+      process.kill(pid, "SIGTERM");
+      reaped += 1;
+      console.log(`[agent-link] boot sweep: reaped orphan pid ${pid}; evidence: ${evidence.join("; ")}`);
+    } catch {}
+  }
+  if (reaped) console.log(`[agent-link] boot sweep: ${reaped} orphan(s) reaped`);
+}
+bootSweepReap();
+
 function jobFile(id, data) {
   const f = path.join(JOBS_DIR, `${id}.json`);
   if (data !== undefined) {
@@ -210,6 +287,36 @@ const PREAMBLE = [
   "TASK:",
 ].join("\n");
 
+// v0.2.7 (T34): live executor registry. detached:true STAYS (a daemon crash
+// must not kill the executor mid-write); what changes is that the daemon now
+// KNOWS its children and reaps them on shutdown — the POSTMORTEM-2 leak
+// class (daemon dies, detached children burn credits forever) dies here.
+const liveChildren = new Map(); // pid -> job id
+const timedOutJobs = new Set(); // job ids killed by the --max-runtime watchdog
+let shuttingDown = false;
+function shutdownReap(signal) {
+  if (shuttingDown) return;
+  shuttingDown = true;
+  const pids = [...liveChildren.keys()];
+  console.log(`[agent-link] ${signal}: reaping ${pids.length} live executor child(ren)`);
+  for (const pid of pids) { try { process.kill(pid, "SIGTERM"); } catch {} }
+  if (pids.length === 0) process.exit(0);
+  const deadline = Date.now() + 5000; // 5s grace, then SIGKILL stragglers
+  const poll = setInterval(() => {
+    for (const pid of [...pids]) { try { process.kill(pid, 0); } catch { pids.splice(pids.indexOf(pid), 1); } }
+    if (pids.length === 0 || Date.now() >= deadline) {
+      for (const pid of pids) { try { process.kill(pid, "SIGKILL"); } catch {} }
+      clearInterval(poll);
+      process.exit(0);
+    }
+  }, 100);
+}
+process.on("SIGTERM", () => shutdownReap("SIGTERM"));
+process.on("SIGINT", () => shutdownReap("SIGINT"));
+// last-resort synchronous sweep: an 'exit' handler cannot wait, but a
+// SIGTERM is still better than leaving every child behind
+process.on("exit", () => { for (const pid of liveChildren.keys()) { try { process.kill(pid, "SIGTERM"); } catch {} } });
+
 function runJob(id, { task, workdir, model, agent }) {
   const argv = ["run", `${PREAMBLE}\n${task}`, "--format", "json", "--print-logs"];
   if (model || MODEL) argv.push("-m", model || MODEL);
@@ -223,12 +330,30 @@ function runJob(id, { task, workdir, model, agent }) {
     stdio: ["ignore", out, out],
   });
   child.unref();
+  // v0.2.7: register for shutdown reaping + per-child runtime watchdog
+  liveChildren.set(child.pid, id);
+  let runtimeTimer = null;
+  if (MAX_RUNTIME_MS > 0) {
+    runtimeTimer = setTimeout(() => {
+      const j = jobFile(id);
+      if (!j || j.status !== "running") return; // finished meanwhile
+      timedOutJobs.add(id);
+      console.log(`[agent-link] job ${id}: max runtime ${MAX_RUNTIME_S}s exceeded -> SIGKILL`);
+      try { child.kill("SIGKILL"); } catch {}
+    }, MAX_RUNTIME_MS);
+    runtimeTimer.unref(); // the child holds the event loop, not the timer
+  }
   let closed = false;
   const closeOut = () => { if (!closed) { closed = true; try { fs.closeSync(out); } catch {} } };
+  const deregister = () => {
+    liveChildren.delete(child.pid);
+    if (runtimeTimer) { clearTimeout(runtimeTimer); runtimeTimer = null; }
+  };
   // v0.2.5 (red-team finding 1): an async spawn failure (executor missing
   // from PATH, bad cwd) used to be an unhandled 'error' event = whole daemon
   // dead from one request. Now it is a failed job, and nothing else.
   child.on("error", (err) => {
+    deregister();
     const j = jobFile(id) || {};
     j.status = "failed"; j.error = String(err && err.message || err);
     j.finished_at = new Date().toISOString();
@@ -236,8 +361,16 @@ function runJob(id, { task, workdir, model, agent }) {
     closeOut();
   });
   child.on("exit", (code) => {
+    deregister();
     const j = jobFile(id) || {};
-    j.status = code === 0 ? "done" : "failed";
+    if (timedOutJobs.has(id)) {
+      timedOutJobs.delete(id);
+      j.status = "timeout";
+      j.error = `max runtime ${MAX_RUNTIME_S}s exceeded`;
+      j.killed_by = "max-runtime";
+    } else {
+      j.status = code === 0 ? "done" : "failed";
+    }
     j.exit_code = code;
     j.finished_at = new Date().toISOString();
     jobFile(id, j);

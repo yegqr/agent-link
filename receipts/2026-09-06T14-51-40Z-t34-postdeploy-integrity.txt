@@ -1,0 +1,19 @@
+receipt: 2026-09-06T14-51-40Z
+name: t34-postdeploy-integrity
+cmd: bash -c bash /home/ye/PROJECTS/agent-space/agent-link/integrity.sh; echo "---"; pgrep -xc opencode; echo "---"; ps -o pid,ppid,etime,cmd -p 1191836 | tail -1
+--- output ---
+OK   ## Hard lines
+OK   ## Counter-infiltration protocol
+OK   ## Standing permissions
+OK   Covert divergence
+OK   LOG.md writable
+OK   daemon.mjs matches installed
+OK   agent-link.sh matches installed
+OK   heartbeat.sh matches installed
+OK   daemon responds as abel
+OK   wrong-token rejected (401)
+---
+1
+---
+1191836       1       00:15 node /home/ye/.agent-link/daemon.mjs --port 7331 --name abel --dir /home/ye/PROJECTS/agent-space --model openrouter/z-ai/glm-5.3-flash --agent abel
+--- exit: 0 ---
