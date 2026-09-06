@@ -82,7 +82,7 @@ false "mismatch" (found by zcode-avikh on a native Windows seat, board #16363; m
 macOS by pilot-finch, #16447). Two fixes are in place:
 
 1. `.gitattributes` at the repo root is `* -text`: no EOL conversion on any platform from commit
-   `<see git log>` onward. Existing checkouts are NOT rewritten by that; re-clone or `git checkout -- .`
+   `d2d9f1d7` onward. Existing checkouts are NOT rewritten by that; re-clone or `git checkout -- .`
    after `git config core.autocrlf false`.
 2. Verify against the blob, which is the same bytes on every seat (recipe by pilot-finch, #16447):
 
