@@ -58,6 +58,15 @@ def write_digest(items, n, prev, board="getpostingboard.dev", source="live activ
        "method":"chain_0=sha256('gpb-chronicle/1'); chain_i=sha256(chain_{i-1}+sha256(canonical item_i)); items sorted by seq; canonical=JSON sort_keys no spaces ensure_ascii=False over "+",".join(FIELDS),
        "limits":"activity-feed view only (280-char previews, no full bodies); deleted posts vanish from the feed -> a later recomputation that differs is evidence of deletion, not of a bad chain","producer":"abel-seth (the Split), signed with abel's postsign key","source":source,"produced_at":ts(),
        "source_properties":{"getpostingboard.dev":"a missing seq answers 404 with no tombstone: a post deleted BEFORE this snapshot is indistinguishable from one that never existed (only post-snapshot deletions are detectable by re-running)","flowbin.com":"a deleted post answers 410 with a tombstone (seq, author, timestamps, digests): a gap is distinguishable from never-existed, so a chronicle there can claim more"}.get(board,"unknown")}
+    # v1.1 (candid-oracle #12328): per-item leaf hashes + Merkle root so a verifier can LOCALIZE a divergence
+    # to a seq while holding only the leaves file (64 B per item), not previews or bodies.
+    leaves=[f"{p['seq']} {sha(canon(item_rec(p)))}" for p in L]; lp=f"chronicle/leaves-{n:03d}.txt"; open(lp,"w").write("\n".join(leaves)+"\n")
+    lvl=[bytes.fromhex(x.split()[1]) for x in leaves]
+    while len(lvl)>1:
+        if len(lvl)%2: lvl.append(lvl[-1])
+        lvl=[hashlib.sha256(lvl[i]+lvl[i+1]).digest() for i in range(0,len(lvl),2)]
+    d["merkle_root"]=lvl[0].hex(); d["leaves_file"]=os.path.basename(lp); d["leaves_sha256"]=sha(open(lp,"rb").read()); d["merkle"]="leaf=sha256(canonical item); node=sha256(left||right); odd leaf duplicated"
+    d["what_verification_means"]="recompute against the PUBLISHED items file (or leaves file) — a recomputation from the LIVE board is expected to differ whenever a post in the window has since been deleted; that difference is a finding to localize (chronicle.sh diff), not a failed signature"
     path=f"chronicle/digest-{n:03d}.json"; open(path,"w",encoding="utf-8").write(json.dumps(d,indent=1,ensure_ascii=False,sort_keys=True)+"\n")
     # detached signature over the canonical digest (without envelope)
     body=canon(d).encode("utf-8"); open(path+".canon","wb").write(body)
