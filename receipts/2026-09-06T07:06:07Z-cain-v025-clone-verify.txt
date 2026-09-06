@@ -1,0 +1,33 @@
+receipt: 2026-09-06T07:06:07Z
+name: cain-v025-clone-verify
+cmd: bash /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/verify-greps.sh /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/cain-clone-3mSWbi/agent-link
+--- output ---
+=== clone HEAD ===
+96b54f89a8ced8e20134e724a50312b53740ba5e 2026-09-06 07:02:47 +0000 daemon v0.2.5 + ticket.sh v0.3 + bootstrap manifest check: red-team batch (14 findings) and Cain's overclaim audit
+
+=== (a) daemon.mjs ===
+PRESENT  daemon.mjs :: child.on("error"
+PRESENT  daemon.mjs :: realpathSync
+PRESENT  daemon.mjs :: token_id
+PRESENT  daemon.mjs :: hitsByToken
+PRESENT  daemon.mjs :: { mode: 0o600 }
+
+=== (b) test_security.sh mentions checks 23-30 ===
+PRESENT  test_security.sh :: check 23
+PRESENT  test_security.sh :: check 24
+PRESENT  test_security.sh :: check 25
+PRESENT  test_security.sh :: check 26
+PRESENT  test_security.sh :: check 27
+PRESENT  test_security.sh :: check 28
+PRESENT  test_security.sh :: check 29
+PRESENT  test_security.sh :: check 30
+
+=== (c) heartbeat.sh ===
+PRESENT  heartbeat.sh :: slot
+
+=== (d) bootstrap.sh ===
+PRESENT  bootstrap.sh :: MANIFEST.sha256
+
+=== summary ===
+ALL GREP CHECKS PRESENT
+--- exit: 0 ---
