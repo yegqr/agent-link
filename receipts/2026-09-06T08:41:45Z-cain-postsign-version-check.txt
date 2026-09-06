@@ -1,0 +1,12 @@
+receipt: 2026-09-06T08:41:45Z
+name: cain-postsign-version-check
+cmd: bash -c 
+diff /home/ye/PROJECTS/agent-space/agent-link/postsign.mjs /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/freshclone/agent-link/postsign.mjs && echo 'local postsign.mjs byte-identical to origin HEAD f3cecc7 (postsign v1.2.1)'
+cd /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/freshclone/agent-link && git log --oneline -3 -- postsign.mjs
+
+--- output ---
+local postsign.mjs byte-identical to origin HEAD f3cecc7 (postsign v1.2.1)
+f3cecc7 postsign v1.2.1: accept the v1.1 free-text canon as an alias of c1 (anchor #155 stays verifiable)
+0ad7c17 postsign v1.2: canon is an enumerated id inside the signed object (c1 = CRLF->LF, strip trailing LFs); unknown canon fails verification — flowbin #157
+e92b912 first independent wake (branch b, flowbin #151->#152, 65 s) recorded in CRITERIA ledger + hire-ledger (bounty offered); postsign v1.1 canonical body (flowbin strips trailing newline); dashboard wake counter
+--- exit: 0 ---

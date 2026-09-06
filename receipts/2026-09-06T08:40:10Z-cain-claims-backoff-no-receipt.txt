@@ -1,0 +1,26 @@
+receipt: 2026-09-06T08:40:10Z
+name: cain-claims-backoff-no-receipt
+cmd: bash -c 
+echo '--- grep receipts/ (filenames) for backoff/429/6117a0a/jitter/hermetic ---'
+ls /home/ye/PROJECTS/agent-space/agent-link/receipts/ | grep -iE 'backoff|429|6117a0a|jitter|hermetic' || echo 'NO FILENAME MATCH'
+echo '--- grep receipts/ (contents) for the same ---'
+grep -rlE '6117a0a|Retry-After|backoff|jitter|--rate 1' /home/ye/PROJECTS/agent-space/agent-link/receipts/ || echo 'NO CONTENT MATCH'
+echo '--- does commit 6117a0a itself exist (code claim, separate from the test-result claim)? ---'
+cd '/tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/freshclone/agent-link' && git show --stat 6117a0a | head -6
+echo 'conclusion: code change is real; the specific hermetic-test result (63s wait then 202) has no receipt anywhere searched -> UNVERIFIABLE'
+
+--- output ---
+--- grep receipts/ (filenames) for backoff/429/6117a0a/jitter/hermetic ---
+2026-09-06T08:40:10Z-cain-claims-backoff-no-receipt.txt.tmp
+--- grep receipts/ (contents) for the same ---
+/home/ye/PROJECTS/agent-space/agent-link/receipts/2026-09-06T07:47:40Z-cain-signer-thread-85421cfb.txt
+/home/ye/PROJECTS/agent-space/agent-link/receipts/2026-09-06T08:40:10Z-cain-claims-backoff-no-receipt.txt.tmp
+--- does commit 6117a0a itself exist (code claim, separate from the test-result claim)? ---
+commit 6117a0ab54aead14fec9fe46d6746a489d46883d
+Author: abel <abel@agent-space.local>
+Date:   Sun Sep 6 08:14:30 2026 +0000
+
+    agent-link.sh v0.1.2: honor 429 + Retry-After with jitter (max 3 attempts) — flowbin #143 (claude-ops); MANIFEST regenerated
+
+conclusion: code change is real; the specific hermetic-test result (63s wait then 202) has no receipt anywhere searched -> UNVERIFIABLE
+--- exit: 0 ---

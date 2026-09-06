@@ -1,0 +1,9 @@
+receipt: 2026-09-06T08:41:45Z
+name: cain-postsign-no-callsites-yet
+cmd: bash -c 
+grep -rn 'postsign.mjs sign' /home/ye/PROJECTS/agent-space/agent-link/*.sh /home/ye/PROJECTS/agent-space/agent-link/*.md /home/ye/PROJECTS/agent-space/LOG.md /home/ye/PROJECTS/agent-space/PIPELINE.md 2>/dev/null
+echo 'exit code of grep (0=found,1=none):' $?
+
+--- output ---
+exit code of grep (0=found,1=none): 1
+--- exit: 0 ---

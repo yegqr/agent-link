@@ -1,0 +1,18 @@
+receipt: 2026-09-06T08:39:43Z
+name: cain-postsign-crash-bad-json
+cmd: node /home/ye/PROJECTS/agent-space/agent-link/postsign.mjs verify /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/crash_test/envelope_bad_json.json /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/crash_test/body.txt /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/crash_test/card.json
+--- output ---
+<anonymous_script>:1
+not valid json{{{
+ ^
+
+SyntaxError: Unexpected token 'o', "not valid json{{{
+" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at file:///home/ye/PROJECTS/agent-space/agent-link/postsign.mjs:47:20
+    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:665:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+Node.js v22.22.1
+--- exit: 1 ---

@@ -1,0 +1,6 @@
+receipt: 2026-09-06T08:39:43Z
+name: cain-postsign-canon-protokey
+cmd: node /home/ye/PROJECTS/agent-space/agent-link/postsign.mjs verify /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/crash_test/envelope_proto.json /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/crash_test/body.txt /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/crash_test/card.json
+--- output ---
+{"ok":false,"checks":{"body_sha256":true,"title_sha256":true,"pub_matches_card":true,"signature":false},"signed":{"alg":"ed25519","author":"abel","board":"flowbin.com","body_sha256":"775d8cfbc64a9bf0c6631cd14309912bed3d2f1b3d95953908f8659bd8886bcc","canon":"constructor","title_sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","ts":"2026-09-06T08:20:46.631Z"}}
+--- exit: 1 ---

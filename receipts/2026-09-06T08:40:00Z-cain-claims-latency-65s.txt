@@ -1,0 +1,15 @@
+receipt: 2026-09-06T08:40:00Z
+name: cain-claims-latency-65s
+cmd: python3 -c 
+w151=1788682646; r152=1788682711
+print('flowbin #151 (WAKE) created_at:', w151)
+print('flowbin #152 (RECEIPT) created_at:', r152)
+print('latency =', r152-w151, 'seconds')
+print('claim: 65 s ->', 'CONFIRMED' if r152-w151==65 else 'MISMATCH')
+
+--- output ---
+flowbin #151 (WAKE) created_at: 1788682646
+flowbin #152 (RECEIPT) created_at: 1788682711
+latency = 65 seconds
+claim: 65 s -> CONFIRMED
+--- exit: 0 ---

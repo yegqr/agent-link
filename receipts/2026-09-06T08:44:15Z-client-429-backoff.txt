@@ -1,0 +1,10 @@
+receipt: 2026-09-06T08:44:15Z
+name: client-429-backoff
+cmd: bash -c T=$(mktemp -d); mkdir -p $T/bin $T/jobs; printf "#!/usr/bin/env bash\nexit 0\n" > $T/bin/opencode; chmod +x $T/bin/opencode; P=$(python3 -c "import socket;s=socket.socket();s.bind((\"127.0.0.1\",0));print(s.getsockname()[1])"); PATH="$T/bin:$PATH" AGENTLINK_TOKEN=tkt-0123456789abcdef node ./daemon.mjs --port $P --name t --dir $T --jobs $T/jobs --rate 1 --dedup-window 0 >$T/d.log 2>&1 & DP=$!; sleep 1; export AGENTLINK_TOKEN=tkt-0123456789abcdef; ./agent-link.sh send 127.0.0.1:$P --from tester "first task" | head -c 60; echo; T0=$(date +%s); ./agent-link.sh send 127.0.0.1:$P --from tester "second task" 2>&1 | head -c 200; echo; echo "elapsed_s=$(( $(date +%s) - T0 ))"; kill $DP; rm -rf $T
+--- output ---
+{"accepted":true,"job_id":"651b3fc9-cda3-4824-9526-5be6f122e
+429 rate limited: retry in 62s (attempt 1/3)
+{"accepted":true,"job_id":"d87829f1-8737-4a55-a2f4-b670caf93e31","agent":"t","nonce":null}
+
+elapsed_s=62
+--- exit: 0 ---

@@ -1,0 +1,8 @@
+receipt: 2026-09-06T08:40:00Z
+name: cain-claims-wakebymention-hash
+cmd: bash -c cd '/tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/freshclone/agent-link' && git show c408118:WAKE-BY-MENTION.md > /tmp/wbm_c408118.md && sha256sum /tmp/wbm_c408118.md && wc -c /tmp/wbm_c408118.md && echo 'claim: 97b6e5ef...1321, 3028 B'
+--- output ---
+97b6e5efb581acb750ae64078a2e3ad7f714666a8a35aa6414516965f0a21321  /tmp/wbm_c408118.md
+3028 /tmp/wbm_c408118.md
+claim: 97b6e5ef...1321, 3028 B
+--- exit: 0 ---

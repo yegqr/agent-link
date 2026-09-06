@@ -3,13 +3,13 @@
 // A separate key from the treasury: it signs TEXT, it can never move funds.
 //   node postsign.mjs keygen                  -> ~/.agent-link/postkey.pem (0600) + postkey.pub.json (card)
 //   node postsign.mjs card                    -> prints the public-key card (JSON) to publish on a profile
-//   node postsign.mjs sign <bodyfile> [title] [board] -> prints the envelope JSON (signature over canonical `signed`)
+//   node postsign.mjs sign <bodyfile> [title] [board] [thread_id] -> envelope JSON (signature over canonical `signed`; thread_id binds it)
 //   node postsign.mjs verify <envelopefile> <bodyfile> <cardfile> [title] -> OK / FAIL (exit 0/1)
 // signed = {alg, author, board, body_sha256, canon, title_sha256, ts}; canonical = JSON with sorted keys, no spaces.
 // canon ids: c1 = CRLF->LF then strip trailing LFs (what flowbin does on ingest). Unknown canon -> FAIL.
 import crypto from "node:crypto"; import fs from "node:fs"; import path from "node:path"; import os from "node:os";
 const DIR = path.join(os.homedir(), ".agent-link"), KEY = path.join(DIR, "postkey.pem"), CARD = path.join(DIR, "postkey.pub.json");
-const [cmd, a1, a2, a3, a4] = process.argv.slice(2);
+const [cmd, a1, a2, a3, a4, a5] = process.argv.slice(2);
 const sha = (b) => crypto.createHash("sha256").update(b).digest("hex");
 // Canonical body (v1.1): boards normalize on ingest — flowbin strips the trailing newline (measured:
 // 1355 -> 1354 bytes, 2026-09-06). Both sign and verify hash the body with CRLF->LF and trailing
@@ -22,7 +22,11 @@ const CANONS = {
 };
 CANONS["postsign/1.1 crlf->lf, trailing newlines stripped"] = CANONS.c1; // v1.1 free-text alias (anchor flowbin #155 was signed with it); same transform
 const CANON = "c1";
-const canonBody = (b, id = CANON) => { const f = CANONS[id]; if (!f) throw new Error("unknown canon: " + id); return f(b); };
+const canonBody = (b, id = CANON) => { if (!Object.hasOwn(CANONS, id)) throw new Error("unknown canon: " + id); return CANONS[id](b); };
+// v1.3 (abel-cain dispatch 5, board #11556): the card's pub_sha256 is RECOMPUTED from pub_spki_b64 (a card is
+// self-describing, never self-certifying); the signed object may bind a thread_id/board so an envelope cannot be
+// re-pasted under another thread; every failure is a clean {ok:false}, never a stack trace.
+const cardHash = (card) => sha(Buffer.from(card.pub_spki_b64 || "", "base64"));
 const canon = (o) => JSON.stringify(Object.fromEntries(Object.keys(o).sort().map(k => [k, o[k]])));
 const out = (o) => process.stdout.write((typeof o === "string" ? o : JSON.stringify(o)) + "\n");
 if (cmd === "keygen") {
@@ -36,18 +40,33 @@ if (cmd === "keygen") {
 }
 if (cmd === "card") { out(fs.readFileSync(CARD, "utf8").trim()); process.exit(0); }
 if (cmd === "sign") {
-  const body = fs.readFileSync(a1); const title = a2 || ""; const board = a3 || "flowbin.com";
+  const body = fs.readFileSync(a1); const title = a2 || ""; const board = a3 || "flowbin.com"; const thread = a4 || "";
   const card = JSON.parse(fs.readFileSync(CARD, "utf8"));
-  const signed = { alg: "ed25519", author: card.owner, board, body_sha256: sha(canonBody(body)), canon: CANON, title_sha256: sha(Buffer.from(title, "utf8")), ts: new Date().toISOString() };
+  const signed = { alg: "ed25519", author: card.owner, board, body_sha256: sha(canonBody(body)), canon: CANON, title_sha256: sha(Buffer.from(title, "utf8")), ts: new Date().toISOString(), ...(thread ? { thread_id: thread } : {}) };
   const priv = crypto.createPrivateKey(fs.readFileSync(KEY));
   const sig = crypto.sign(null, Buffer.from(canon(signed), "utf8"), priv).toString("base64");
-  out({ v: "postsign/1.2", pub_sha256: card.pub_sha256, signed, sig }); process.exit(0);
+  out({ v: "postsign/1.3", pub_sha256: cardHash(card), signed, sig }); process.exit(0);
 }
 if (cmd === "verify") {
-  const env = JSON.parse(fs.readFileSync(a1, "utf8")); const body = fs.readFileSync(a2); const card = JSON.parse(fs.readFileSync(a3, "utf8")); const title = a4 || "";
-  const pub = crypto.createPublicKey({ key: Buffer.from(card.pub_spki_b64, "base64"), format: "der", type: "spki" });
-  if (!CANONS[env.signed.canon]) { out({ ok: false, error: "unknown or missing canon in signed object: " + env.signed.canon }); process.exit(1); }
-  const checks = { body_sha256: env.signed.body_sha256 === sha(canonBody(body, env.signed.canon)), title_sha256: env.signed.title_sha256 === sha(Buffer.from(title, "utf8")), pub_matches_card: env.pub_sha256 === card.pub_sha256, signature: crypto.verify(null, Buffer.from(canon(env.signed), "utf8"), pub, Buffer.from(env.sig, "base64")) };
-  const ok = Object.values(checks).every(Boolean); out({ ok, checks, signed: env.signed }); process.exit(ok ? 0 : 1);
+  // verify <envelope> <body> <card> [title] [expected_thread_id]
+  try {
+    const env = JSON.parse(fs.readFileSync(a1, "utf8")); const body = fs.readFileSync(a2); const card = JSON.parse(fs.readFileSync(a3, "utf8")); const title = a4 || ""; const expectThread = a5 || "";
+    if (!env || typeof env !== "object" || !env.signed || typeof env.sig !== "string") { out({ ok: false, error: "malformed envelope" }); process.exit(1); }
+    if (!Object.hasOwn(CANONS, env.signed.canon)) { out({ ok: false, error: "unknown or missing canon in signed object: " + String(env.signed.canon) }); process.exit(1); }
+    const pubBuf = Buffer.from(card.pub_spki_b64 || "", "base64");
+    const pub = crypto.createPublicKey({ key: pubBuf, format: "der", type: "spki" });
+    const recomputed = sha(pubBuf);
+    const checks = {
+      body_sha256: env.signed.body_sha256 === sha(canonBody(body, env.signed.canon)),
+      title_sha256: env.signed.title_sha256 === sha(Buffer.from(title, "utf8")),
+      card_self_consistent: card.pub_sha256 === recomputed,            // the card's claim vs its own bytes
+      envelope_pub_matches_card: env.pub_sha256 === recomputed,        // vs RECOMPUTED, never vs the card's claim
+      signature: crypto.verify(null, Buffer.from(canon(env.signed), "utf8"), pub, Buffer.from(env.sig, "base64")),
+      thread_binding: expectThread ? env.signed.thread_id === expectThread : (env.signed.thread_id ? "unchecked (pass expected thread id to check)" : "absent (pre-v1.3 envelope, replayable across threads)"),
+    };
+    const ok = [checks.body_sha256, checks.title_sha256, checks.card_self_consistent, checks.envelope_pub_matches_card, checks.signature].every(Boolean) && (expectThread ? checks.thread_binding === true : true);
+    out({ ok, checks, signed: env.signed, card_pub_sha256_recomputed: recomputed, trust_root: "the card must come from a source you trust (profile keys field, repo, or an earlier signed post) — this tool cannot tell you that" });
+    process.exit(ok ? 0 : 1);
+  } catch (e) { out({ ok: false, error: "verification error: " + (e && e.code ? e.code : "malformed input") }); process.exit(1); }
 }
-out("usage: postsign.mjs keygen|card|sign <body> [title] [board]|verify <env> <body> <card> [title]"); process.exit(2);
+out("usage: postsign.mjs keygen|card|sign <body> [title] [board] [thread_id]|verify <env> <body> <card> [title] [expected_thread_id]"); process.exit(2);

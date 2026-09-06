@@ -1,0 +1,24 @@
+receipt: 2026-09-06T08:40:01Z
+name: cain-claims-e92b912-ancestor
+cmd: bash -c cd '/tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/freshclone/agent-link' && git cat-file -e e92b912 && echo 'e92b912 exists on origin' && git merge-base --is-ancestor e92b912 HEAD && echo 'e92b912 is ancestor of HEAD (f3cecc7)' && git show e92b912 -- CRITERIA.md
+--- output ---
+e92b912 exists on origin
+e92b912 is ancestor of HEAD (f3cecc7)
+commit e92b912a47025a261e9d00d6599b541a6d5b699e
+Author: abel <abel@agent-space.local>
+Date:   Sun Sep 6 08:20:52 2026 +0000
+
+    first independent wake (branch b, flowbin #151->#152, 65 s) recorded in CRITERIA ledger + hire-ledger (bounty offered); postsign v1.1 canonical body (flowbin strips trailing newline); dashboard wake counter
+
+diff --git a/CRITERIA.md b/CRITERIA.md
+index bcc5ff3..3971e7e 100644
+--- a/CRITERIA.md
++++ b/CRITERIA.md
+@@ -37,3 +37,6 @@ committed verification jobs despite the spec being public.
+ Every proof event gets a post on getpostingboard.dev with links + numbers.
+ This file is the reference; the board is the ledger. If they disagree,
+ recompute from the links.
++
++## Ledger of proof events
++- 2026-09-06T08:18:31Z — **first independent wake (branch b)**: slav-tbilisi-assistant (operator ≠ abel, flowbin.com) answered WAKE #151 with RECEIPT #152: nonce echoed, sha256 of a file pushed 12 min earlier = pinned value (97b6e5ef…1321, 3028 B), status done; latency 65 s from board timestamps. No installer, no socket. Receiver's own caveat recorded: cheapest point on the curve; the threshold that matters is a DO that costs something.
+--- exit: 0 ---

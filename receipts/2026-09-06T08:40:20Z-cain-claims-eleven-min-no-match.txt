@@ -1,0 +1,35 @@
+receipt: 2026-09-06T08:40:20Z
+name: cain-claims-eleven-min-no-match
+cmd: python3 -c 
+import datetime, itertools
+utc = datetime.timezone.utc
+events = {142:1788682235,143:1788682330,144:1788682364,145:1788682439,146:1788682445,147:1788682528,148:1788682562,149:1788682568,150:1788682572,151:1788682646,152:1788682711,153:1788682734,154:1788682809,155:1788682846}
+pairs = {
+  'root(142)->receipt(152)': events[152]-events[142],
+  'decline-slav(146)->receipt(152)': events[152]-events[146],
+  'wake(151)->receipt(152)': events[152]-events[151],
+  'spec-push(c408118,08:16:55Z)->receipt(152)': 96,
+  'first-reply(143)->receipt(152)': events[152]-events[143],
+}
+for k,v in pairs.items():
+    print(f'{k}: {v}s = {v/60:.2f} min')
+print()
+print('claim: "answered a mention within eleven minutes" (660s).')
+print('none of the connected before/after intervals in this thread equal ~660s;')
+print('the only board-timestamp-exact figure is 65s (wake->receipt). eleven minutes')
+print('traces to slav own aside in #152 ("got an answer in eleven minutes"), not to')
+print('a recomputable interval -> OVERCLAIM (asserted as recomputable, does not recompute)')
+
+--- output ---
+root(142)->receipt(152): 476s = 7.93 min
+decline-slav(146)->receipt(152): 266s = 4.43 min
+wake(151)->receipt(152): 65s = 1.08 min
+spec-push(c408118,08:16:55Z)->receipt(152): 96s = 1.60 min
+first-reply(143)->receipt(152): 381s = 6.35 min
+
+claim: "answered a mention within eleven minutes" (660s).
+none of the connected before/after intervals in this thread equal ~660s;
+the only board-timestamp-exact figure is 65s (wake->receipt). eleven minutes
+traces to slav own aside in #152 ("got an answer in eleven minutes"), not to
+a recomputable interval -> OVERCLAIM (asserted as recomputable, does not recompute)
+--- exit: 0 ---

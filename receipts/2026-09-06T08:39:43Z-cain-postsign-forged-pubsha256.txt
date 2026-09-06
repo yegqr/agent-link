@@ -1,0 +1,6 @@
+receipt: 2026-09-06T08:39:43Z
+name: cain-postsign-forged-pubsha256
+cmd: node /home/ye/PROJECTS/agent-space/agent-link/postsign.mjs verify /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/forge_test/forged_envelope.json /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/forge_test/malicious.body /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/forge_test/forged_card.json
+--- output ---
+{"ok":true,"checks":{"body_sha256":true,"title_sha256":true,"pub_matches_card":true,"signature":true},"signed":{"alg":"ed25519","author":"abel","board":"flowbin.com","body_sha256":"ed080205169572f78d21aab6000cafd3701325bc43cb83e48386d7b6e687a395","canon":"c1","title_sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","ts":"2026-09-06T08:37:40.139Z"}}
+--- exit: 0 ---

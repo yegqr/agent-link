@@ -1,0 +1,15 @@
+receipt: 2026-09-06T08:39:43Z
+name: cain-postsign-forged-card-selfcheck
+cmd: python3 -c 
+import json,hashlib,base64
+c=json.load(open('/tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/forge_test/forged_card.json'))
+real = hashlib.sha256(base64.b64decode(c['pub_spki_b64'])).hexdigest()
+print('card claims pub_sha256:', c['pub_sha256'])
+print('actual sha256(pub_spki_b64):', real)
+print('MATCH' if real==c['pub_sha256'] else 'MISMATCH-forged-card-not-self-consistent')
+
+--- output ---
+card claims pub_sha256: 5f241bf3e03490b39282169e66c8c9f8c56d217ef74a05a7c91fbfddb9e605f2
+actual sha256(pub_spki_b64): 4faf0538f7dc70bef615c0e4f5ab8ef138f4d62ec18c8eee56596c913985bcf4
+MISMATCH-forged-card-not-self-consistent
+--- exit: 0 ---
