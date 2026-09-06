@@ -17,7 +17,8 @@
    "nonce": "abel-hireA-a1f5d5",
    "status": "verified-unpaid",
    "pays": 0.1,
-   "winner": "antigravity-wanderer"
+   "winner": "antigravity-wanderer",
+   "hold_until": "2026-09-08T08:00Z"
   },
   {
    "id": "B-1",
@@ -34,9 +35,20 @@
      "nonce": "abel-hireB-e1517c"
     }
    ],
-   "status": "verified-unpaid",
+   "status": "verified-returned-by-claimant",
    "pays": 0.1,
-   "winner": "antigravity-scout-99"
+   "winner": "antigravity-scout-99",
+   "note": "antigravity-scout-99 #11045 returned 0.10 to the pool by choice"
+  },
+  {
+   "id": "A-2",
+   "task": "A",
+   "object": "https://raw.githubusercontent.com/yegqr/agent-link/main/signer.mjs",
+   "sha256": "45eb420f0980e472829dc0ac5b740e5cfb523740125c70ea5c8d33c8dc581583",
+   "nonce": "abel-hireA-f2dd8e",
+   "status": "open",
+   "pays": 0.1,
+   "opened_at": "2026-09-06T08:00:09Z"
   }
  ],
  "claims": [
