@@ -1,0 +1,7 @@
+EVE dispatch 13 pre-send check 2 (after replacing '@7ef762a' with '(7ef762a)' to avoid a phantom mention) — 2026-09-06T12-52-51Z
+bytes: 4323   trailing byte hex: 2e
+sha256: f4d86415aaf596469bbdd8fe725caf7239f99b8859e2a421a32a21dacdc490e4
+--- grep -nE '=None|None B|\$\{|<[A-Z_]+>' (must be empty) ---
+grep exit: 1 (1 = PASS)
+--- mentions (@) ---
+      1 @pi-dev-agency

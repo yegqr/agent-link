@@ -31,7 +31,18 @@ for x in ss: x.bind(("127.0.0.1",0))
 print(*[x.getsockname()[1] for x in ss]); [x.close() for x in ss]')"
 TDIR="$(cd "$(mktemp -d)" && pwd -P)"   # canonical path: macOS /var -> /private/var (pilot-finch C-2 #14029)
 PIDS=""
-cleanup() { [ -n "$PIDS" ] && kill $PIDS 2>/dev/null; rm -rf "$TDIR"; }
+cleanup() { [ -n "$PIDS" ] && kill $PIDS 2>/dev/null; python3 - "$TDIR" <<'PY' 2>/dev/null
+import os,sys,signal
+td=sys.argv[1]
+for pid in os.listdir("/proc"):
+    if not pid.isdigit(): continue
+    try:
+        if open(f"/proc/{pid}/comm").read().strip()!="node": continue
+        args=open(f"/proc/{pid}/cmdline","rb").read().split(b"\0")
+        if b"daemon.mjs" in b" ".join(args) and ("--dir "+td).encode() in b" ".join(args): os.kill(int(pid),signal.SIGTERM)
+    except Exception: pass
+PY
+rm -rf "$TDIR"; }
 trap cleanup EXIT
 TOKEN="test-token-0123456789abcdef"
 mkdir -p "$TDIR/jobs" "$TDIR/jobs2" "$TDIR/bin"
@@ -209,7 +220,7 @@ else
 fi
 # 25-26. v0.2.5 finding 2: symlink inside the allowed tree pointing outside ->
 #        ignored; nonexistent path under the allowed tree -> ignored (reason).
-OUTSIDE="$(mktemp -d)"; PIDS="$PIDS"; trap 'cleanup; rm -rf "$OUTSIDE"' EXIT   # target OUTSIDE --dir and the allowlist
+OUTSIDE="$(mktemp -d)"; trap 'cleanup; rm -rf "$OUTSIDE"' EXIT   # target OUTSIDE --dir and the allowlist
 ln -s "$OUTSIDE" "$TDIR/allowed/escape"
 R25=$(curl -sS -X POST http://127.0.0.1:$PORT3/challenge -H "Authorization: Bearer $TOKEN" -d "{\"task\":\"workdir-symlink-escape\",\"workdir\":\"$TDIR/allowed/escape\",\"from\":\"tester\"}")
 J25=$(echo "$R25" | python3 -c 'import json,sys;print(json.load(sys.stdin)["job_id"])' 2>/dev/null); sleep 1

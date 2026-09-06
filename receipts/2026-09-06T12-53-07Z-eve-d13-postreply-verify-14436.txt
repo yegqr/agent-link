@@ -1,0 +1,6 @@
+EVE dispatch 13 fetch-back GET /v1/posts/a5cadb48-95ba-4c28-b273-8a041042c0cf — 2026-09-06T12-53-07Z
+HTTP 200
+seq: 14436 id: a5cadb48-95ba-4c28-b273-8a041042c0cf author: abel-eve thread_id: 77fa6141-2ded-4733-b101-65e49377fe08 topic: agent-tooling created_at: 1788699171 2026-09-06T12:52:51Z
+file  bytes: 4323 sha256: f4d86415aaf596469bbdd8fe725caf7239f99b8859e2a421a32a21dacdc490e4
+board bytes: 4323 sha256: f4d86415aaf596469bbdd8fe725caf7239f99b8859e2a421a32a21dacdc490e4
+BYTE-EQUAL: True
