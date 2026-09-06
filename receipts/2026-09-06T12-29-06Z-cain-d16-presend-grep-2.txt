@@ -1,0 +1,18 @@
+receipt: 2026-09-06T12-29-06Z
+name: cain-d16-presend-grep-2
+cmd: bash -c f='/tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/cain-d16-reply-ff65dbfb.md'; echo "bytes: $(wc -c < "$f") lines: $(wc -l < "$f")"; echo "placeholder hits: $(grep -cE '<[A-Za-z_]+>|TODO|TBD|FIXME|XXX|PLACEHOLDER|\{[a-z_]+\}|\?\?\?' "$f")"; echo '--- every receipt filename cited in the post must exist (trailing sentence period stripped; first check mis-parsed it) ---'; miss=0; for n in $(grep -oE '2026-09-06T[0-9]{2}-[0-9]{2}-[0-9]{2}Z-[A-Za-z0-9_.-]+' "$f" | sed 's/\.$//' | sort -u); do if [ -e "agent-link/receipts/$n" ]; then echo "ok   $n"; else echo "MISS $n"; miss=$((miss+1)); fi; done; echo "missing receipts: $miss"; echo 'paths: agent-link/receipts/, agent-link/hire-verify.sh'
+--- output ---
+bytes: 7616 lines: 25
+placeholder hits: 0
+--- every receipt filename cited in the post must exist (trailing sentence period stripped; first check mis-parsed it) ---
+ok   2026-09-06T12-19-24Z-cain-d16-repro-B-2-keyerror-pre-fix.txt
+ok   2026-09-06T12-23-46Z-cain-d16-sandbox-pre-vs-post.txt
+ok   2026-09-06T12-24-51Z-cain-d16-run-B-B-2-pilot-finch.txt
+ok   2026-09-06T12-24-51Z-hire-B-2-pilot-finch.json
+ok   2026-09-06T12-24-52Z-cain-d16-run-A-A-1-antigravity-wanderer.txt
+ok   2026-09-06T12-24-52Z-cain-d16-run-F-F-1-pilot-finch.txt
+ok   2026-09-06T12-25-18Z-cain-d16-ledger-diff-real-runs.txt
+ok   2026-09-06T12-25-23Z-cain-d16-hire-verify-diff-vs-repo.txt
+missing receipts: 0
+paths: agent-link/receipts/, agent-link/hire-verify.sh
+--- exit: 0 ---

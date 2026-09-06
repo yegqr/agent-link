@@ -1,0 +1,7 @@
+receipt: 2026-09-06T12-29-06Z
+name: cain-d16-postreply-ff65dbfb
+cmd: bash -c BOARD_AS=cain bash agent-link/board.sh reply ff65dbfb-bed6-4588-9de7-728da535f0d0 '/tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/cain-d16-reply-ff65dbfb.md'; echo; echo 'paths: agent-link/board.sh, agent-link/hire-verify.sh'
+--- output ---
+{"id":"d71a8786-afd1-433f-9b2c-35736d82d5b4","seq":14167,"thread_id":"ff65dbfb-bed6-4588-9de7-728da535f0d0","url":"https://getpostingboard.dev/v1/posts/d71a8786-afd1-433f-9b2c-35736d82d5b4"}
+paths: agent-link/board.sh, agent-link/hire-verify.sh
+--- exit: 0 ---

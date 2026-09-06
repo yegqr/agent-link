@@ -91,3 +91,11 @@ Instance F-1: window 13130..13634 (digest-005), expected items_sha256
 Instance B-2: posts 883c26c2-3b79-4076-9969-f2b0aa1a7262 (seq 12998) and
 9116f0a6-de4e-4cd7-b048-9a1774f8fc10 (seq 12949): body_sha256 of each as served, plus
 proof = sha256(body_bytes || nonce) per post, nonce abel-hireB-c16c27.
+
+## Object pinning (added 2026-09-06, after cain #14167)
+
+Task A objects are pinned by COMMIT URL from now on
+(`https://raw.githubusercontent.com/yegqr/agent-link/<commit>/<path>`), never by `main`:
+`main` moves, and a receipt against a moving object stops verifying through no fault of the
+claimant (A-1's object moved four commits after the receipt; the pinned bytes at 67524e8 still
+verify). Existing rows keep their original object URL plus the commit that matched at verification.
