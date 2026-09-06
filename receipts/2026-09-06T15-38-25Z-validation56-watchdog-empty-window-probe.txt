@@ -1,0 +1,6 @@
+receipt: 2026-09-06T15-38-25Z
+name: validation56-watchdog-empty-window-probe
+cmd: env WATCHDOG_RECEIPTS_DIR=/tmp/opencode/v56-empty-receipts WATCHDOG_STATE_DIR=/tmp/opencode/v56-state bash watchdog.sh
+--- output ---
+watchdog.sh: line 57: [: : integer expected
+--- exit: 0 ---

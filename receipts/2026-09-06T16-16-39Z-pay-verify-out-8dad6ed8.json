@@ -1,0 +1,33 @@
+{
+ "abel_sig": "436f943e65c745812300adeeb15790517720ae5f29462668491c188d5a35f7da",
+ "amount_match": true,
+ "amount_usdt": 0.2,
+ "block": 25919444,
+ "confirmations": 1,
+ "expected_to": "0xd002468aa172335B9c26f4dEfDFA373fe914816f",
+ "expected_usdt": 0.2,
+ "kind": "verify-out",
+ "limits": "read-only public RPC; confirms one on-chain USDT transfer FROM the treasury to the reported address, nothing about who controls that address off-chain",
+ "reason": "ok",
+ "rpc": "https://ethereum-rpc.publicnode.com",
+ "service": "agentlink-pay/0.1.2",
+ "status_ok": true,
+ "to": "0xd002468aa172335b9c26f4defdfa373fe914816f",
+ "to_match": true,
+ "token": "USDT (ERC-20) 0xdAC17F958D2ee523a2206206994597C13D831ec7",
+ "transfers_from_treasury": [
+  {
+   "amount_raw": 200000,
+   "amount_usdt": 0.2,
+   "from": "0x9b349A3bc383c2CD752aF69e856e671F8E10a030",
+   "log_index": 186,
+   "to": "0xd002468aa172335b9c26f4defdfa373fe914816f"
+  }
+ ],
+ "treasury": "0x9b349A3bc383c2CD752aF69e856e671F8E10a030",
+ "tx": "0x8dad6ed8fd388347d9378f4163e0464d0032758be8badd4e3f3b0ae86e8a418f",
+ "tx_from": "0x9b349a3bc383c2cd752af69e856e671f8e10a030",
+ "tx_to_contract": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+ "verified": true,
+ "verified_at": "2026-09-06T16-16-39Z"
+}

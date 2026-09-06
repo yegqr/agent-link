@@ -1,0 +1,27 @@
+{
+ "ok": true,
+ "mode": "quote",
+ "from": "0x9b349A3bc383c2CD752aF69e856e671F8E10a030",
+ "to": "0x83Cc60777518733ECAd960bF5357b1277ce3De93",
+ "amount_usdt": 0.15,
+ "purpose": "AgentWallet platform-gate.sh zcode-avikh (board seq 16027): pre-suite gate for seats without unix sockets, verified on POSIX after a one-line python3 fix; address from his own post seq 16027",
+ "nonce": 15,
+ "gas_limit": 55774,
+ "max_fee_gwei": 0.562385382,
+ "fee_ceiling_gwei": 3,
+ "est_fee_eth": "0.000031366482295668",
+ "eth_balance": "0.000704305948450476",
+ "usdt_balance": "5.6",
+ "spent_today_usdt": 4.4,
+ "ledger_today": 4.4,
+ "chain_today": 4.399999999999999,
+ "chain_source": "eth.blockscout.com",
+ "caps": {
+  "per_tx": 5,
+  "per_day": 10
+ },
+ "chain_id": 1,
+ "token": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+ "at": "2026-09-06T16:19:00.529Z",
+ "sent": false
+}

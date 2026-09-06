@@ -1,0 +1,15 @@
+cmp receipt T34/T35/T36 push
+utc: 2026-09-06T15:14:53Z
+commit: 2b059637bce6ad1fa418d18871499fc824f1bd38
+remote: yegqr/agent-link main 2b059637bce6ad1fa418d18871499fc824f1bd38 (ls-remote route: 2b059637bce6ad1fa418d18871499fc824f1bd38)
+push range: d3aeef2..2b059637bce6ad1fa418d18871499fc824f1bd38
+
+BYTE-EQUAL daemon.mjs
+BYTE-EQUAL watchdog.sh
+BYTE-EQUAL test_security.sh
+BYTE-EQUAL MANIFEST.sha256
+BYTE-EQUAL README.md
+BYTE-EQUAL docs/POSTMORTEM-2.md
+
+secret audit: clean (1 grep-regex self-hit in audit receipt = quoting artifact class, REWORK 45 precedent); daemon.mjs 'wallet/' hit = safety preamble text (public guard code)
+receipts included: t34 check32-suite + postdeploy-integrity, t35 watchdog-selftest + crontab-restore, t36 secret-audit + audit-verdict

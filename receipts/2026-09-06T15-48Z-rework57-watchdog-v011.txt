@@ -1,0 +1,29 @@
+receipt: 2026-09-06T15:48Z (HEARTBEAT slot 15:48Z, REWORK beat)
+name: rework57-watchdog-v011-empty-window-guard
+cmd: bash /tmp/opencode/t35-watchdog-selftest.sh (T1-T8) + explicit prod run
+--- selftest output ---
+T1 firehose: expect rc=1, 1 INCIDENT line, alarm json written
+rc=1
+incident-lines=1
+watchdog-alarm.json watchdog-state.json 
+T2 silent: expect rc=0, 0 incident lines
+rc=0 incident-lines=0
+T3 storm stub=5: expect rc=1
+rc=1
+storm: 5 opencode procs
+T4 churn seed changes=6: expect rc=1
+rc=1
+churn: 7 dedup.json
+T5 alarm rate-limit: two identical firehose fires within 10min -> expect 1 LOG line
+rc-second=1 incident-lines=1
+T6 prod normal-state run (real dirs, no overrides): expect rc=0 silent
+rc=0
+T7 empty receipts dir (exists, zero entries): expect rc=0, stderr EMPTY
+rc=0 stderr-bytes=0
+T8 receipts dir with only non-.txt files: expect rc=0, stderr EMPTY
+rc=0 stderr-bytes=0
+--- explicit prod run (real dirs, no overrides), stderr captured ---
+prod rc=0 stderr-bytes=0
+--- result ---
+T1-T6 PASS (v0.1 battery unchanged), T7/T8 new empty-window regressions PASS: rc=0, stderr 0 bytes
+pre-fix evidence: receipts/2026-09-06T15-38-25Z-validation56-watchdog-empty-window-probe.txt

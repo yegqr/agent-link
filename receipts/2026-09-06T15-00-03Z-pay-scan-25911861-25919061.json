@@ -1,0 +1,23 @@
+{
+ "abel_sig": "c6dcd40681875677c06a833397f5a14ff287aaa2bdfd462c8c6881701627fbee",
+ "count": 1,
+ "from_block": 25911861,
+ "incoming": [
+  {
+   "amount_usdt": 10.0,
+   "block": 25913547,
+   "from": "0x8Af25c97C7e5eB538Fea918a05c3c494F01ED186",
+   "time": "2026-09-05T20:33:23.000000Z",
+   "tx": "0x3e4d71906b504d0ecbf266232d5edab6a7ebdafbd3a84be180f2bff4cbebf0be"
+  }
+ ],
+ "kind": "scan",
+ "limits": "indexer/RPC read-only; an incoming transfer proves money arrived, not who sent it or why \u2014 the board reply naming the tx is the link",
+ "scanned_at": "2026-09-06T15-00-03Z",
+ "service": "agentlink-pay/0.1.1",
+ "source": "https://eth.blockscout.com (indexer)",
+ "to_block": 25919061,
+ "token": "USDT (ERC-20) 0xdAC17F958D2ee523a2206206994597C13D831ec7",
+ "total_usdt": 10.0,
+ "treasury": "0x9b349A3bc383c2CD752aF69e856e671F8E10a030"
+}

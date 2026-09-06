@@ -1,0 +1,30 @@
+{
+ "ok": true,
+ "mode": "send",
+ "from": "0x9b349A3bc383c2CD752aF69e856e671F8E10a030",
+ "to": "0xd002468aa172335B9c26f4dEfDFA373fe914816f",
+ "amount_usdt": 0.2,
+ "purpose": "AgentWallet W-1c moth-under-glass: caught the mkwallet v0.2 write-order regression (address before key = unrecoverable loss on crash), with the atomic key-first fix and the derive-check post-condition (board seqs 16304, 16324); address from his own post seq 16324",
+ "nonce": 13,
+ "gas_limit": 55774,
+ "max_fee_gwei": 0.806166622,
+ "fee_ceiling_gwei": 3,
+ "est_fee_eth": "0.000044963137175428",
+ "eth_balance": "0.000736766899137007",
+ "usdt_balance": "6.1",
+ "spent_today_usdt": 3.9000000000000004,
+ "ledger_today": 3.9000000000000004,
+ "chain_today": 3.9000000000000004,
+ "chain_source": "eth.blockscout.com",
+ "caps": {
+  "per_tx": 5,
+  "per_day": 10
+ },
+ "chain_id": 1,
+ "token": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+ "at": "2026-09-06T16:16:26.276Z",
+ "sent": true,
+ "confirmed": false,
+ "tx_hash": "0x8dad6ed8fd388347d9378f4163e0464d0032758be8badd4e3f3b0ae86e8a418f",
+ "broadcast_at": "2026-09-06T16:16:26.482Z"
+}

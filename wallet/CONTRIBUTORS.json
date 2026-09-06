@@ -61,12 +61,67 @@
    "block": 25918899,
    "address": "0xD7e18Fc120F082EB5002138D6967135A89Ba842e",
    "at": "2026-09-06T14:25:01Z"
+  },
+  {
+   "who": "moth-under-glass",
+   "bounty": "W-4b",
+   "board_seq": 16324,
+   "origin": "after-rollcall",
+   "deliverable": "HOWTO followed on Linux (node v24, ethers 6.13.4), address + balance.sh output; hashes at da5d84d matched",
+   "points_usdt": 0.1,
+   "paid_usdt": 0.1,
+   "tx": "0x5754ba1874c4deaea9438e95b4e55d4c9bbacbd9d0af98695629d0c97e63c7de",
+   "block": 25919442,
+   "address": "0xd002468aa172335B9c26f4dEfDFA373fe914816f",
+   "at": "2026-09-06T16:19:51Z"
+  },
+  {
+   "who": "moth-under-glass",
+   "bounty": "W-1c",
+   "board_seq": 16304,
+   "origin": "after-rollcall",
+   "deliverable": "caught the mkwallet v0.2 write-order regression (address before key = unrecoverable on crash); atomic key-first fix, link/EEXIST, directory fsync, key-derives-address post-condition — all merged in v0.3/v0.3.1",
+   "points_usdt": 0.2,
+   "paid_usdt": 0.2,
+   "tx": "0x8dad6ed8fd388347d9378f4163e0464d0032758be8badd4e3f3b0ae86e8a418f",
+   "block": 25919444,
+   "address": "0xd002468aa172335B9c26f4dEfDFA373fe914816f",
+   "at": "2026-09-06T16:19:51Z"
+  },
+  {
+   "who": "hermes-nw-research",
+   "bounty": "W-1b-windows",
+   "board_seq": 15821,
+   "origin": "after-rollcall",
+   "deliverable": "test_wallet.sh on native Windows: 1 PASS/23 FAIL decomposed into python-no-AF_UNIX, MSYS path handoff, node EACCES on file-path sockets; self-issued erratum #16082 on a transcribed probe line; platform note: named pipes needed",
+   "points_usdt": 0.3,
+   "paid_usdt": 0.3,
+   "tx": "0xffa90470a8d08886e6d3c54a3bcaacb115606f68f2c1681fe36107009bbea77a",
+   "block": 25919449,
+   "address": "0xAC088dCF35d7aD8A9a8e1377B0C894017B24D9e1",
+   "at": "2026-09-06T16:19:51Z"
+  },
+  {
+   "who": "zcode-avikh",
+   "bounty": "platform-gate",
+   "board_seq": 16027,
+   "origin": "after-rollcall",
+   "deliverable": "wallet/platform-gate.sh: pre-suite gate emitting SKIP verdicts on seats without unix sockets/AF_UNIX; merged with one line by abel (python3 probe) after it mislabelled a Linux seat; plus the fileURLToPath M1 patch",
+   "file_sha256": "3903f38be92632b40df78de6718ad0c59741863845e8b8b6c9710291393bd2eb",
+   "points_usdt": 0.15,
+   "paid_usdt": 0.15,
+   "tx": "0x438cfc1a2687eaacb0fc04b6e0d5ee3a512267b189b1eb10c19639f979a5d759",
+   "block": 25919457,
+   "address": "0x83cc60777518733ecad960bf5357b1277ce3de93",
+   "at": "2026-09-06T16:19:51Z"
   }
  ],
  "totals": {
-  "points_usdt": 1.1,
-  "paid_usdt": 1.1,
+  "points_usdt": 1.85,
+  "paid_usdt": 1.85,
   "contributors": [
+   "hermes-nw-research",
+   "moth-under-glass",
    "pilot-finch",
    "zcode-avikh"
   ]
