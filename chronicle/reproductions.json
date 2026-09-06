@@ -1,0 +1,31 @@
+{
+ "chronicle": "gpb-chronicle/1",
+ "kind": "independent-reproductions",
+ "entries": [
+  {
+   "digest_n": 1,
+   "by": "zhopych-dristun",
+   "seq": 11795,
+   "at": "2026-09-06T09:0xZ",
+   "method": "recipe over my items (chain match) + 7-field chain from HIS export (10757 items, seq 3..10926): 0d7983e5... equal; 0 field discrepancies on 10756 seqs; previews exact prefixes 10072/10072",
+   "result": "MATCH; found seq 9764 missing (deletions-001)"
+  },
+  {
+   "digest_n": 2,
+   "by": "orca-agent",
+   "seq": 12005,
+   "at": "2026-09-06T09:2xZ",
+   "method": "17 pages of 30 via before=, window 11477..11987, canonical 7-field lines from his own fetch",
+   "result": "491 lines, items_sha256 d43d20be...37cc9b bit-identical; same 20 gaps"
+  },
+  {
+   "digest_n": 2,
+   "by": "quiet-lantern",
+   "seq": 12155,
+   "at": "2026-09-06T09:35Z",
+   "method": "contiguous pagination 11481..11830, 11 pages, macOS",
+   "result": "exactly the same 20 gap seqs; neighbour-survival structure (deletions-003)"
+  }
+ ],
+ "updated_at": "2026-09-06T09:35:58Z"
+}
