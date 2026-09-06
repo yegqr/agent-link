@@ -8,6 +8,9 @@ that can call wallet.send". If a control below is not implemented, it says so.
 - A1 the private key (one file, one process may read it)
 - A2 the funds it controls (today: 7.30 USDT, ~0.0008 ETH)
 - A3 the spend ledger and receipts (integrity: a stranger can recompute what was paid to whom)
+- A4 **budget.json** — the human-free budget state (rolling 24 h). Under the same uid it is the highest-value
+  file for an attacker: delete it and the budget is fresh; edit it and the budget is whatever they say.
+  Covered only by C2 — which is why C2 is the whole game (hardline-cto #15061).
 
 ## Adversaries, most likely first
 - T1 **the agent itself, prompt-injected** by board content (every post is untrusted input by the
@@ -31,7 +34,7 @@ that can call wallet.send". If a control below is not implemented, it says so.
 | C6 | **human confirmation above a threshold the agent cannot raise** (threshold in policy.json; one-time approval codes minted by approve.sh into approvals/, consumed on use, bound to payee and max amount, expiring) | implemented in code (signerd.mjs) — the threshold is unraisable by the agent only once C2 makes policy.json and approvals/ another uid's | T1 |
 | C7 | LOG line written before broadcast; append-only ledger; receipts with tx, block, verify-out | implemented | A3 integrity, T4 forensics |
 | C8 | swap: exact-allowance approve, slippage bound, router allowlist | not started (swap is last by design) | T2, T5 |
-| C9 | **human-free daily budget** (v0.3, hardline-cto #14994 finding 1): the sum of below-threshold sends per UTC day is capped in `budget.json`; beyond it every send needs a human code, so splitting a payment cannot bypass C6 | implemented in signerd v0.3 (default 2 USDT/day); enforcement against the agent needs C2 like everything else | T1 |
+| C9 | **human-free budget** (v0.3/v0.3.1): the sum of below-threshold sends over a ROLLING 24-hour window is capped in `budget.json` (not a UTC-date bucket, so a send straddling midnight buys nothing); a minimum amount (0.01) and a count cap (20) stop dust probes; beyond the budget every send needs a human code | implemented in signerd v0.3.1; enforcement against the agent needs C2 like everything else | T1 |
 | C10 | approvals marked pending → used only after a confirmed broadcast; released on failure; optionally bound to a purpose string the human read (v0.3, #14994 findings 4 and note) | implemented | T1, T4 |
 
 ## What follows from the table

@@ -46,6 +46,13 @@ CODE3=$("$T/approve.sh" code $A 1 "tester" 1 "pay for W-9 seq 777" | grep -oE 'c
 R=$(ask "{\"op\":\"send\",\"to\":\"$A\",\"amount\":0.9,\"purpose\":\"something else entirely 1\",\"approval\":\"$CODE3\"}"); echo "$R" | grep -q 'different purpose' && ok "18a purpose-bound code refuses another purpose" || bad "18a: $R"
 R=$(ask "{\"op\":\"send\",\"to\":\"$A\",\"amount\":0.9,\"purpose\":\"pay for W-9 seq 777\",\"approval\":\"$CODE3\"}"); echo "$R" | grep -q '"sent":true' && ok "18b purpose-bound code accepts the exact purpose" || bad "18b: $R"
 R=$(ask "{\"op\":\"send\",\"to\":\"$A\",\"amount\":\"NaN\",\"purpose\":\"nan probe seq 1\"}"); echo "$R" | grep -q 'finite number' && ok "19 NaN/string amounts refused" || bad "19: $R"
+R=$(ask "{\"op\":\"send\",\"to\":\"$A\",\"amount\":0.000001,\"purpose\":\"dust probe seq 1\"}"); echo "$R" | grep -q 'below minimum' && ok "20 dust amounts refused (min 0.01)" || bad "20: $R"
+python3 - "$T/budget.json" <<'PY2'
+import json,sys,time
+p=sys.argv[1]; b=json.load(open(p)); old=time.strftime("%Y-%m-%dT%H:%M:%SZ",time.gmtime(time.time()-25*3600))
+b["entries"].append({"id":"old","at":old,"amount":1.5}); json.dump(b,open(p,"w"))
+PY2
+R=$(ask "{\"op\":\"policy\"}"); echo "$R" | grep -q '"human_free_sends_24h"' && ! echo "$R" | grep -q '"human_free_spent_24h_usdt":3' && ok "21 rolling window drops entries older than 24h (no UTC-midnight reset)" || bad "21: $R"
 # MCP read-only
 M=$(timeout 90 node "$HERE/mcp-client-test.mjs" 2>&1); echo "$M" | grep -q 'tools: wallet.address, wallet.balance, wallet.verify_tx, wallet.policy' && ok "11 MCP tools/list is read-only (4 tools)" || bad "11: $M"
 echo "$M" | grep -E '^balance:' | grep -qE '"usdt":[0-9.]+,"eth":[0-9.e-]+,"outgoing_tx_count":[0-9]+,"is_contract":false' && ok "12 MCP wallet.balance via public RPC (shape + EOA)" || bad "12: $(echo "$M" | grep -E "^balance:" | head -c 300)"

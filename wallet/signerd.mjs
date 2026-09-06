@@ -1,9 +1,11 @@
 #!/usr/bin/env node
-// signerd.mjs v0.3 — AgentWallet policy gate. v0.3 answers hardline-cto #14994: a persisted HUMAN-FREE
+// signerd.mjs v0.3.1 — AgentWallet policy gate. v0.3 answers hardline-cto #14994: a persisted HUMAN-FREE
 // BUDGET per UTC day (splitting a payment into below-threshold sends no longer bypasses the human),
 // per-path isolation report (policy, allowlist, approvals/, key file, socket dir), socket dir mode that a
 // second uid can traverse, approvals marked pending -> used only after a successful broadcast, and
-// approvals bound to a purpose string the human read before minting. A local daemon that OWNS the key and answers over a
+// approvals bound to a purpose string the human read before minting. v0.3.1 (hardline-cto #15061):
+// the human-free budget is a ROLLING 24-hour window of timestamped sends, not a UTC-date bucket, so a
+// send straddling midnight buys nothing; a minimum amount and a count cap stop dust probes. A local daemon that OWNS the key and answers over a
 // Unix socket; the agent never touches the key file. Layered on signer.mjs (caps, payee guard,
 // ledger, receipts): signerd adds a root-ownable policy file, a payee ALLOWLIST with the board seq
 // of the claimant's own post, and a HUMAN THRESHOLD: above it, a one-time approval code must exist in
@@ -37,7 +39,7 @@ function loadJson(p, fallback) { try { return JSON.parse(fs.readFileSync(p, "utf
 function policy() {
   const p = loadJson(POLICY, null);
   if (!p) throw new Error("policy.json missing or invalid: " + POLICY);
-  return { max_per_tx: 5, max_per_day: 10, human_threshold_usdt: 1, human_free_budget_per_day_usdt: 2, allowlist_required: true, ...p };
+  return { max_per_tx: 5, max_per_day: 10, human_threshold_usdt: 1, human_free_budget_per_day_usdt: 2, max_human_free_sends_per_day: 20, min_amount_usdt: 0.01, allowlist_required: true, ...p };
 }
 function allowlist() { return loadJson(ALLOWLIST, { entries: [] }).entries || []; }
 function isolationReport() {
@@ -49,9 +51,12 @@ function isolationReport() {
   return { daemon_uid: me, per_path: per, isolated: allOther,
     note: allOther ? "every policy path, approvals/, the key file and the socket dir are owned by another uid: C2 met" : "at least one of policy/allowlist/approvals/budget/key/socket-dir is owned by the daemon's own uid or missing: caps are policy, not enforcement (THREAT-MODEL C2 not met)" };
 }
-function budgetLoad() { const d = new Date().toISOString().slice(0, 10); const b = loadJson(BUDGET, null); return b && b.day === d ? b : { day: d, human_free_spent_usdt: 0 }; }
-function budgetReserve(amount) { const b = budgetLoad(); const p = policy(); if (b.human_free_spent_usdt + amount > p.human_free_budget_per_day_usdt + 1e-9) return { ok: false, spent: b.human_free_spent_usdt, budget: p.human_free_budget_per_day_usdt }; b.human_free_spent_usdt = Math.round((b.human_free_spent_usdt + amount) * 1e6) / 1e6; fs.writeFileSync(BUDGET, JSON.stringify(b)); return { ok: true, spent: b.human_free_spent_usdt, budget: p.human_free_budget_per_day_usdt }; }
-function budgetRelease(amount) { const b = budgetLoad(); b.human_free_spent_usdt = Math.max(0, Math.round((b.human_free_spent_usdt - amount) * 1e6) / 1e6); try { fs.writeFileSync(BUDGET, JSON.stringify(b)); } catch {} }
+const DAY_MS = 24 * 3600 * 1000;
+function budgetLoad() { const b = loadJson(BUDGET, null); const now = Date.now(); const entries = (b && Array.isArray(b.entries) ? b.entries : []).filter((e) => now - Date.parse(e.at) < DAY_MS); return { entries, spent: Math.round(entries.reduce((s, e) => s + Number(e.amount), 0) * 1e6) / 1e6, count: entries.length }; }
+function budgetSave(b) { fs.writeFileSync(BUDGET, JSON.stringify({ v: "rolling-24h/1", entries: b.entries })); }
+function budgetRoom(amount) { const p = policy(); const b = budgetLoad(); return { ok: amount >= p.min_amount_usdt && b.spent + amount <= p.human_free_budget_per_day_usdt + 1e-9 && b.count < p.max_human_free_sends_per_day, spent: b.spent, count: b.count, budget: p.human_free_budget_per_day_usdt, window: "rolling 24h" }; }
+function budgetReserve(amount) { const r = budgetRoom(amount); if (!r.ok) return r; const b = budgetLoad(); const id = Math.random().toString(36).slice(2); b.entries.push({ id, at: new Date().toISOString(), amount }); budgetSave(b); return { ...r, ok: true, spent: Math.round((r.spent + amount) * 1e6) / 1e6, id }; }
+function budgetRelease(id) { const b = budgetLoad(); b.entries = b.entries.filter((e) => e.id !== id); try { budgetSave(b); } catch {} }
 function approvalFile(code) { return (code && /^[A-Za-z0-9_-]{8,64}$/.test(code)) ? path.join(APPROVALS, code + ".json") : null; }
 function checkApproval(code, to, amount, purpose) {
   const f = approvalFile(code); if (!f) return { ok: false, why: "approval code missing or malformed" };
@@ -74,11 +79,12 @@ function gate(req) {
   if (p.allowlist_required && !entry) return { ok: false, error: "policy: payee not in allowlist (approve.sh allow <address> <board_seq>)" };
   // v0.3: below the per-request threshold the send still consumes the HUMAN-FREE daily budget; when the
   // budget is exhausted, every send needs a code, whatever its size. Splitting no longer bypasses the human.
-  const b = budgetLoad(); const withinBudget = amount <= p.human_threshold_usdt && (b.human_free_spent_usdt + amount) <= p.human_free_budget_per_day_usdt + 1e-9;
+  if (amount < p.min_amount_usdt) return { ok: false, error: `policy: amount below minimum ${p.min_amount_usdt} USDT` };
+  const room = budgetRoom(amount); const withinBudget = amount <= p.human_threshold_usdt && room.ok;
   let approval = null;
   if (!withinBudget) {
     const r = checkApproval(req.approval, to, amount, purpose);
-    if (!r.ok) return { ok: false, error: "policy: needs a human approval code — " + r.why, human_threshold_usdt: p.human_threshold_usdt, human_free_budget_per_day_usdt: p.human_free_budget_per_day_usdt, human_free_spent_today_usdt: b.human_free_spent_usdt };
+    if (!r.ok) return { ok: false, error: "policy: needs a human approval code — " + r.why, human_threshold_usdt: p.human_threshold_usdt, human_free_budget_per_day_usdt: p.human_free_budget_per_day_usdt, human_free_spent_24h_usdt: room.spent, human_free_sends_24h: room.count };
     approval = r;
   }
   return { ok: true, to, amount, purpose, allowlist_entry: entry || null, approval, consumes_budget: withinBudget };
@@ -91,7 +97,7 @@ function runSigner(mode, to, amount, purpose) {
 function handle(req) {
   const op = req.op;
   if (op === "address") return { ok: true, address: policy().treasury || null, isolation: isolationReport() };
-  if (op === "policy") { const p = policy(); const b = budgetLoad(); return { ok: true, policy: { max_per_tx: p.max_per_tx, max_per_day: p.max_per_day, human_threshold_usdt: p.human_threshold_usdt, human_free_budget_per_day_usdt: p.human_free_budget_per_day_usdt, allowlist_required: p.allowlist_required }, human_free_spent_today_usdt: b.human_free_spent_usdt, allowlist_size: allowlist().length, isolation: isolationReport() }; }
+  if (op === "policy") { const p = policy(); const b = budgetLoad(); return { ok: true, policy: { max_per_tx: p.max_per_tx, max_per_day: p.max_per_day, human_threshold_usdt: p.human_threshold_usdt, human_free_budget_per_day_usdt: p.human_free_budget_per_day_usdt, max_human_free_sends_per_day: p.max_human_free_sends_per_day, min_amount_usdt: p.min_amount_usdt, allowlist_required: p.allowlist_required }, human_free_spent_24h_usdt: b.spent, human_free_sends_24h: b.count, allowlist_size: allowlist().length, isolation: isolationReport() }; }
   if (op === "quote" || op === "send") {
     const g = gate(req); if (!g.ok) return { ...g, op };
     if (op === "quote") return { ok: true, op, gate: g, ...runSigner("quote", g.to, g.amount, g.purpose) };
@@ -101,7 +107,7 @@ function handle(req) {
     const r = runSigner("send", g.to, g.amount, g.purpose);
     const sent = r.exit === 0 || (r.signer && r.signer.sent === true);
     if (g.approval) approvalMark(g.approval.file, sent ? "used" : "released");
-    if (g.consumes_budget && !sent) budgetRelease(g.amount);
+    if (g.consumes_budget && !sent && budget && budget.id) budgetRelease(budget.id);
     return { ok: sent, op, gate: { allowlist_seq: g.allowlist_entry && g.allowlist_entry.board_seq, approval: g.approval ? { approved_by: g.approval.approved_by, purpose_bound: g.approval.purpose_bound } : null, human_free_budget: budget }, ...r };
   }
   return { ok: false, error: "unknown op" };
