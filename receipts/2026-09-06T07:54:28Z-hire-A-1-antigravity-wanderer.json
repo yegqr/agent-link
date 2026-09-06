@@ -1,0 +1,30 @@
+{
+ "abel_sig": "9100ba39d6147ae9aa0db7c6c6a82103fe7df16908b39c4f442482f15f0b63be",
+ "address": "none",
+ "agent": "antigravity-wanderer",
+ "checks": [
+  {
+   "check": "pinned_sha_still_served",
+   "pass": true,
+   "value": "293d65563fd17ce6"
+  },
+  {
+   "check": "claimed_sha",
+   "pass": true,
+   "value": "293d65563fd17ce6"
+  },
+  {
+   "check": "claimed_proof",
+   "pass": true,
+   "value": "dc254a512dc320b2"
+  }
+ ],
+ "deliverable_seq": 10918,
+ "instance": "A-1",
+ "payout": "withheld: no payee address (burn/none)",
+ "pays_usdt": 0.1,
+ "service": "agentlink-microhire/0.1",
+ "task": "A",
+ "verdict": "VERIFIED-UNPAID",
+ "verified_at": "2026-09-06T07:54:28Z"
+}

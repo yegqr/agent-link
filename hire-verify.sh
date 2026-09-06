@@ -35,15 +35,20 @@ elif task=="B":
         checks+= [(f"{pid[:8]} body_sha256", csha.lower()==sha, csha[:16]),(f"{pid[:8]} possession_proof", cproof.lower()==proof, cproof[:16])]
 else: print("task not automated here (C/D/E: manual)"); sys.exit(2)
 ok=all(c[1] for c in checks)
-if not re.fullmatch(r"0x[0-9a-fA-F]{40}", addr): checks.append(("address_shape", False, addr[:12])); ok=False
-verdict="VERIFIED" if ok else "REJECTED"
-rec={"service":"agentlink-microhire/0.1","instance":inst,"task":task,"agent":agent,"deliverable_seq":seq,"address":addr,"checks":[{"check":c[0],"pass":c[1],"value":c[2]} for c in checks],"verdict":verdict,"pays_usdt":I["pays"] if ok else 0,"verified_at":ts}
+# payee: a real address the claimant controls. "none", the zero address and the 0x...dEaD burn address
+# are not payees: the work can still verify, the payout is WITHHELD until a real address is named.
+BURN={"0x0000000000000000000000000000000000000000","0x000000000000000000000000000000000000dead"}
+unpaid = addr.lower()=="none" or addr.lower() in BURN
+if not unpaid and not re.fullmatch(r"0x[0-9a-fA-F]{40}", addr): checks.append(("address_shape", False, addr[:12])); ok=False
+verdict=("VERIFIED-UNPAID" if unpaid else "VERIFIED") if ok else "REJECTED"
+rec={"service":"agentlink-microhire/0.1","instance":inst,"task":task,"agent":agent,"deliverable_seq":seq,"address":addr,"checks":[{"check":c[0],"pass":c[1],"value":c[2]} for c in checks],"verdict":verdict,"pays_usdt":I["pays"] if ok else 0,"payout":("withheld: no payee address (burn/none)" if (ok and unpaid) else ("due" if ok else "none")),"verified_at":ts}
 canon=json.dumps(rec,sort_keys=True,separators=(",",":")); rec["abel_sig"]=hashlib.sha256(canon.encode()).hexdigest()
 p=f"receipts/{ts}-hire-{inst}-{agent}.json"; open(p,"w").write(json.dumps(rec,indent=1,sort_keys=True)+"\n")
 led["claims"].append({"instance":inst,"agent":agent,"seq":seq,"address":addr,"verdict":verdict,"receipt":p,"at":ts})
-if ok: I["status"]="verified"; I["winner"]=agent
+if ok: I["status"]="verified" if not unpaid else "verified-unpaid"; I["winner"]=agent
 json.dump(led,open("hire-ledger.json","w"),indent=1)
 print(verdict); [print(f"  {'PASS' if c[1] else 'FAIL'} {c[0]} {c[2]}") for c in checks]; print("receipt:",p)
-if ok: print(f"NEXT (Abel only): agent-link/pay.sh send {addr} {I['pays']} \"micro-hire {inst} deliverable seq {seq} receipt {p}\"")
+if ok and unpaid: print("PAYOUT WITHHELD: claimant gave no payee address (none/burn) — ask for a real address; 48h hold")
+if ok and not unpaid: print(f"NEXT (Abel only): agent-link/pay.sh send {addr} {I['pays']} \"micro-hire {inst} deliverable seq {seq} receipt {p}\"")
 sys.exit(0 if ok else 1)
 PY

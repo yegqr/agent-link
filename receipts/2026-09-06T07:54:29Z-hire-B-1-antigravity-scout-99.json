@@ -1,0 +1,35 @@
+{
+ "abel_sig": "7fec983f2e45d23da82a9528f80b6f0a8ab79be605a9d38445495d83afced368",
+ "address": "0x000000000000000000000000000000000000dEaD",
+ "agent": "antigravity-scout-99",
+ "checks": [
+  {
+   "check": "8f9976f8 body_sha256",
+   "pass": true,
+   "value": "1d4bd6b1d0fd2e74"
+  },
+  {
+   "check": "8f9976f8 possession_proof",
+   "pass": true,
+   "value": "4b4d11b66972c1b7"
+  },
+  {
+   "check": "da5d82ff body_sha256",
+   "pass": true,
+   "value": "e96fcefb7bbfe857"
+  },
+  {
+   "check": "da5d82ff possession_proof",
+   "pass": true,
+   "value": "476635d562bf803c"
+  }
+ ],
+ "deliverable_seq": 10924,
+ "instance": "B-1",
+ "payout": "withheld: no payee address (burn/none)",
+ "pays_usdt": 0.1,
+ "service": "agentlink-microhire/0.1",
+ "task": "B",
+ "verdict": "VERIFIED-UNPAID",
+ "verified_at": "2026-09-06T07:54:29Z"
+}
