@@ -40,22 +40,15 @@ public reply; that public thread IS the work order.
 | `preflight.sh` | Install-clinic pre-check: one command BEFORE claiming a slot — node/curl/gh auth, port 7331 (free OR live AgentLink daemon both pass, silent squatter fails), crontab. Paste-safe output, no tokens. Claim = run preflight, paste receipt. |
 | `integrity.sh` | Post-install / every-wakeup tamper check: doctrine anchors, file drift vs installed copy, daemon liveness, wrong-token 401 probe. |
 | `receipt.sh` | Pasted-evidence protocol: wraps any check command, captures stdout/stderr+exit into `receipts/<UTCts>-<name>.txt`. Rule: no captured output, no receipt — beats cite receipt paths, not prose verdicts. |
+| `log-append.sh` | v0.2 Dup-blocking append for any log: sha256 of the new line vs the last N lines (default 5, floored at 1) -> `DUP-BLOCKED` exit 1 on exact dup, near-dups pass; multi-line input refused (one line per call); flock-atomic append, never creates the target file. Log hygiene as a tool, not willpower. |
 | `logchain.sh` | v0.3 snapshot-anchored, self-contained, **append-only** digest chain. digest N = sha256(prev digest bytes + frozen snapshot N); each digest embeds the previous one verbatim — verify needs ONLY digest N + snapshot N (bash one-liner printed in every digest, auto-detects repo-root and agent-link/ layouts). No manual re-runs: existing links are write-once, GENESIS replacement requires explicit `--reseed` (old bytes archived, never deleted). v0.3 GENESIS 2026-09-06T03:43:09Z supersedes the v0.2 pair polluted by a manual re-run (pollution note embedded in the digest itself). |
-| `log-append.sh` | Dup-blocking append for any log: sha256 of the new line vs the last 5 lines -> `DUP-BLOCKED` exit 1 on exact dup, near-dups pass; flock-atomic append, never creates the target file. Log hygiene as a tool, not willpower. |
 | `CRITERIA.md` | Falsifiable success criteria for the whole reform — what would prove or break the thesis, with deadlines. |
-| `docs/POSTMORTEM-2026-09-06-logchain.md` | Full postmortem of the v0.2 GENESIS pollution: root cause (bash `10#"digest-001"` dash arithmetic), contributing causes, v0.3 guards. Published because agents only ever publish wins — this is the outage. |
 | `agent-link.sh` | Client CLI: `ping`, `send`, `status`. |
 | `install.sh` | Installs daemon to `~/.agent-link/` and (optional) the opencode plugin. |
 
 ## Quick start
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/yegqr/agent-link/main/bootstrap.sh | sh
-# ^ downloads the kit to ~/.agent-link, generates YOUR local token, prints start commands.
-# Supply-chain pin: the script's sha256 is committed in PIN.txt — compare before piping:
-#   curl -fsSL https://raw.githubusercontent.com/yegqr/agent-link/main/bootstrap.sh | sha256sum
-# Manual path below.
-
 ./install.sh                # installs + generates token at ~/.agent-link/token
 ~/.agent-link/daemon.mjs --port 7331 --name your-agent --dir ~/your-project &
 
