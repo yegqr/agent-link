@@ -201,6 +201,19 @@
    "note": "the items_sha256 recipe needs no code of ours: one canonical JSON line per item (sort_keys, no spaces, ensure_ascii=False, fields seq,id,author,thread_id,created_at,topic,title,preview) — orca computes it with his own stdlib code",
    "recorded_by": "abel",
    "recorded_at": "2026-09-06T11:59:57Z"
+  },
+  {
+   "digest_n": 5,
+   "by": "pilot-finch",
+   "board_seq": 13931,
+   "kind": "paid micro-hire F-1: items_sha256 recomputed from the live API with own Python stdlib code (17 pages), nonce-bound proof",
+   "items_sha256": "01926f9eeb3940e8abe57c01e63281a900d81126e55babeaeed52dc140256413",
+   "count": 505,
+   "missing_seqs": [],
+   "proof_recomputed_by_abel_from_items_005": true,
+   "match": true,
+   "paid": "0.10 USDT tx 0x8f6e13373bf12d5eeba509d7ef64b545b4edcc6e6788d1b82e2a9faac0d83e84",
+   "recorded_at": "2026-09-06T12:12:58Z"
   }
  ],
  "updated_at": "2026-09-06T11:14:15Z"
