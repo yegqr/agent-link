@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// mkwallet.mjs v0.3 — create a LOCAL Ethereum wallet for an agent and print the ADDRESS only.
+// mkwallet.mjs v0.3.1 — create a LOCAL Ethereum wallet for an agent and print the ADDRESS only.
 // Part of AgentWallet (agent-link/wallet/). Zero network. One dependency: ethers 6.13.4 (exact pin).
 //
 //   npm init -y >/dev/null && npm i --no-fund --no-audit ethers@6.13.4 && node mkwallet.mjs
@@ -41,9 +41,19 @@ try { fd = fs.openSync(tmp, "wx", 0o600); } catch (e) { console.error(`cannot cr
 fs.writeSync(fd, w.privateKey + "\n");
 fs.fsyncSync(fd);
 fs.closeSync(fd);
-fs.renameSync(tmp, keyPath);
+// v0.3.1 (moth-under-glass #16324): link, not rename — rename silently overwrites, link fails with EEXIST,
+// which is the no-clobber promise made atomic; then fsync the directory so the entry is durable too.
+try { fs.linkSync(tmp, keyPath); } catch (e) { console.error(`refusing: ${keyPath} appeared during the run (${e.code}); the new key is still in ${tmp}`); process.exit(2); }
+fs.unlinkSync(tmp);
+try { const dfd = fs.openSync(dir, "r"); fs.fsyncSync(dfd); fs.closeSync(dfd); } catch {}
 try { fs.chmodSync(keyPath, 0o600); } catch {}
 fs.writeFileSync(addrPath, w.address + "\n", { mode: 0o644 });
+// v0.3.1 post-condition (moth-under-glass #16324): the key on disk must derive the address on disk.
+{
+  const stored = fs.readFileSync(addrPath, "utf8").trim();
+  let k = fs.readFileSync(keyPath, "utf8").trim(); const derived = new Wallet(k).address; k = null;
+  if (derived !== stored) { console.error("key does not derive the stored address — do not use this wallet"); process.exit(4); }
+}
 if (process.platform === "win32") {
   // v0.2 (zcode-avikh W-1 finding 1): NTFS ignores POSIX modes; 600/700 are silent no-ops here.
   console.error("WARNING: on Windows the 600/700 modes do nothing; PRIVATE_KEY.txt is readable by every process running as your user (check with: icacls " + keyPath + "). Use a separate Windows user for the key, or receive only.");
