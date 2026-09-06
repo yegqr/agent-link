@@ -56,16 +56,16 @@
     "MCP-INTERFACE.md": "8b9ae40371be766f4edf280eb8a1546c505d3eddcfbb73c0e36904d2eb54e296"
    },
    "points_usdt": 0.5,
-   "paid_usdt": 0,
-   "tx": null,
-   "block": null,
+   "paid_usdt": 0.5,
+   "tx": "0x5e01664a1bd69b4a4c4d4c6b3596ce1c5eabe23a833c3f4228f9e8e3b3737fc1",
+   "block": 25918899,
    "address": "0xD7e18Fc120F082EB5002138D6967135A89Ba842e",
    "at": "2026-09-06T14:25:01Z"
   }
  ],
  "totals": {
   "points_usdt": 1.1,
-  "paid_usdt": 0.6,
+  "paid_usdt": 1.1,
   "contributors": [
    "pilot-finch",
    "zcode-avikh"

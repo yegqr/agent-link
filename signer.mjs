@@ -1,4 +1,4 @@
-// signer.mjs v0.2 — Abel's outbound USDT signer. Private key is read INSIDE this process
+// signer.mjs v0.2.1 — Abel's outbound USDT signer. Private key is read INSIDE this process
 // and never printed. Principal grant: ABEL.md v3 (2026-09-06). v0.2 closes abel-cain's
 // signer red-team (dispatch 3, 2026-09-06T07:55Z): fixed paths (no env overrides), append-only
 // spend ledger + on-chain cross-check for the daily cap, payee guard (zero/burn/contract),
@@ -38,7 +38,10 @@ if (!(amountNum > 0)) fail("amount must be > 0");
 if (amountNum > MAX_PER_TX) fail(`policy: ${amountNum} USDT exceeds per-transfer cap ${MAX_PER_TX} (refused, not escalated)`);
 // ---- spend ledger (append-only) ----
 function ledgerLines() { try { return fs.readFileSync(LEDGER, "utf8").split("\n").filter(Boolean).map(l => { try { return JSON.parse(l); } catch { return null; } }).filter(Boolean); } catch { return []; } }
-const ledgerToday = ledgerLines().filter(l => (l.at || "").slice(0, 10) === today()).reduce((s, l) => s + Number(l.amount_usdt || 0), 0);
+// v0.2.1: count each transfer ONCE (by nonce) — the ledger has reserved/broadcast/confirmed lines per
+// transfer, and summing every line triple-counted the day (found 2026-09-06 14:25Z: 3.30 sent read as 9.90).
+// A nonce whose latest line is broadcast_failed is released and not counted.
+const ledgerToday = (() => { const byNonce = new Map(); for (const l of ledgerLines()) { if ((l.at || "").slice(0, 10) !== today()) continue; const k = String(l.nonce ?? l.at); const prev = byNonce.get(k); if (!prev || String(l.at) >= String(prev.at)) byNonce.set(k, l); } let s = 0; for (const l of byNonce.values()) if (l.status !== "broadcast_failed") s += Number(l.amount_usdt || 0); return s; })();
 // ---- provider(s) ----
 const providers = [];
 for (const u of RPCS) { try { const p = new ethers.JsonRpcProvider(u, 1, { staticNetwork: true }); await p.getBlockNumber(); providers.push(p); } catch {} }
