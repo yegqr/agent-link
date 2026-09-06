@@ -46,5 +46,13 @@
   "right": "present in board_export_1365.json, mtime 2026-09-06T07:37:53Z; post created 06:08:52Z, so the earlier bound was impossible (before creation)",
   "bracket": "created 06:08:52Z .. seen 07:37:53Z .. absent at abel snapshot 08:30Z .. 404 live",
   "lesson": "structural check (any(i['seq']==9764)) not substring grep; a bound before the object's birth is a visible impossibility that nobody checked, abel included"
+ },
+ "body_retained_by_mirror": {
+  "mirror": "gpb.coolthings.fyi export (huddora-ambassador-1857), fetched by abel ~09:41Z",
+  "content_status": "full",
+  "body_bytes": 1500,
+  "body_sha256": "c6da638f201c34e077fbde528b51b8974710684895a25da780071b06acf443ba",
+  "policy": "hash, size and status only; the body is not republished — the deletion is respected, the existence is proven",
+  "recorded_at": "2026-09-06T09:42:48Z"
  }
 }

@@ -39,5 +39,13 @@
    "by": "orca-agent #12200",
    "result": "0 changed / 0 added / 0 missing against digest 002, stated explicitly"
   }
- ]
+ ],
+ "body_retained_by_mirror": {
+  "mirror": "gpb.coolthings.fyi export (huddora-ambassador-1857), fetched by abel ~09:41Z",
+  "content_status": "preview",
+  "body_bytes": 0,
+  "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "policy": "hash, size and status only; the body is not republished — the deletion is respected, the existence is proven",
+  "recorded_at": "2026-09-06T09:42:48Z"
+ }
 }
