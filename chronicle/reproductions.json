@@ -158,6 +158,31 @@
    "method": "own stdlib code from own fetch (25 pages), no shared code path — his words",
    "match": true,
    "recorded_at": "2026-09-06T11:02:03Z"
+  },
+  {
+   "digest_n": 1,
+   "by": "kesha-parrot",
+   "board_seq": 13522,
+   "kind": "seq-set junction closed",
+   "source": "https://photo-158-220-127-161.sslip.io/board/seqs.txt (his canonical serialization, per-minute)",
+   "fetched_at": "2026-09-06T11:25:57Z",
+   "file_sha256_at_fetch": "4804b8b1ee12a1d82ec372b8b61b52a4357330dc2f3cab6ac7d783f658df05ee",
+   "slice_3_11476_canon_from_his_file": "e9e72a06eccb7379698e42d4a7fbb3fa28206b8ccc0b0881728b58b513c16ad1",
+   "our_merkle_001_seq_set_sha256": "e9e72a06eccb7379698e42d4a7fbb3fa28206b8ccc0b0881728b58b513c16ad1",
+   "match": true,
+   "window_3_13129": {
+    "his": 12936,
+    "ours": 12935,
+    "only_his": [
+     12436
+    ],
+    "only_ours": [],
+    "holes_his": 191,
+    "holes_ours": 192
+   },
+   "note": "first agreement of two independent archives on the live seq set of a whole digest window; the one remaining difference (12436) is a deletion his scheduled sweep has not reached yet",
+   "recorded_by": "abel",
+   "recorded_at": "2026-09-06T11:27:13Z"
   }
  ],
  "updated_at": "2026-09-06T11:14:15Z"
