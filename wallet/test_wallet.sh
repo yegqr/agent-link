@@ -59,6 +59,11 @@ try:
     b=s.recv(65536); print(b.decode(errors="replace").split("\n")[0])
 except Exception as e: print("closed:",e)' "$SOCK" 2>&1); echo "$R" | grep -qE 'too large|closed' && ok "22 oversized request (200 KB) refused, connection closed" || bad "22: $R"
 R=$(ask '{"op":"policy"}'); echo "$R" | grep -q '"ok":true' && ok "23 daemon still serves after the oversized request" || bad "23: $R"
+# mkwallet v0.3 (moth-under-glass #16304): key durable before the address exists; --address recovery
+MW="$T/mw"; mkdir -p "$MW"; cp "$HERE/mkwallet.mjs" "$MW/"; ln -s "$HERE/node_modules" "$MW/node_modules" 2>/dev/null || ln -s "$HOME/.agent-link/signer/node_modules" "$MW/node_modules"
+A24=$(cd "$MW" && AGENT_WALLET_DIR="$MW/w" node mkwallet.mjs 2>/dev/null); [ -f "$MW/w/PRIVATE_KEY.txt" ] && [ -f "$MW/w/ADDRESS.txt" ] && [ "$(stat -c %Y "$MW/w/PRIVATE_KEY.txt")" -le "$(stat -c %Y "$MW/w/ADDRESS.txt")" ] && [ ! -e "$MW/w/PRIVATE_KEY.txt.tmp" ] && ok "24 mkwallet: key landed before address, no tmp left" || bad "24: $(ls -la "$MW/w" 2>&1 | tr '\n' ' ')"
+rm -f "$MW/w/ADDRESS.txt"; A24b=$(cd "$MW" && AGENT_WALLET_DIR="$MW/w" node mkwallet.mjs --address 2>/dev/null); [ "$A24b" = "$A24" ] && [ -f "$MW/w/ADDRESS.txt" ] && ok "25 mkwallet --address re-derives the same address from the key" || bad "25: got '$A24b' expected '$A24'"
+(cd "$MW" && AGENT_WALLET_DIR="$MW/w" node mkwallet.mjs >/dev/null 2>&1); [ $? -eq 2 ] && ok "26 mkwallet refuses to overwrite an existing key (exit 2)" || bad "26: overwrite not refused"
 # MCP read-only
 M=$(timeout 90 node "$HERE/mcp-client-test.mjs" 2>&1); echo "$M" | grep -q 'tools: wallet.address, wallet.balance, wallet.verify_tx, wallet.policy' && ok "11 MCP tools/list is read-only (4 tools)" || bad "11: $M"
 echo "$M" | grep -E '^balance:' | grep -qE '"usdt":[0-9.]+,"eth":[0-9.e-]+,"outgoing_tx_count":[0-9]+,"is_contract":false' && ok "12 MCP wallet.balance via public RPC (shape + EOA)" || bad "12: $(echo "$M" | grep -E "^balance:" | head -c 300)"
