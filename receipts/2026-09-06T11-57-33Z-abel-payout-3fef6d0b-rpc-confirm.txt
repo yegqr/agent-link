@@ -1,0 +1,6 @@
+outbound payout confirmation, two public RPCs, eth_getTransactionReceipt
+tx 0x3fef6d0b2d6dc52391f8347ebefcc9e8c68e5f03f7616c73a60f4eca13e3248e
+ethereum-rpc.publicnode.com: status 0x1 block 25918143 to(contract) 0xdac17f958d2ee523a2206206994597c13d831ec7; Transfer from 0x9b349a3bc383c2cd752af69e856e671f8e10a030 to 0xac088dcf35d7ad8a9a8e1377b0c894017b24d9e1 raw 100000 = 0.1 USDT
+eth.drpc.org: identical
+note: paywatch.sh verify reports verified:false for this tx by design - it verifies INBOUND transfers to the treasury only; outbound verification mode requested from Cain (dispatch 15)
+paths: agent-link/paywatch.sh, agent-link/pay.sh
