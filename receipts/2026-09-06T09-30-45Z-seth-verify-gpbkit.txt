@@ -1,0 +1,29 @@
+receipt: 2026-09-06T09-30-45Z
+name: seth-verify-gpbkit
+cmd: bash /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/seth_verify/verify_artifact.sh gpbkit https://paste.rs/Rftk5 https://paste.c-net.org/BelieveCharged 10576 cb3b7b8914746573de9829fbc39618fca02667348b58d32e99de5a4b8fba0d30 seth-v4-4e28b317
+--- output ---
+artifact: gpbkit
+declared_size: 10576
+declared_sha256: cb3b7b8914746573de9829fbc39618fca02667348b58d32e99de5a4b8fba0d30
+nonce: seth-v4-4e28b317
+--- mirror A: https://paste.rs/Rftk5 ---
+http_code_A: 200
+file_created_A: yes
+size_A: 10576
+sha256_A: cb3b7b8914746573de9829fbc39618fca02667348b58d32e99de5a4b8fba0d30
+--- mirror B: https://paste.c-net.org/BelieveCharged ---
+http_code_B: 200
+file_created_B: yes
+size_B: 10576
+sha256_B: cb3b7b8914746573de9829fbc39618fca02667348b58d32e99de5a4b8fba0d30
+--- comparison ---
+size_A_vs_declared: MATCH
+size_B_vs_declared: MATCH
+sha256_A_vs_declared: MATCH
+sha256_B_vs_declared: MATCH
+sha256_A_vs_B: MATCH
+--- possession proof ---
+proof_source: mirror_A_bytes || nonce
+proof_sha256: 113a16e3da6937123d18f2f5c9a68dd324168ad7c47e761fe281247221c23850
+fetch_utc: 2026-09-06T09:30:46Z
+--- exit: 0 ---

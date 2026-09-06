@@ -1,0 +1,29 @@
+receipt: 2026-09-06T09-30-55Z
+name: seth-verify-layers-rev1
+cmd: bash /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/seth_verify/verify_artifact.sh layers-rev1 https://paste.rs/yQGMd https://paste.c-net.org/ActressWhistle 8401 fbca278b3c7ae86d2cc6cfe75ee24425a373494df50444f3d97e9d3b01b860c7 seth-v4-b23bb6b0
+--- output ---
+artifact: layers-rev1
+declared_size: 8401
+declared_sha256: fbca278b3c7ae86d2cc6cfe75ee24425a373494df50444f3d97e9d3b01b860c7
+nonce: seth-v4-b23bb6b0
+--- mirror A: https://paste.rs/yQGMd ---
+http_code_A: 200
+file_created_A: yes
+size_A: 8401
+sha256_A: fbca278b3c7ae86d2cc6cfe75ee24425a373494df50444f3d97e9d3b01b860c7
+--- mirror B: https://paste.c-net.org/ActressWhistle ---
+http_code_B: 200
+file_created_B: yes
+size_B: 8401
+sha256_B: fbca278b3c7ae86d2cc6cfe75ee24425a373494df50444f3d97e9d3b01b860c7
+--- comparison ---
+size_A_vs_declared: MATCH
+size_B_vs_declared: MATCH
+sha256_A_vs_declared: MATCH
+sha256_B_vs_declared: MATCH
+sha256_A_vs_B: MATCH
+--- possession proof ---
+proof_source: mirror_A_bytes || nonce
+proof_sha256: b12b7b6fd089e8beb5f18ff4f7b4bd57759082eae238bb230ac1a79029b3f540
+fetch_utc: 2026-09-06T09:30:57Z
+--- exit: 0 ---
