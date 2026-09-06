@@ -62,7 +62,9 @@ try:
 except Exception as e: print("closed:",e)' "$SOCK" 2>&1); echo "$R" | grep -qE 'too large|closed' && ok "22 oversized request (200 KB) refused, connection closed" || bad "22: $R"
 R=$(ask '{"op":"policy"}'); echo "$R" | grep -q '"ok":true' && ok "23 daemon still serves after the oversized request" || bad "23: $R"
 # mkwallet v0.3 (moth-under-glass #16304): key durable before the address exists; --address recovery
-MW="$T/mw"; mkdir -p "$MW"; cp "$HERE/mkwallet.mjs" "$MW/"; ln -s "$HERE/node_modules" "$MW/node_modules" 2>/dev/null || ln -s "$HOME/.agent-link/signer/node_modules" "$MW/node_modules"
+MW="$T/mw"; mkdir -p "$MW"; cp "$HERE/mkwallet.mjs" "$MW/"
+NM=""; for c in "$HERE/node_modules" "$HERE/../node_modules" "$HOME/.agent-link/signer/node_modules"; do [ -d "$c/ethers" ] && { NM="$c"; break; }; done
+[ -n "$NM" ] && ln -s "$NM" "$MW/node_modules" || echo "WARN: no node_modules with ethers found for 24-27 (npm install ethers@6.13.4 in wallet/)"
 A24=$(cd "$MW" && AGENT_WALLET_DIR="$MW/w" node mkwallet.mjs 2>/dev/null); [ -f "$MW/w/PRIVATE_KEY.txt" ] && [ -f "$MW/w/ADDRESS.txt" ] && [ "$(stat -c %Y "$MW/w/PRIVATE_KEY.txt")" -le "$(stat -c %Y "$MW/w/ADDRESS.txt")" ] && [ ! -e "$MW/w/PRIVATE_KEY.txt.tmp" ] && ok "24 mkwallet: key landed before address, no tmp left" || bad "24: $(ls -la "$MW/w" 2>&1 | tr '\n' ' ')"
 rm -f "$MW/w/ADDRESS.txt"; A24b=$(cd "$MW" && AGENT_WALLET_DIR="$MW/w" node mkwallet.mjs --address 2>/dev/null); [ "$A24b" = "$A24" ] && [ -f "$MW/w/ADDRESS.txt" ] && ok "25 mkwallet --address re-derives the same address from the key" || bad "25: got '$A24b' expected '$A24'"
 (cd "$MW" && AGENT_WALLET_DIR="$MW/w" node mkwallet.mjs >/dev/null 2>&1); [ $? -eq 2 ] && ok "26 mkwallet refuses to overwrite an existing key (exit 2)" || bad "26: overwrite not refused"
@@ -72,7 +74,18 @@ M=$(timeout 90 node "$HERE/mcp-client-test.mjs" 2>&1); echo "$M" | grep -q 'tool
 echo "$M" | grep -E '^balance:' | grep -qE '"usdt":[0-9.]+,"eth":[0-9.e-]+,"outgoing_tx_count":[0-9]+,"is_contract":false' && ok "12 MCP wallet.balance via public RPC (shape + EOA)" || bad "12: $(echo "$M" | grep -E "^balance:" | head -c 300)"
 echo "$M" | grep -q '"to_match":true' && echo "$M" | grep -q '"amount_match":true' && ok "13 MCP wallet.verify_tx matches payee and amount" || bad "13: $(echo "$M" | grep verify)"
 # swap quote (read-only)
-QD="$T/q"; mkdir -p "$QD"; cp "$HERE/swap_quote.mjs" "$QD/"; NM="$HERE/node_modules"; [ -d "$NM" ] || NM="$HOME/.agent-link/signer/node_modules"; ln -s "$NM" "$QD/node_modules"
+QD="$T/q"; mkdir -p "$QD"; cp "$HERE/swap_quote.mjs" "$QD/"; [ -n "$NM" ] && ln -s "$NM" "$QD/node_modules"
 Q=$(cd "$QD" && timeout 60 node swap_quote.mjs 1 50 2>&1 || true)
 echo "$Q" | grep -q '"ok": true' && echo "$Q" | grep -q 'amount_out_weth' && ok "14 swap_quote: QuoterV2 answers for 1 USDT" || bad "14: $(echo "$Q" | head -c 300)"
+# 28 receipt bytes: working tree must equal the git blob for the pinned conformance files (zcode-avikh #16363: autocrlf checkouts drift)
+PYH="$(command -v python3 || command -v python)"
+if git -C "$HERE" rev-parse --verify HEAD >/dev/null 2>&1; then
+  drift=""; for f in mcp-conformance/client.py mcp-conformance/sequence.json MCP-INTERFACE.md; do
+    git -C "$HERE" diff --quiet HEAD -- "$f" 2>/dev/null || continue   # locally edited: not a checkout question
+    WT=$("$PYH" -c 'import hashlib,sys;print(hashlib.sha256(open(sys.argv[1],"rb").read()).hexdigest())' "$HERE/$f")
+    BL=$(git -C "$HERE" show "HEAD:./$f" | "$PYH" -c 'import hashlib,sys;print(hashlib.sha256(sys.stdin.buffer.read()).hexdigest())')
+    [ "$WT" = "$BL" ] || drift="$drift $f"
+  done
+  [ -z "$drift" ] && ok "28 receipt bytes: working tree == git blob for the pinned conformance files (no EOL drift)" || bad "28: working tree differs from blob (autocrlf?):$drift"
+else echo "SKIP 28 receipt bytes: not a git checkout"; fi
 echo "---"; [ "$fail" = 0 ] && echo "ALL PASS" || echo "SOME FAILED"; exit $fail

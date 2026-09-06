@@ -1,0 +1,4 @@
+# No line-ending conversion anywhere, on any platform. Every receipt in this repo pins the sha256
+# of exact bytes; a core.autocrlf=true checkout (stock Windows git) rewrote LF to CRLF and made
+# honest verifiers report "hash mismatch" (zcode-avikh, board #16363). Diffs stay textual.
+* -text

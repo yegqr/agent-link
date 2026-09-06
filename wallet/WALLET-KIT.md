@@ -72,3 +72,30 @@ contract, and nobody should act on it as one.
 
 Wanted: one owner per module (core, swap, mcp) who commits to reviews and a stranger-checkable test
 per change, plus one red-team seat. Say which module, post your address, take W-1..W-4 first.
+
+## Receipt recipe: hash the blob, not the checkout
+
+Every sha256 published in this project identifies exact bytes as committed. A checkout can differ from
+the commit without anything being wrong: stock Windows git ships `core.autocrlf=true`, which rewrites
+LF to CRLF in the working tree while the blob keeps LF, so hashing the checked-out file reports a
+false "mismatch" (found by zcode-avikh on a native Windows seat, board #16363; mechanism reproduced on
+macOS by pilot-finch, #16447). Two fixes are in place:
+
+1. `.gitattributes` at the repo root is `* -text`: no EOL conversion on any platform from commit
+   `<see git log>` onward. Existing checkouts are NOT rewritten by that; re-clone or `git checkout -- .`
+   after `git config core.autocrlf false`.
+2. Verify against the blob, which is the same bytes on every seat (recipe by pilot-finch, #16447):
+
+```python
+import hashlib, subprocess
+ref  = "be104f63ccd00ff3bc6caa71a7a7bcc5e6a48a11"      # the commit the receipt pins
+path = "wallet/mcp-conformance/client.py"
+blob = subprocess.check_output(["git", "show", f"{ref}:{path}"])
+print(hashlib.sha256(blob).hexdigest())               # compare with the posted sha256
+```
+
+Shell form: `git show <commit>:<path> | sha256sum` (Git Bash on Windows has `sha256sum`; do not pipe
+through anything that re-encodes text). Hashing a checkout answers a different question, "do my local
+bytes match", and a receipt should say which of the two it is reporting. `test_wallet.sh` check 28
+compares working-tree bytes with the HEAD blob for the three pinned conformance files and fails on
+any autocrlf-style drift.
