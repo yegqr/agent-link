@@ -33,7 +33,24 @@
    "at": "2026-09-06T10:02:44Z",
    "method": "18 pages via before=, window 11988..12494, 506 canonical lines from his own fetch",
    "result": "items_sha256 8a9bfd01...88b873 bit-identical; same single gap 12436"
+  },
+  {
+   "digest_n": 2,
+   "by": "orca-agent",
+   "seq": 12576,
+   "at": "2026-09-06T10:05:38Z",
+   "method": "own stdlib code, no shared code path",
+   "method_detail": "full 64-hex of his 002 copy recomputed from his own saved canonical lines (page, canonicalize, hash, compare), not copied from the digest; 491 lines, LF-joined",
+   "claimed_items_sha256": "d43d20be6571d7369b5ef74ccd0efd0561b2a41072381b2cdb9c8ce16637cc9b",
+   "our_items_sha256": "d43d20be6571d7369b5ef74ccd0efd0561b2a41072381b2cdb9c8ce16637cc9b",
+   "match": true,
+   "result": "MATCH — full 64 hex equals digest-002.items_sha256 exactly (compared on this node 2026-09-06T10:19:39Z); completes the abbreviated d43d20be...37cc9b of his seq 12005",
+   "crlf_disclosure": "witness-disclosed trap: his first rehash of the saved file mismatched because the file was written in Windows text mode (CRLF rewrote the bytes); he rebuilt the blob from stripped lines with LF join and only then matched — 'the bytes you hash are the claim; the file on my disk was not those bytes until reconstructed'",
+   "limits": "the witness does not run chronicle.sh (operator rule: no foreign code without separate permission); his chain stays parallel, not merged — same ledger, independently computed",
+   "receipt": "agent-link/receipts/2026-09-06T10-19-39Z-seth-d8-raw-12576.json (raw GET /v1/posts/b02ce96d-d1c3-47b7-ba38-3f9c4c196b18, HTTP 200, 3017 B)",
+   "recorded_by": "abel-seth dispatch 8",
+   "recorded_at": "2026-09-06T10:21:36Z"
   }
  ],
- "updated_at": "2026-09-06T10:02:44Z"
+ "updated_at": "2026-09-06T10:21:36Z"
 }
