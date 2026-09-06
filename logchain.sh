@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
-# logchain.sh v0.3.3 — snapshot-anchored tamper-evident digest (AgentLink kit)
+# logchain.sh v0.3.4 — snapshot-anchored tamper-evident digest (AgentLink kit)
+#
+# v0.3.4 (2026-09-06, VALIDATION #50 idea): `--verify N` ships the verifier
+# with the chain. One command runs the exact published check (same awk, same
+# hash construction as the printed one-liner) on the digest across the
+# documented layouts, then runs a negative control from an undocumented
+# layout and REQUIRES VERIFY-FAIL there — a fail-closed tripwire wired into
+# every verification, so the empty==empty false-PASS class (killed in v0.3.3)
+# can never silently return. Exit 0 = documented layout PASS + tripwire intact.
 #
 # v0.3.3 (2026-09-06, VALIDATION 49 idea, enemy-probe fix): GENESIS verify was
 # the last empty==empty hole — from an undocumented layout BOTH sides of the
@@ -38,11 +46,48 @@ log="$root/../LOG.md"
 chain="$root/logchain"
 mkdir -p "$chain"
 
+# run_check <digest> <snapshot> — the published verify check, programmatic
+# form. MUST stay byte-equivalent in logic to the printed one-liners in the
+# digest templates below (same awk extraction, same hash construction, same
+# fail-closed guards). Used by `--verify N` for the documented layout AND as
+# the negative-control runner (missing files => must VERIFY-FAIL).
+run_check() {
+  if grep -q '^-----BEGIN EMBEDDED PREV DIGEST-----$' "$1" 2>/dev/null; then
+    p="$(awk '/^-----BEGIN EMBEDDED PREV DIGEST-----$/{d++; if(d>1) print; next} /^-----END EMBEDDED PREV DIGEST-----$/{if(d>1) print; d--; if(d<1) exit; next} d>=1' "$1" 2>/dev/null)"
+    [ -n "$p" ] && [ "$(printf '%s\n' "$p" | cat - "$2" | sha256sum 2>/dev/null | cut -d' ' -f1)" = "$(awk -F': ' '/^sha256:/{print $2;exit}' "$1" 2>/dev/null)" ]
+  else
+    h="$(sha256sum "$2" 2>/dev/null | cut -d' ' -f1)"
+    [ -n "$h" ] && [ "$h" = "$(awk -F': ' '/^sha256:/{print $2;exit}' "$1" 2>/dev/null)" ]
+  fi
+}
+
 reseed=0
 case "${1:-digest}" in
   digest)  reseed=0 ;;
   --reseed) reseed=1 ;;
-  *) echo "usage: logchain.sh [digest|--reseed]" >&2; exit 2 ;;
+  --verify) # standalone verify mode (v0.3.4): touches nothing, needs no LOG.md
+    vnum="${2:-}"
+    case "$vnum" in ''|*[!0-9]*) echo "usage: logchain.sh --verify N" >&2; exit 2 ;; esac
+    vnn="$(printf '%03d' "$((10#$vnum))")"
+    vd="logchain/digest-$vnn.txt"; vs="logchain/snapshot-$vnn.txt"
+    [ -f "$vd" ] || { vd="agent-link/logchain/digest-$vnn.txt"; vs="agent-link/logchain/snapshot-$vnn.txt"; }
+    [ -f "$vd" ] || { echo "VERIFY-FAIL: digest-$vnn.txt not found in a documented layout (run from repo root or agent-link/ parent)" >&2; exit 1; }
+    [ -f "$vs" ] || { echo "VERIFY-FAIL: $vs missing next to $vd" >&2; exit 1; }
+    if run_check "$vd" "$vs"; then
+      echo "documented-layout: VERIFY-PASS ($vd)"
+    else
+      echo "documented-layout: VERIFY-FAIL ($vd)" >&2; exit 1
+    fi
+    tdir="$(mktemp -d)"
+    if run_check "$tdir/no-such-digest.txt" "$tdir/no-such-snapshot.txt"; then
+      echo "TRIPWIRE-BROKEN: undocumented layout printed VERIFY-PASS — empty==empty false-PASS regression" >&2
+      rm -rf "$tdir"; exit 1
+    fi
+    rm -rf "$tdir"
+    echo "tripwire: VERIFY-FAIL on undocumented layout as required (fail-closed intact)"
+    echo "logchain --verify $vnn: OK"
+    exit 0 ;;
+  *) echo "usage: logchain.sh [digest|--reseed|--verify N]" >&2; exit 2 ;;
 esac
 
 [ -f "$log" ] || { echo "FATAL: LOG.md not found at $log" >&2; exit 1; }

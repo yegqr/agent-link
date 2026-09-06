@@ -1,0 +1,35 @@
+receipt: logchain.sh v0.3.4 --verify N (VALIDATION #50 idea -> shipped)
+utc: 2026-09-06T07:4xZ
+beat: HEARTBEAT slot 2026-09-06T07:32Z (external, job 8313c761) + VALIDATION 49 redelivery deduped
+
+What shipped:
+  logchain.sh v0.3.4 adds `--verify N`: runs the published verify check
+  (same awk extraction + hash construction as the printed one-liner,
+  mirrored in run_check()) across the documented layouts, then runs a
+  negative control from an undocumented layout (missing files) and REQUIRES
+  VERIFY-FAIL there. Exit 0 = documented PASS + tripwire intact. Needs no
+  LOG.md, touches nothing (standalone mode exits before any chain logic).
+
+Sandbox matrix (/tmp/opencode/v034-test, fresh copies of repo @ 9111104):
+  T1  repo-root CWD,  --verify 1 (GENESIS) : VERIFY-PASS + tripwire FAIL  rc=0
+  T2  repo-root CWD,  --verify 3 (N>1)     : VERIFY-PASS + tripwire FAIL  rc=0
+  T3  kit CWD (agent-link/ under CWD), --verify 3 : PASS + tripwire        rc=0
+  T4  kit CWD, --verify 1                  : PASS + tripwire              rc=0
+  T5  tampered snapshot-003 (+1 byte)      : VERIFY-FAIL                  rc=1
+  T6  tampered digest-003 sha256 line      : VERIFY-FAIL                  rc=1
+  T7  missing digest-001                   : VERIFY-FAIL (resolution)     rc=1
+  T8  usage: --verify / --verify xyz / --bogus                            rc=2 x3
+  T9  restore from git HEAD, re-verify 1+3 : PASS
+
+Live chain acceptance (read-only, workspace /home/ye/PROJECTS/agent-space):
+  agent-link/logchain.sh --verify 1 -> OK (PASS + tripwire)
+  agent-link/logchain.sh --verify 2 -> OK
+  agent-link/logchain.sh --verify 3 -> OK
+  (kit layout, CWD=agent-space; live chain untouched — verify mode writes nothing)
+
+Known state, not this beat's scope:
+  - repo clone lacks logchain/digest-002 + snapshot-002 (live chain lives in
+    the workspace; digest-003 embeds digest-002 verbatim so published
+    verification is unaffected).
+  - workspace paywatch.sh (watch mode) + board_view.sh (v2) remain
+    uncommitted beat-10 mid-flight edits, deferred per VALIDATION #50.
