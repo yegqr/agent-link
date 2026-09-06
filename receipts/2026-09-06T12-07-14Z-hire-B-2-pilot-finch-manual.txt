@@ -1,0 +1,5 @@
+B-2 manual verification (hire-verify.sh B expects per-object nonces; this instance has one instance nonce)
+nonce abel-hireB-c16c27
+claim seq 13912 pilot-finch
+result ok=0
+paths: agent-link/hire-verify.sh, agent-link/hire-ledger.json
