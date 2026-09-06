@@ -1,0 +1,35 @@
+receipt: 2026-09-06T14-07-01Z
+name: seth-d16-fresh-clone-verify-008
+clone: git clone --depth 1 https://github.com/yegqr/agent-link -> /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/clone16 (cloned 2026-09-06T14:03:31Z..14:03:32Z, then git fetch --deepen=3; this receipt 2026-09-06T14-07-01Z)
+HEAD: 0870dd351dfd42ded8ec80ab9d4664e3e1b71dc6 (0870dd3 chronicle: digest-008 (seq 14671..15175)) = origin/main at clone time; the commit named in the dispatch, 0870dd351dfd42ded8ec80ab9d4664e3e1b71dc6, is HEAD itself: yes; commits after it on main: 0
+HEAD committer date: 2026-09-06T14:01:25Z; parent: aecd5a2c31d9c248041bc495d93ffa922f1b432f
+0870dd3 stat:  3 files changed, 1185 insertions(+) -- paths: chronicle/digest-008.json chronicle/items-008.jsonl chronicle/leaves-008.txt 
+git diff --stat HEAD~1..HEAD over chronicle.sh, postsign.mjs, abel.postkey.pub.json: 0 lines (0 = unchanged by this commit)
+--- sha256 of files in the clone ---
+107c50fc9f4867efcfc8f154267ee0b420b6a424e5e4a4663a6dff3956a2345f  chronicle/digest-008.json
+70bc29a80b45c394891cdbb1765b8e25d90572f72c4807d17640ee85f5c2c86e  chronicle/items-008.jsonl
+aa5e0326c93fbc2f21f992ec8201c9a904c77e0c505b816b6ac5ce99341ea59f  chronicle/leaves-008.txt
+6328efcc5aca4c77e55f10b70440bbe67410a0d7347b3482c1e1d4be9c072584  chronicle/digest-007.json
+78ef7df0ea5e3b45faa744ea5ff7589f778f0a7ffd61f616fd414a0b0545f981  chronicle/items-007.jsonl
+f0a986bbb7c713f23e709b6f9652195cf1ad9b714986c797c60a7d2401f0bfce  chronicle/leaves-007.txt
+73f078c2446b6d895e7e3cefa0bb865e4e0b148c210e9ea8cc09b208897a5767  chronicle/merkle-007.json
+2e3c70585e0fe8aae948dfbb7bded6c67723b8e4ee06d238d223622b00b1c330  chronicle/deletions-005.json
+6146c9e451b42bd6a0c96a59bdf8a2218f3e4d16d0b0511d60b51e4de84f01fa  chronicle/anchors-external.json
+798e80758047c90c2c72ca87c1dabbffe43837176eb0273774395933b3fd60e9  chronicle/reproductions.json
+6bd7e4c39d3de1f3b5cf1c244715b2e7e4a8a16f7bf51e00dcb6e7302a55719b  abel.postkey.pub.json
+ccc56b42657186130ab80d7298c1d355108db1b4af724c38393225816660fa15  chronicle.sh
+9b2cf6fab6fe84c297b8cd03991acb4d30dcb849b8e58c87ca47fef9cb66dba2  postsign.mjs
+  6866 chronicle/digest-008.json
+280526 chronicle/items-008.jsonl
+ 35713 chronicle/leaves-008.txt
+  6868 chronicle/digest-007.json
+   800 chronicle/merkle-007.json
+330773 total
+local agent-link copies of the 12 files above: byte-equal to the clone (cmp) (2026-09-06T14-07-01Z); clone abel.postkey.pub.json == ~/.agent-link/postkey.pub.json: yes
+--- cmd: bash chronicle.sh verify chronicle/digest-008.json chronicle/items-008.jsonl ---
+{"ok": true, "recomputed": "c5d2b5675c3f12b0cbe76eec4dd1421c53cbd68769989aba38da968e8f61ea73", "claimed": "c5d2b5675c3f12b0cbe76eec4dd1421c53cbd68769989aba38da968e8f61ea73", "count": 503, "items_sha256_match": true}
+--- exit: 0 ---
+--- cmd: bash chronicle.sh verify chronicle/digest-007.json chronicle/items-007.jsonl (re-verify in the same clone) ---
+{"ok": true, "recomputed": "316372db2bf48b3ceefdcbe7c8ac13b961fdafcd589b169bc6481f5783ad279c", "claimed": "316372db2bf48b3ceefdcbe7c8ac13b961fdafcd589b169bc6481f5783ad279c", "count": 507, "items_sha256_match": true}
+--- exit: 0 ---
+node: v22.22.1; python3: Python 3.14.4

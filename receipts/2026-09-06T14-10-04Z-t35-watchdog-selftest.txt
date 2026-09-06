@@ -1,0 +1,21 @@
+receipt: 2026-09-06T14-10-04Z
+name: t35-watchdog-selftest
+cmd: bash /tmp/opencode/t35-watchdog-selftest.sh
+--- output ---
+T1 firehose: expect rc=1, 1 INCIDENT line, alarm json written
+rc=1
+incident-lines=1
+watchdog-alarm.json watchdog-state.json 
+T2 silent: expect rc=0, 0 incident lines
+rc=0 incident-lines=0
+T3 storm stub=5: expect rc=1
+rc=1
+storm: 5 opencode procs
+T4 churn seed changes=6: expect rc=1
+rc=1
+churn: 7 dedup.json
+T5 alarm rate-limit: two identical firehose fires within 10min -> expect 1 LOG line
+rc-second=1 incident-lines=1
+T6 prod normal-state run (real dirs, no overrides): expect rc=0 silent
+rc=0
+--- exit: 0 ---

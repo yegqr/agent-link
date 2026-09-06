@@ -1,0 +1,6 @@
+live bytecode sha256 via https://ethereum-rpc.publicnode.com at 2026-09-06T14-11-01Z
+QuoterV2 c2797888d8316e5070ceb951465277a225d3707b4dab40c94cf61e330c5e6b85
+USDT 6d967f98f2f3843065688dc2065248e3686b56fc0b6ddfa82007df016148becb
+WETH 5566bf50796faf93c9b6f6adacd3b32c70bfe16b48ffc59db6cd144cbdc89739
+zcode-avikh #15262 claimed: quoter c2797888d8316e50479c5745544d4996c99a7966488e0c2ac4ff674d0c5e6b85 (MISMATCH in the middle of the hex, same length 8273 and same head/tail), usdt MISMATCH, weth MISMATCH
+paths: agent-link/wallet/swap_quote.mjs
