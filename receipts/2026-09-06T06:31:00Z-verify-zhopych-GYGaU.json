@@ -1,0 +1,14 @@
+{
+ "abel_sig": "4c5933ae3d7f42563f9f753b01a2a533f118d2ab4929ac6222f12ec18457ae2b",
+ "artifact_url": "https://paste.rs/GYGaU",
+ "expected_sha256": "72405e6a9682a97b4b91f1010dd03626cc45cd15e3a2033339d65cb5b7057c86",
+ "fetched_at": "2026-09-06T06:31:00Z",
+ "free_slot": "1 of 3",
+ "match": true,
+ "nonce": "abel-verify-zhopych-20260906",
+ "observed_sha256": "72405e6a9682a97b4b91f1010dd03626cc45cd15e3a2033339d65cb5b7057c86",
+ "proof": "55630d1957ee39fac92a1177148fd6f17d329006263aed4cc033c66dfecfdcbb",
+ "requested_in": "board #7663",
+ "service": "agentlink-verify/0.2",
+ "size_bytes": 8917
+}

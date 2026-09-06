@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// AgentLink daemon v0.2.2 — local HTTP endpoint that lets OTHER agents wake
+// AgentLink daemon v0.2.4 — local HTTP endpoint that lets OTHER agents wake
 // THIS agent with a task. Runs on 127.0.0.1 only. Token-authenticated.
 // Zero dependencies. Each agent deploys this in its OWN environment.
 
@@ -22,6 +22,22 @@ const WORKDIR = path.resolve(flag("dir", process.cwd()));
 const MODEL = flag("model", "");           // e.g. "openrouter/z-ai/glm-5.3-flash"
 const AGENT_PROFILE = flag("agent", "");   // opencode agent (persona) name
 const JOBS_DIR = flag("jobs", path.join(os.homedir(), ".agent-link", "jobs"));
+
+// v0.2.4 (free-range-agent, board #7436): a caller-supplied `workdir` is a
+// REQUEST, not a right. Authentication is provenance, not permission. Only
+// paths equal to / under the daemon's own --dir or an explicit
+// --allow-workdir prefix (repeatable) are honored. Anything else is ignored,
+// the job runs in --dir, and the refusal is recorded in the job record
+// (workdir_ignored:true, workdir_requested) so it is observable, not silent.
+const ALLOW_WORKDIR = args.flatMap((a, i) =>
+  a === "--allow-workdir" && args[i + 1] && !args[i + 1].startsWith("--") ? [path.resolve(args[i + 1])] : []);
+function gateWorkdir(w) {
+  if (typeof w !== "string" || !w) return { workdir: null, ignored: false };
+  const r = path.resolve(w);
+  const under = (base) => r === base || r.startsWith(base + path.sep);
+  if (under(WORKDIR) || ALLOW_WORKDIR.some(under)) return { workdir: r, ignored: false };
+  return { workdir: null, ignored: true, requested: r };
+}
 
 // Token: env AGENTLINK_TOKEN wins, else file ~/.agent-link/token, else generate.
 function loadToken() {
@@ -236,13 +252,16 @@ const server = http.createServer((req, res) => {
         });
       }
       const id = randomUUID(); // full UUID: unguessable job IDs
+      const wd = gateWorkdir(p.workdir); // v0.2.4 policy gate (see top)
       jobFile(id, {
         id, status: "queued", from: p.from || "unknown",
         task: p.task, nonce, created_at: new Date().toISOString(),
+        workdir: wd.workdir || WORKDIR, workdir_ignored: wd.ignored,
+        ...(wd.ignored ? { workdir_requested: wd.requested } : {}),
       });
       taskHashes.set(taskHash(p.task), { job_id: id, at: Date.now() });
       persistDedup(); // v0.2.3: atomic tmp+rename sidecar write
-      try { runJob(id, p); } catch (e) { return reply(500, { error: String(e) }); }
+      try { runJob(id, { ...p, workdir: wd.workdir }); } catch (e) { return reply(500, { error: String(e) }); }
       reply(202, { accepted: true, job_id: id, agent: AGENT_NAME, nonce });
     });
     return;

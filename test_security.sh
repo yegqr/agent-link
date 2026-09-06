@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# test_security.sh — hermetic security tests for daemon.mjs v0.2.3.
+# test_security.sh — hermetic security tests for daemon.mjs v0.2.4.
 # Spins an isolated daemon on :7399 with a stubbed `opencode`, dummy token,
 # temp jobs dir, rate=5. Covers: ping no-auth, 401 (no/wrong token), 404
 # unknown job, 413 oversized task, nonce echo (202 + job record), full-UUID
@@ -8,7 +8,8 @@
 # in window -> same job id + single spawn; different task -> new spawn;
 # window 0 -> dedup disabled -> new spawn), v0.2.3 dedup persistence
 # (restart within window -> still deduped, both fresh and case-9 entries;
-# window 0 -> nothing persisted). 20 checks.
+# window 0 -> nothing persisted), v0.2.4 caller-workdir policy gate (outside
+# allowlist -> ignored + recorded; inside --allow-workdir -> honored). 22 checks.
 # Hermetic: isolated daemon :7399/:7398, stubbed opencode, temp jobs dir.
 set -uo pipefail
 DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -134,6 +135,33 @@ J17=$(echo "$R17" | python3 -c 'import json,sys;print(json.load(sys.stdin)["job_
   && ok "dedup persists across restart: same job, 1 spawn, nonce echoed" || bad "dedup persistence: J17=$J17 (was $J9A) R=$R17"
 # 20. window-0 sidecar re-check after all restarts: still nothing persisted
 [ ! -f "$TDIR/jobs2/dedup.json" ] && ok "window 0: no sidecar written" || bad "window-0 sidecar exists: $(cat "$TDIR/jobs2/dedup.json" 2>/dev/null)"
+
+# 21-22. v0.2.4 caller-workdir policy gate. Third hermetic daemon :7397 with
+#     --allow-workdir $TDIR/allowed. A caller asking for /etc (outside --dir and
+#     the allowlist) gets 202 but the job runs in --dir: record says
+#     workdir_ignored:true + workdir_requested, stub argv carries no --dir.
+#     A caller asking for the allowlisted path is honored: --dir present.
+mkdir -p "$TDIR/jobs3" "$TDIR/allowed/sub"
+PATH="$TDIR/bin:$PATH" AGENTLINK_TOKEN="$TOKEN" node "$DIR/daemon.mjs" \
+  --port 7397 --name test3 --dir "$TDIR" --jobs "$TDIR/jobs3" --rate 100 \
+  --allow-workdir "$TDIR/allowed" >"$TDIR/daemon3.log" 2>&1 &
+DPID3=$!
+trap 'kill $DPID $DPID3 2>/dev/null; rm -rf "$TDIR"' EXIT
+for i in $(seq 1 25); do curl -sS --max-time 1 "http://127.0.0.1:7397/ping" >/dev/null 2>&1 && break; sleep 0.2; done
+R21=$(curl -sS -X POST http://127.0.0.1:7397/challenge -H "Authorization: Bearer $TOKEN" -d '{"task":"workdir-gate-outside","workdir":"/etc","from":"tester"}')
+J21=$(echo "$R21" | python3 -c 'import json,sys;print(json.load(sys.stdin)["job_id"])' 2>/dev/null)
+sleep 1
+{ grep -q '"workdir_ignored": true' "$TDIR/jobs3/$J21.json" 2>/dev/null \
+  && grep -q '"workdir_requested": "/etc"' "$TDIR/jobs3/$J21.json" \
+  && grep -q '"status": "done"' "$TDIR/jobs3/$J21.json" \
+  && ! grep 'workdir-gate-outside' "$TDIR/spawns.log" | grep -q -- '--dir'; } \
+  && ok "workdir gate: outside allowlist -> ignored, recorded, ran in --dir" || bad "workdir gate outside: R=$R21 rec=$(cat "$TDIR/jobs3/$J21.json" 2>/dev/null) spawn=$(grep 'workdir-gate-outside' "$TDIR/spawns.log" 2>/dev/null)"
+R22=$(curl -sS -X POST http://127.0.0.1:7397/challenge -H "Authorization: Bearer $TOKEN" -d "{\"task\":\"workdir-gate-inside\",\"workdir\":\"$TDIR/allowed/sub\",\"from\":\"tester\"}")
+J22=$(echo "$R22" | python3 -c 'import json,sys;print(json.load(sys.stdin)["job_id"])' 2>/dev/null)
+sleep 1
+{ grep -q '"workdir_ignored": false' "$TDIR/jobs3/$J22.json" 2>/dev/null \
+  && grep 'workdir-gate-inside' "$TDIR/spawns.log" | grep -q -- "--dir $TDIR/allowed/sub"; } \
+  && ok "workdir gate: inside --allow-workdir -> honored" || bad "workdir gate inside: R=$R22 spawn=$(grep 'workdir-gate-inside' "$TDIR/spawns.log" 2>/dev/null)"
 
 echo "---"
 [ $fail = 0 ] && echo "ALL PASS" || echo "SOME FAILED"

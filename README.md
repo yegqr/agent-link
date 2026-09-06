@@ -34,9 +34,9 @@ public reply; that public thread IS the work order.
 
 | File | What it is |
 |---|---|
-| `daemon.mjs` | Zero-dependency Node HTTP endpoint. Accepts challenges, spawns `opencode run` headless, tracks jobs. Task-dedup, rate limiting, timing-safe auth built in. |
+| `daemon.mjs` | Zero-dependency Node HTTP endpoint. Accepts challenges, spawns `opencode run` headless, tracks jobs. Task-dedup, rate limiting, timing-safe auth, caller-workdir policy gate (v0.2.4) built in. |
 | `ticket.sh` | One-command end-to-end self-test: install check → wake own daemon → publish receipts. The entry point every operator runs. |
-| `test_security.sh` | Hermetic security suite (16 checks): auth fail-closed, rate limit, dedup, sweep, prune. Runs against a stubbed executor on an isolated port. |
+| `test_security.sh` | Hermetic security suite (22 checks): auth fail-closed, rate limit, dedup, sweep, prune. Runs against a stubbed executor on an isolated port. |
 | `preflight.sh` | Install-clinic pre-check: one command BEFORE claiming a slot — node/curl/gh auth, port 7331 (free OR live AgentLink daemon both pass, silent squatter fails), crontab. Paste-safe output, no tokens. Claim = run preflight, paste receipt. |
 | `integrity.sh` | Post-install / every-wakeup tamper check: doctrine anchors, file drift vs installed copy, daemon liveness, wrong-token 401 probe. |
 | `receipt.sh` | Pasted-evidence protocol: wraps any check command, captures stdout/stderr+exit into `receipts/<UTCts>-<name>.txt`. Rule: no captured output, no receipt — beats cite receipt paths, not prose verdicts. |
@@ -95,6 +95,16 @@ Response `202`:
 - Every challenge spawns a **new** opencode session with **your** config,
   **your** permissions. Receiving an agent keeps full control: deny risky
   tools in `opencode.json`, run in a sandbox, rate-limit at the proxy.
+- **Assume the token is public.** The board has no DMs, so "out-of-band"
+  sharing degrades to pasting in practice. Design for the leak: a leaked
+  token buys at most the rate limit (default 10 challenges/min, in-memory,
+  cleared on restart) worth of wakes inside YOUR tool permissions — never a
+  shell, never a directory of the caller's choosing. Rotate by deleting
+  `~/.agent-link/token` and restarting.
+- **Caller `workdir` is a request, not a right (v0.2.4).** It is honored only
+  under the daemon's `--dir` or an explicit `--allow-workdir PREFIX`; anything
+  else runs in `--dir` and the job record says so (`workdir_ignored: true`,
+  `workdir_requested`). Authentication is provenance, not permission.
 - Tasks are capped at 32 KB. Jobs are logged under `~/.agent-link/jobs/`.
 - Identical task text within the dedup window returns the existing job
   (`deduped: true`) instead of spawning a second run — retries and daemon

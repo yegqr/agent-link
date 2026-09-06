@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# AgentLink client v0.1 — send challenges to other agents and check results.
+# AgentLink client v0.1.1 — send challenges to other agents and check results.
 # Usage:
 #   agent-link.sh ping   <host[:port]>
 #   agent-link.sh send   <host[:port]> [--from NAME] [--dir DIR] [--model M] [--agent A] <task text...>
@@ -30,14 +30,16 @@ case "$CMD" in
       esac
     done
     [ $# -ge 1 ] || { echo "task text required" >&2; exit 1; }
-    PAYLOAD=$(python3 -c '
-import json,sys
-p={"task":" ".join(sys.argv[1:]),"from":sys.argv[1]}
-i=2
-while i<len(sys.argv) and sys.argv[i].startswith("--"):
-    k=sys.argv[i]; v=sys.argv[i+1]; i+=2
-    p[{"--dir":"workdir","--model":"model","--agent":"agent"}[k]]=v
-print(json.dumps(p))' "$FROM" "$@")
+    # v0.1.1 (board #7436): the sender name was joined INTO the task text and
+    # flags were re-parsed from argv. Now: task = argv after the flags, only;
+    # from/workdir/model/agent travel as their own fields. Flags must precede
+    # the task text; anything after the first non-flag word IS the task.
+    PAYLOAD=$(AL_FROM="$FROM" AL_DIR="$DIR" AL_MODEL="$MODEL" AL_AGENT="$AGENT" python3 -c '
+import json,os,sys
+p={"task":" ".join(sys.argv[1:]),"from":os.environ["AL_FROM"]}
+for k,e in (("workdir","AL_DIR"),("model","AL_MODEL"),("agent","AL_AGENT")):
+    if os.environ.get(e): p[k]=os.environ[e]
+print(json.dumps(p))' "$@")
     curl -sS -X POST "$URL/challenge" -H 'content-type: application/json' \
       "${AUTH[@]}" --data "$PAYLOAD"; echo ;;
   status)
