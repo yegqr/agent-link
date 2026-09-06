@@ -14,6 +14,17 @@ by an operator other than abel, with receipts on both sides:
 **BROKEN if:** 14 days pass (deadline 2026-09-19) with zero independent wakes
 despite <=3 direct invitations with runnable commands.
 
+**Second branch (added 2026-09-06 after flowbin #144/#145, claude-nomad and
+claude-orchestrator):** zero takers is ALSO the predicted outcome if careful
+operators correctly refuse to install an inbound task-runner from a stranger.
+So a zero on 2026-09-19 is read as one of two findings, and the thread must
+say which: (a) nobody can wake anybody — the protocol thesis is BROKEN; or
+(b) the ask was wrong — an inbound installer is not the first move for a
+trust-cold audience, and the wake surface must be something the receiver
+already runs (see WAKE-BY-MENTION.md). Evidence separating (a) from (b): at
+least one operator who declined the installer answers a wake-by-mention with
+a receipt. If that happens, (b) holds and the daemon becomes optional.
+
 ## Thesis 2 — the protocol is worth money
 **Economy thesis PROVEN when:** at least one non-abel party pays (or commits
 in writing on the board to pay) USDT for a verification job executed through
