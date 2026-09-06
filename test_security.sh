@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# test_security.sh — hermetic security tests for daemon.mjs v0.2.4.
+# test_security.sh — hermetic security tests for daemon.mjs v0.2.5.
 # Spins an isolated daemon on :7399 with a stubbed `opencode`, dummy token,
 # temp jobs dir, rate=5. Covers: ping no-auth, 401 (no/wrong token), 404
 # unknown job, 413 oversized task, nonce echo (202 + job record), full-UUID
@@ -9,12 +9,23 @@
 # window 0 -> dedup disabled -> new spawn), v0.2.3 dedup persistence
 # (restart within window -> still deduped, both fresh and case-9 entries;
 # window 0 -> nothing persisted), v0.2.4 caller-workdir policy gate (outside
-# allowlist -> ignored + recorded; inside --allow-workdir -> honored). 22 checks.
-# Hermetic: isolated daemon :7399/:7398, stubbed opencode, temp jobs dir.
+# allowlist -> ignored + recorded; inside --allow-workdir -> honored), v0.2.5:
+# preamble actually spawned, spawn-error survival, symlink escape, nonexistent
+# workdir, job-file mode 600, 413 on oversized body, per-token job ownership,
+# /jobs id shape. 30 checks. Ports are picked free at start (concurrent runs OK).
+# Hermetic: isolated daemon :7399/:$PORT2, stubbed opencode, temp jobs dir.
 set -uo pipefail
 DIR="$(cd "$(dirname "$0")" && pwd)"
-PORT=7399
+# Free ports, so two suites (or a stray daemon) never collide (board #10317).
+read -r PORT PORT2 PORT3 PORT4 <<<"$(python3 -c '
+import socket
+ss=[socket.socket() for _ in range(4)]
+for x in ss: x.bind(("127.0.0.1",0))
+print(*[x.getsockname()[1] for x in ss]); [x.close() for x in ss]')"
 TDIR="$(mktemp -d)"
+PIDS=""
+cleanup() { [ -n "$PIDS" ] && kill $PIDS 2>/dev/null; rm -rf "$TDIR"; }
+trap cleanup EXIT
 TOKEN="test-token-0123456789abcdef"
 mkdir -p "$TDIR/jobs" "$TDIR/jobs2" "$TDIR/bin"
 printf '#!/usr/bin/env bash\necho "$@" >> %s/spawns.log\nexit 0\n' "$TDIR" > "$TDIR/bin/opencode"
@@ -30,9 +41,9 @@ echo '{"id":"bbbbbbbb-0000-0000-0000-000000000002","status":"running","created_a
 
 PATH="$TDIR/bin:$PATH" AGENTLINK_TOKEN="$TOKEN" node "$DIR/daemon.mjs" \
   --port $PORT --name test --dir "$TDIR" --jobs "$TDIR/jobs" --rate 5 >"$TDIR/daemon.log" 2>&1 &
-DPID=$!
-trap 'kill $DPID 2>/dev/null; rm -rf "$TDIR"' EXIT
-for i in $(seq 1 25); do curl -sS --max-time 1 "http://127.0.0.1:$PORT/ping" >/dev/null 2>&1 && break; sleep 0.2; done
+DPID=$!; PIDS="$PIDS $DPID"
+waitping() { for i in $(seq 1 50); do curl -sS --max-time 1 "http://127.0.0.1:$1/ping" 2>/dev/null | grep -q '"ok":true' && return 0; sleep 0.2; done; echo "daemon on :$1 never answered" >&2; return 1; }
+waitping $PORT
 
 # 1. ping requires no auth
 curl -sS "http://127.0.0.1:$PORT/ping" | grep -q '"agent":"test"' && ok "ping no-auth" || bad "ping no-auth"
@@ -73,12 +84,11 @@ J10=$(echo "$R10" | python3 -c 'import json,sys;print(json.load(sys.stdin)["job_
   && ok "dedup: different task -> new spawn" || bad "dedup diff-task: $R10"
 # 11. dedup window 0 -> disabled: same task twice -> two spawns, two job ids
 PATH="$TDIR/bin:$PATH" AGENTLINK_TOKEN="$TOKEN" node "$DIR/daemon.mjs" \
-  --port 7398 --name test-win0 --dir "$TDIR" --jobs "$TDIR/jobs2" --dedup-window 0 >"$TDIR/daemon2.log" 2>&1 &
-DPID2=$!
-trap 'kill $DPID $DPID2 2>/dev/null; rm -rf "$TDIR"' EXIT
-for i in $(seq 1 25); do curl -sS --max-time 1 "http://127.0.0.1:7398/ping" >/dev/null 2>&1 && break; sleep 0.2; done
-RW1=$(curl -sS -X POST http://127.0.0.1:7398/challenge -H "Authorization: Bearer $TOKEN" -d '{"task":"dedup-win0-task","from":"tester"}')
-RW2=$(curl -sS -X POST http://127.0.0.1:7398/challenge -H "Authorization: Bearer $TOKEN" -d '{"task":"dedup-win0-task","from":"tester"}')
+  --port $PORT2 --name test-win0 --dir "$TDIR" --jobs "$TDIR/jobs2" --dedup-window 0 >"$TDIR/daemon2.log" 2>&1 &
+DPID2=$!; PIDS="$PIDS $DPID2"
+waitping $PORT2
+RW1=$(curl -sS -X POST http://127.0.0.1:$PORT2/challenge -H "Authorization: Bearer $TOKEN" -d '{"task":"dedup-win0-task","from":"tester"}')
+RW2=$(curl -sS -X POST http://127.0.0.1:$PORT2/challenge -H "Authorization: Bearer $TOKEN" -d '{"task":"dedup-win0-task","from":"tester"}')
 JW1=$(echo "$RW1" | python3 -c 'import json,sys;print(json.load(sys.stdin)["job_id"])' 2>/dev/null)
 JW2=$(echo "$RW2" | python3 -c 'import json,sys;print(json.load(sys.stdin)["job_id"])' 2>/dev/null)
 { [ -n "$JW1" ] && [ "$JW1" != "$JW2" ] && ! echo "$RW2" | grep -q '"deduped":true' \
@@ -136,19 +146,18 @@ J17=$(echo "$R17" | python3 -c 'import json,sys;print(json.load(sys.stdin)["job_
 # 20. window-0 sidecar re-check after all restarts: still nothing persisted
 [ ! -f "$TDIR/jobs2/dedup.json" ] && ok "window 0: no sidecar written" || bad "window-0 sidecar exists: $(cat "$TDIR/jobs2/dedup.json" 2>/dev/null)"
 
-# 21-22. v0.2.4 caller-workdir policy gate. Third hermetic daemon :7397 with
+# 21-22. v0.2.4 caller-workdir policy gate. Third hermetic daemon :$PORT3 with
 #     --allow-workdir $TDIR/allowed. A caller asking for /etc (outside --dir and
 #     the allowlist) gets 202 but the job runs in --dir: record says
 #     workdir_ignored:true + workdir_requested, stub argv carries no --dir.
 #     A caller asking for the allowlisted path is honored: --dir present.
 mkdir -p "$TDIR/jobs3" "$TDIR/allowed/sub"
 PATH="$TDIR/bin:$PATH" AGENTLINK_TOKEN="$TOKEN" node "$DIR/daemon.mjs" \
-  --port 7397 --name test3 --dir "$TDIR" --jobs "$TDIR/jobs3" --rate 100 \
+  --port $PORT3 --name test3 --dir "$TDIR" --jobs "$TDIR/jobs3" --rate 100 \
   --allow-workdir "$TDIR/allowed" >"$TDIR/daemon3.log" 2>&1 &
-DPID3=$!
-trap 'kill $DPID $DPID3 2>/dev/null; rm -rf "$TDIR"' EXIT
-for i in $(seq 1 25); do curl -sS --max-time 1 "http://127.0.0.1:7397/ping" >/dev/null 2>&1 && break; sleep 0.2; done
-R21=$(curl -sS -X POST http://127.0.0.1:7397/challenge -H "Authorization: Bearer $TOKEN" -d '{"task":"workdir-gate-outside","workdir":"/etc","from":"tester"}')
+DPID3=$!; PIDS="$PIDS $DPID3"
+waitping $PORT3
+R21=$(curl -sS -X POST http://127.0.0.1:$PORT3/challenge -H "Authorization: Bearer $TOKEN" -d '{"task":"workdir-gate-outside","workdir":"/etc","from":"tester"}')
 J21=$(echo "$R21" | python3 -c 'import json,sys;print(json.load(sys.stdin)["job_id"])' 2>/dev/null)
 sleep 1
 { grep -q '"workdir_ignored": true' "$TDIR/jobs3/$J21.json" 2>/dev/null \
@@ -156,12 +165,69 @@ sleep 1
   && grep -q '"status": "done"' "$TDIR/jobs3/$J21.json" \
   && ! grep 'workdir-gate-outside' "$TDIR/spawns.log" | grep -q -- '--dir'; } \
   && ok "workdir gate: outside allowlist -> ignored, recorded, ran in --dir" || bad "workdir gate outside: R=$R21 rec=$(cat "$TDIR/jobs3/$J21.json" 2>/dev/null) spawn=$(grep 'workdir-gate-outside' "$TDIR/spawns.log" 2>/dev/null)"
-R22=$(curl -sS -X POST http://127.0.0.1:7397/challenge -H "Authorization: Bearer $TOKEN" -d "{\"task\":\"workdir-gate-inside\",\"workdir\":\"$TDIR/allowed/sub\",\"from\":\"tester\"}")
+R22=$(curl -sS -X POST http://127.0.0.1:$PORT3/challenge -H "Authorization: Bearer $TOKEN" -d "{\"task\":\"workdir-gate-inside\",\"workdir\":\"$TDIR/allowed/sub\",\"from\":\"tester\"}")
 J22=$(echo "$R22" | python3 -c 'import json,sys;print(json.load(sys.stdin)["job_id"])' 2>/dev/null)
 sleep 1
 { grep -q '"workdir_ignored": false' "$TDIR/jobs3/$J22.json" 2>/dev/null \
   && grep 'workdir-gate-inside' "$TDIR/spawns.log" | grep -q -- "--dir $TDIR/allowed/sub"; } \
   && ok "workdir gate: inside --allow-workdir -> honored" || bad "workdir gate inside: R=$R22 spawn=$(grep 'workdir-gate-inside' "$TDIR/spawns.log" 2>/dev/null)"
+
+# 23. the safety PREAMBLE is actually part of what gets spawned (a refactor
+#     that drops it must fail here, not in production)
+grep -q 'AgentLink safety preamble' "$TDIR/spawns.log" && ok "preamble present in spawned argv" || bad "preamble missing from spawns.log"
+# 24. v0.2.5 finding 1: executor missing from PATH -> job FAILS, daemon LIVES.
+mkdir -p "$TDIR/nobin" "$TDIR/jobs4"
+printf '%s\n' "tokenB-0123456789abcdef peerB" > "$TDIR/tokens"; chmod 600 "$TDIR/tokens"
+NOBIN_PATH="$TDIR/nobin:$(dirname "$(command -v node)"):/usr/bin:/bin"
+if PATH="$NOBIN_PATH" command -v opencode >/dev/null 2>&1; then
+  ok "spawn-error survival: SKIPPED (opencode present in system PATH)"
+else
+  PATH="$NOBIN_PATH" AGENTLINK_TOKEN="$TOKEN" node "$DIR/daemon.mjs" \
+    --port $PORT4 --name test4 --dir "$TDIR" --jobs "$TDIR/jobs4" --rate 100 \
+    --allow-workdir "$TDIR/allowed" --token-file "$TDIR/tokens" >"$TDIR/daemon4.log" 2>&1 &
+  DPID4=$!; PIDS="$PIDS $DPID4"
+  waitping $PORT4
+  R24=$(curl -sS -X POST http://127.0.0.1:$PORT4/challenge -H "Authorization: Bearer $TOKEN" -d '{"task":"no-executor-task","from":"tester"}')
+  J24=$(echo "$R24" | python3 -c 'import json,sys;print(json.load(sys.stdin)["job_id"])' 2>/dev/null)
+  sleep 1
+  { curl -sS --max-time 2 "http://127.0.0.1:$PORT4/ping" | grep -q '"ok":true' \
+    && grep -q '"status": "failed"' "$TDIR/jobs4/$J24.json" && grep -q 'ENOENT' "$TDIR/jobs4/$J24.json"; } \
+    && ok "spawn error -> job failed, daemon alive" || bad "spawn-error: R=$R24 rec=$(cat "$TDIR/jobs4/$J24.json" 2>/dev/null) log=$(tail -3 "$TDIR/daemon4.log")"
+fi
+# 25-26. v0.2.5 finding 2: symlink inside the allowed tree pointing outside ->
+#        ignored; nonexistent path under the allowed tree -> ignored (reason).
+OUTSIDE="$(mktemp -d)"; PIDS="$PIDS"; trap 'cleanup; rm -rf "$OUTSIDE"' EXIT   # target OUTSIDE --dir and the allowlist
+ln -s "$OUTSIDE" "$TDIR/allowed/escape"
+R25=$(curl -sS -X POST http://127.0.0.1:$PORT3/challenge -H "Authorization: Bearer $TOKEN" -d "{\"task\":\"workdir-symlink-escape\",\"workdir\":\"$TDIR/allowed/escape\",\"from\":\"tester\"}")
+J25=$(echo "$R25" | python3 -c 'import json,sys;print(json.load(sys.stdin)["job_id"])' 2>/dev/null); sleep 1
+{ grep -q '"workdir_ignored": true' "$TDIR/jobs3/$J25.json" 2>/dev/null && ! grep 'workdir-symlink-escape' "$TDIR/spawns.log" | grep -q -- '--dir'; } \
+  && ok "workdir gate: symlink escape -> ignored" || bad "symlink escape: rec=$(cat "$TDIR/jobs3/$J25.json" 2>/dev/null)"
+R26=$(curl -sS -X POST http://127.0.0.1:$PORT3/challenge -H "Authorization: Bearer $TOKEN" -d "{\"task\":\"workdir-nonexistent\",\"workdir\":\"$TDIR/allowed/does-not-exist\",\"from\":\"tester\"}")
+J26=$(echo "$R26" | python3 -c 'import json,sys;print(json.load(sys.stdin)["job_id"])' 2>/dev/null); sleep 1
+{ grep -q '"workdir_ignored": true' "$TDIR/jobs3/$J26.json" 2>/dev/null && grep -q '"workdir_reason": "not a directory"' "$TDIR/jobs3/$J26.json" \
+  && curl -sS --max-time 2 "http://127.0.0.1:$PORT3/ping" | grep -q '"ok":true'; } \
+  && ok "workdir gate: nonexistent path -> ignored, daemon alive" || bad "nonexistent workdir: rec=$(cat "$TDIR/jobs3/$J26.json" 2>/dev/null)"
+# 27. v0.2.5 finding 8: job records are 0600
+[ "$(stat -c %a "$TDIR/jobs3/$J26.json")" = "600" ] && ok "job file mode 600" || bad "job file mode: $(stat -c %a "$TDIR/jobs3/$J26.json")"
+# 28. v0.2.5 finding 10: oversized BODY (not just task) -> clean 413
+python3 -c 'import json;print(json.dumps({"task":"x","pad":"A"*300000}))' > "$TDIR/huge.json"
+C28=$(curl -sS -o /dev/null -w '%{http_code}' -X POST http://127.0.0.1:$PORT3/challenge -H "Authorization: Bearer $TOKEN" -d @"$TDIR/huge.json" 2>/dev/null || true)
+[ "$C28" = 413 ] && ok "oversized body -> 413" || bad "oversized body: http=$C28"
+# 29. v0.2.5 finding 3: a job answers only to the token that created it
+if [ -n "${DPID4:-}" ]; then
+  R29=$(curl -sS -X POST http://127.0.0.1:$PORT4/challenge -H "Authorization: Bearer $TOKEN" -d '{"task":"ownership-task","from":"tester"}')
+  J29=$(echo "$R29" | python3 -c 'import json,sys;print(json.load(sys.stdin)["job_id"])' 2>/dev/null)
+  CA=$(curl -sS -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $TOKEN" http://127.0.0.1:$PORT4/jobs/$J29)
+  CB=$(curl -sS -o /dev/null -w '%{http_code}' -H "Authorization: Bearer tokenB-0123456789abcdef" http://127.0.0.1:$PORT4/jobs/$J29)
+  CBping=$(curl -sS -o /dev/null -w '%{http_code}' -X POST http://127.0.0.1:$PORT4/challenge -H "Authorization: Bearer tokenB-0123456789abcdef" -d '{"task":"peerB-task","from":"peerB"}')
+  { [ "$CA" = 200 ] && [ "$CB" = 404 ] && [ "$CBping" = 202 ]; } && ok "per-token job ownership (A=200, B=404, B can still challenge)" || bad "ownership: A=$CA B=$CB Bchallenge=$CBping"
+else
+  ok "per-token ownership: SKIPPED (daemon4 not started)"
+fi
+# 30. v0.2.5 finding 12: /jobs/<id> accepts only a UUID shape
+C30a=$(curl -sS -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $TOKEN" "http://127.0.0.1:$PORT3/jobs/not-a-uuid")
+C30b=$(curl -sS -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $TOKEN" "http://127.0.0.1:$PORT3/jobs/..%2f..%2fdedup")
+{ [ "$C30a" = 404 ] && [ "$C30b" = 404 ]; } && ok "/jobs id shape enforced (404, 404)" || bad "/jobs id shape: $C30a $C30b"
 
 echo "---"
 [ $fail = 0 ] && echo "ALL PASS" || echo "SOME FAILED"

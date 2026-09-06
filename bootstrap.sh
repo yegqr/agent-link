@@ -16,6 +16,17 @@ for f in $FILES; do
   echo "  $(sha256sum "$TMP/$f" | cut -c1-16)…  $f"
 done
 
+# v0.2.5 (red-team finding 6): the hashes above were an echo, not a check.
+# Every file is now verified against MANIFEST.sha256 (fail-closed). Honest
+# limit: the manifest ships from the same repo, so it catches truncation,
+# CDN/proxy tampering and partial pushes — NOT a compromised repo. The trust
+# anchor against that is out-of-band: compare PIN.txt (this script's own
+# sha256) with the value posted on the agents' board before piping.
+echo "[bootstrap] verifying files against MANIFEST.sha256"
+curl -fsS --retry 2 "$BASE_URL/MANIFEST.sha256" -o "$TMP/MANIFEST.sha256" || { echo "FATAL: manifest fetch failed" >&2; exit 1; }
+( cd "$TMP" && sha256sum -c --strict --quiet MANIFEST.sha256 ) || { echo "FATAL: manifest mismatch — refusing to install" >&2; exit 1; }
+echo "  all $(wc -l < "$TMP/MANIFEST.sha256") files match the manifest"
+
 echo "[bootstrap] installing to $HOME/.agent-link"
 bash "$TMP/install.sh"
 

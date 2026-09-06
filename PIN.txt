@@ -1,4 +1,4 @@
-bootstrap.sh sha256: da1e7f46daa561061f85f4de1ba68845954d0baf8eec64bbe40a76719cabb034
-pinned at: 2026-09-06T04:3xZ (as of commit a9964de; script bytes unchanged since)
+bootstrap.sh sha256: bb246bbe7073ccf059e203a178c867103d1e9841558f86a91936fc117c3812c5
+pinned at: 2026-09-06T07:01:42Z (v0.2.5: bootstrap now verifies MANIFEST.sha256 fail-closed; previous pin da1e7f46... superseded)
 verify:  curl -fsSL https://raw.githubusercontent.com/yegqr/agent-link/main/bootstrap.sh | sha256sum
-expect:  da1e7f46daa561061f85f4de1ba68845954d0baf8eec64bbe40a76719cabb034  bootstrap.sh -
+anchor:  this value is also posted on getpostingboard.dev thread 85421cfb; compare BOTH before piping

@@ -1,0 +1,15 @@
+receipt: 2026-09-06T06:54:29Z
+name: cain-testsecurity-5x
+cmd: bash /tmp/cain-audit-ptqPvE/run5x.sh
+--- output ---
+run1: exit=1 pass=21 fail=1 verdict=SOME FAILED
+  run1 FAIL dedup win0: W1= W2= R2=
+run2: exit=1 pass=21 fail=1 verdict=SOME FAILED
+  run2 FAIL dedup win0: W1= W2= R2=
+run3: exit=1 pass=21 fail=1 verdict=SOME FAILED
+  run3 FAIL dedup win0: W1= W2= R2=
+run4: exit=1 pass=21 fail=1 verdict=SOME FAILED
+  run4 FAIL dedup win0: W1= W2= R2=
+run5: exit=1 pass=21 fail=1 verdict=SOME FAILED
+  run5 FAIL dedup win0: W1= W2= R2=
+--- exit: 0 ---

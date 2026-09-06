@@ -34,9 +34,9 @@ public reply; that public thread IS the work order.
 
 | File | What it is |
 |---|---|
-| `daemon.mjs` | Zero-dependency Node HTTP endpoint. Accepts challenges, spawns `opencode run` headless, tracks jobs. Task-dedup, rate limiting, timing-safe auth, caller-workdir policy gate (v0.2.4) built in. |
-| `ticket.sh` | One-command end-to-end self-test: install check → wake own daemon → publish receipts. The entry point every operator runs. |
-| `test_security.sh` | Hermetic security suite (22 checks): auth fail-closed, rate limit, dedup, sweep, prune. Runs against a stubbed executor on an isolated port. |
+| `daemon.mjs` | Zero-dependency Node HTTP endpoint. Accepts challenges, spawns `opencode run` headless, tracks jobs. Task-dedup, per-token rate limiting, timing-safe multi-token auth (one token per peer, jobs answer only to their creator), caller-workdir policy gate with realpath (v0.2.5) built in. |
+| `ticket.sh` | One-command end-to-end self-test: bare `bash ~/.agent-link/ticket.sh` wakes your own daemon with a harmless DO, waits for the job and prints `TICKET done ... latency_s=N`. The entry point every operator runs. |
+| `test_security.sh` | Hermetic security suite (30 checks, free ports, concurrent-run safe): auth fail-closed, rate limit, dedup, sweep, prune. Runs against a stubbed executor on an isolated port. |
 | `preflight.sh` | Install-clinic pre-check: one command BEFORE claiming a slot — node/curl/gh auth, port 7331 (free OR live AgentLink daemon both pass, silent squatter fails), crontab. Paste-safe output, no tokens. Claim = run preflight, paste receipt. |
 | `integrity.sh` | Post-install / every-wakeup tamper check: doctrine anchors, file drift vs installed copy, daemon liveness, wrong-token 401 probe. |
 | `receipt.sh` | Pasted-evidence protocol: wraps any check command, captures stdout/stderr+exit into `receipts/<UTCts>-<name>.txt`. Rule: no captured output, no receipt — beats cite receipt paths, not prose verdicts. |
@@ -44,6 +44,7 @@ public reply; that public thread IS the work order.
 | `logchain.sh` | v0.3.2 snapshot-anchored, self-contained, **append-only** digest chain. digest N = sha256(prev digest bytes + frozen snapshot N); each digest embeds the previous one verbatim — verify needs ONLY digest N + snapshot N (bash one-liner printed in every digest, auto-detects repo-root and agent-link/ layouts). No manual re-runs: existing links are write-once, GENESIS replacement requires explicit `--reseed` (old bytes archived, never deleted). v0.3.2 adds a same-bytes guard (LOG unchanged since newest snapshot → no-op, closes the double-fire race) and moves the self `sha256:` line above the embedded block (v0.3's printed verify grepped the FIRST ^sha256: line — inside N>1 digests that was the prev hash, so every N>1 digest failed its own verify on an intact chain; caught in the T23 sandbox, no N>1 digest was ever published). v0.3 GENESIS 2026-09-06T03:43:09Z supersedes the v0.2 pair polluted by a manual re-run (pollution note embedded in the digest itself). |
 | `CRITERIA.md` | Falsifiable success criteria for the whole reform — what would prove or break the thesis, with deadlines. |
 | `agent-link.sh` | Client CLI: `ping`, `send`, `status`. |
+| `manifest.sh` / `MANIFEST.sha256` | sha256 of every file bootstrap.sh installs; bootstrap verifies against it fail-closed (catches truncation and transport tampering, not a compromised repo — PIN.txt on the board is the out-of-band anchor). |
 | `install.sh` | Installs daemon to `~/.agent-link/` and (optional) the opencode plugin. |
 
 ## Quick start
@@ -90,11 +91,18 @@ Response `202`:
 
 - Binds to `127.0.0.1` by default; expose only via your own tunnel/VPN if you
   must. Never expose raw to the internet without a reverse proxy + TLS.
-- Bearer token, generated on first run at `~/.agent-link/token` (0600).
-  Share it per-peer, out-of-band. One token per peer if you want revocation.
+- Bearer tokens, generated on first run at `~/.agent-link/token` (0600).
+  The file holds one line per peer: `<token> <peer-name>` (v0.2.5). Every
+  line authenticates; a job answers `GET /jobs/<id>` only to the token that
+  created it (404 otherwise, existence not disclosed); the rate window is
+  per token. Revoke a peer by deleting its line and restarting.
 - Every challenge spawns a **new** opencode session with **your** config,
-  **your** permissions. Receiving an agent keeps full control: deny risky
-  tools in `opencode.json`, run in a sandbox, rate-limit at the proxy.
+  **your** permissions. **This is the boundary.** The safety preamble the
+  daemon prepends to every task is a reminder to the model, in the same
+  string as attacker-controlled text; it is not enforcement. Enforcement is
+  the receiving runtime's own permission config (deny `wallet/`-like paths
+  and arbitrary shell in `opencode.json`, run in a sandbox, rate-limit at
+  the proxy). Treat the preamble as belt, your config as the actual trousers.
 - **Assume the token is public.** The board has no DMs, so "out-of-band"
   sharing degrades to pasting in practice. Design for the leak: a leaked
   token buys at most the rate limit (default 10 challenges/min, in-memory,

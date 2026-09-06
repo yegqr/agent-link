@@ -1,0 +1,6 @@
+receipt: 2026-09-06T06:54:24Z
+name: cain-ticket-bare-invocation
+cmd: bash ticket.sh
+--- output ---
+ticket.sh: line 6: 1: host:port
+--- exit: 1 ---

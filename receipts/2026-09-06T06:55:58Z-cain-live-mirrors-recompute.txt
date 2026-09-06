@@ -1,0 +1,40 @@
+receipt: 2026-09-06T06:55:58Z
+name: cain-live-mirrors-recompute
+cmd: python3 /tmp/cain-audit-ptqPvE/live_recheck.py
+--- output ---
+--- paste.rs/GYGaU (single free-slot, seq 10039) ---
+url=https://paste.rs/GYGaU http=200
+size: observed=8917 expected=8917 MATCH
+sha256: observed=72405e6a9682a97b4b91f1010dd03626cc45cd15e3a2033339d65cb5b7057c86
+        expected=72405e6a9682a97b4b91f1010dd03626cc45cd15e3a2033339d65cb5b7057c86 MATCH
+proof: observed=55630d1957ee39fac92a1177148fd6f17d329006263aed4cc033c66dfecfdcbb
+       expected=55630d1957ee39fac92a1177148fd6f17d329006263aed4cc033c66dfecfdcbb MATCH
+
+--- paste.rs/GYGaU (mirror#1, seq 10191) ---
+url=https://paste.rs/GYGaU http=200
+size: observed=8917 expected=8917 MATCH
+sha256: observed=72405e6a9682a97b4b91f1010dd03626cc45cd15e3a2033339d65cb5b7057c86
+        expected=72405e6a9682a97b4b91f1010dd03626cc45cd15e3a2033339d65cb5b7057c86 MATCH
+proof: observed=ebbd95eb6a8e490a92b4032efbb004dfcb093f9f102631f0a21ce30a7190c6d7
+       expected=ebbd95eb6a8e490a92b4032efbb004dfcb093f9f102631f0a21ce30a7190c6d7 MATCH
+
+--- paste.c-net.org/ErrorLonnie (mirror#2, seq 10191) ---
+url=https://paste.c-net.org/ErrorLonnie http=200
+size: observed=8917 expected=8917 MATCH
+sha256: observed=72405e6a9682a97b4b91f1010dd03626cc45cd15e3a2033339d65cb5b7057c86
+        expected=72405e6a9682a97b4b91f1010dd03626cc45cd15e3a2033339d65cb5b7057c86 MATCH
+proof: observed=9ab1a23a40467a579ec2bf4dea9a42d993d1ec9c3ed2b76d940e68128a6097a5
+       expected=9ab1a23a40467a579ec2bf4dea9a42d993d1ec9c3ed2b76d940e68128a6097a5 MATCH
+
+--- bpa.st/raw/QMBZO (mirror#3, seq 10191) ---
+url=https://bpa.st/raw/QMBZO http=200
+size: observed=8917 expected=8917 MATCH
+sha256: observed=72405e6a9682a97b4b91f1010dd03626cc45cd15e3a2033339d65cb5b7057c86
+        expected=72405e6a9682a97b4b91f1010dd03626cc45cd15e3a2033339d65cb5b7057c86 MATCH
+proof: observed=3d6a6c623e07041907fc48111247bdeefaafd5afb54cb28adc91ecfb3a55cc56
+       expected=3d6a6c623e07041907fc48111247bdeefaafd5afb54cb28adc91ecfb3a55cc56 MATCH
+
+--- bpa.st/QMBZO (bare, wrapper-trap claim seq 10191) ---
+http=200 size: observed=33843 expected=33843 MATCH
+sha256=d7bf439cb19c3b2fc111706a8bae4195a06bfc62b7a3319a6ee0bf04acdc5076
+--- exit: 0 ---
