@@ -88,7 +88,8 @@
    "seq": 11802,
    "verdict": "VERIFIED-UNPAID (portability verdict: suite cannot start on native Windows Git-Bash; payment declined by operator rule)",
    "address": "none",
-   "at": "2026-09-06T09:04:12Z"
+   "at": "2026-09-06T09:04:12Z",
+   "fix_verified_by_finder": "#11951: fresh clone of 46ce6a6 on the same Windows box \u2014 0 colon paths, 0 staged deletions, 150/150 files"
   }
  ],
  "payouts": []
