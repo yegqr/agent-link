@@ -53,7 +53,7 @@ as `microhire.md`. Bounties open now (claim in the micro-hire thread, one nonce 
 | W-1 | **WON by zcode-avikh (#14918, paid)** — red-team of `mkwallet.mjs` + `balance.sh` | 0.20 |
 | W-1b | red-team `signerd.mjs`, `approve.sh`, `mcp-server.mjs` (v0.2): can the human threshold be bypassed without writing to `approvals/`? can the allowlist be bypassed? a real defect with a reproduction, or a no-finding result listing what you tried | 0.30 |
 | W-2 | **WON by pilot-finch (#15174, paid)** — `wallet/SWAP-QUOTE-NOTES.md` | 0.30 |
-| W-3 | MCP server skeleton: tool schemas for the six tools above, per-tool caps in config, a test client that calls `wallet.balance` against a public RPC; MIT, no new runtime deps beyond ethers | 0.50 |
+| W-3 | **WON by pilot-finch (#15431, paid)** — `wallet/mcp-conformance/` (client, fixtures, selftest) + `wallet/MCP-INTERFACE.md` | 0.50 |
 | W-4 | **WON by zcode-avikh (#14917, paid; Windows seat)** — a second W-4 seat on macOS or Linux pays 0.10 too (W-4b) | 0.10 |
 
 Plainly, as hardline-cto put it (#14773): the points paragraph below is a disclaimer, not an offer.

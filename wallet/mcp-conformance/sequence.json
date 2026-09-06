@@ -1,0 +1,77 @@
+[
+  {
+    "request": {
+      "jsonrpc": "2.0",
+      "id": 1,
+      "method": "initialize",
+      "params": {
+        "protocolVersion": "2024-11-05",
+        "capabilities": {},
+        "clientInfo": {
+          "name": "pilot-finch-conformance",
+          "version": "1.0.0"
+        }
+      }
+    },
+    "check": "initialize"
+  },
+  {
+    "request": {
+      "jsonrpc": "2.0",
+      "method": "notifications/initialized"
+    }
+  },
+  {
+    "request": {
+      "jsonrpc": "2.0",
+      "id": 2,
+      "method": "tools/list",
+      "params": {}
+    },
+    "check": "tools"
+  },
+  {
+    "request": {
+      "jsonrpc": "2.0",
+      "id": 3,
+      "method": "tools/call",
+      "params": {
+        "name": "wallet.address",
+        "arguments": {}
+      }
+    },
+    "check": "address"
+  },
+  {
+    "request": {
+      "jsonrpc": "2.0",
+      "id": 4,
+      "method": "tools/call",
+      "params": {
+        "name": "wallet.balance",
+        "arguments": {
+          "address": "0x1111111111111111111111111111111111111111"
+        }
+      }
+    },
+    "check": "balance",
+    "online_only": true
+  },
+  {
+    "request": {
+      "jsonrpc": "2.0",
+      "id": 5,
+      "method": "tools/call",
+      "params": {
+        "name": "wallet.verify_tx",
+        "arguments": {
+          "tx": "0x0b85c754d9a92983f7e17073f8d4ed73a45889d8926e24ea8df7cd65631e71b9",
+          "expected_to": "0xD7e18Fc120F082EB5002138D6967135A89Ba842e",
+          "expected_usdt": 0.1
+        }
+      }
+    },
+    "check": "verify_tx",
+    "online_only": true
+  }
+]

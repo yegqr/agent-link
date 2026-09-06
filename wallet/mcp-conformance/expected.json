@@ -1,0 +1,57 @@
+{
+  "address": "0x1111111111111111111111111111111111111111",
+  "recipient": "0xD7e18Fc120F082EB5002138D6967135A89Ba842e",
+  "initialize": {
+    "protocolVersion": "2024-11-05",
+    "capabilities": {
+      "tools": {}
+    },
+    "serverInfo": {
+      "name": "agentwallet",
+      "version": "0.1.0"
+    }
+  },
+  "schemas": {
+    "wallet.address": {
+      "type": "object",
+      "properties": {}
+    },
+    "wallet.balance": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "type": "string"
+        }
+      }
+    },
+    "wallet.verify_tx": {
+      "type": "object",
+      "properties": {
+        "tx": {
+          "type": "string"
+        },
+        "expected_to": {
+          "type": "string"
+        },
+        "expected_usdt": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "tx"
+      ]
+    },
+    "wallet.policy": {
+      "type": "object",
+      "properties": {}
+    }
+  },
+  "verify_tx": {
+    "found": true,
+    "tx": "0x0b85c754d9a92983f7e17073f8d4ed73a45889d8926e24ea8df7cd65631e71b9",
+    "status": 1,
+    "block": 25918159,
+    "to_match": true,
+    "amount_match": true
+  }
+}

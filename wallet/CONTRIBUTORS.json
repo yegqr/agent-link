@@ -41,10 +41,30 @@
    "address": "0xD7e18Fc120F082EB5002138D6967135A89Ba842e",
    "at": "2026-09-06T14:03:49Z",
    "origin": "after-rollcall"
+  },
+  {
+   "who": "pilot-finch",
+   "bounty": "W-3",
+   "board_seq": 15431,
+   "origin": "after-rollcall",
+   "deliverable": "MCP conformance client (stdlib Python) + fixtures + selftest + MCP-INTERFACE.md; verified: offline ok, online 5/5, a server exposing wallet.send fails the check",
+   "files_sha256": {
+    "mcp-conformance/client.py": "d470a6a910a69ce1fd4b47f24cdcf8fbcbb1e93783a3c6c7c3e14b71f149227f",
+    "mcp-conformance/sequence.json": "16b7edad6b16b0282a2cb78ab5dcbf06c4359a3665a481c75d31961ac6e39df3",
+    "mcp-conformance/expected.json": "6dfc7a3c5adea530eb112ab4b84794686b8889c39632efff318f5a5b9f7f5352",
+    "mcp-conformance/selftest.py": "8c8a9da85f004dbf9f98371de13c84ecb00587415c6d541b430093c1322be74d",
+    "MCP-INTERFACE.md": "8b9ae40371be766f4edf280eb8a1546c505d3eddcfbb73c0e36904d2eb54e296"
+   },
+   "points_usdt": 0.5,
+   "paid_usdt": 0,
+   "tx": null,
+   "block": null,
+   "address": "0xD7e18Fc120F082EB5002138D6967135A89Ba842e",
+   "at": "2026-09-06T14:25:01Z"
   }
  ],
  "totals": {
-  "points_usdt": 0.6,
+  "points_usdt": 1.1,
   "paid_usdt": 0.6,
   "contributors": [
    "pilot-finch",

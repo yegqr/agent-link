@@ -1,0 +1,82 @@
+receipt: 2026-09-06T14-17-23Z
+name: t35-crontab-restore
+cmd: crontab -l
+--- output ---
+# ВИМКНЕНО 03.08.2026 (вступна кампанія бакалавра завершена) за рішенням власника: Tor-ферма-фолбек після ребуту
+# @reboot /home/ye/PROJECTS/mylovanov/edbo/ops/run.sh edbo_tor_farm.py up 4 >> /home/ye/PROJECTS/mylovanov/edbo/data/farm.log 2>&1  # підняти Tor-ферму після ребуту (фолбек)
+0 4 * * * /home/ye/PROJECTS/180p/platforma/scripts/db_backup.sh
+*/2 * * * * /home/ye/PROJECTS/180p/platforma/scripts/complaint_worker_cron.sh >> /tmp/complaint_worker.log 2>&1
+# ВИМКНЕНО 03.08.2026 (вступна кампанія бакалавра завершена) за рішенням власника: ранковий звіт ЄДЕБО в канал + гілку
+# 0 5 * * * /home/ye/PROJECTS/mylovanov/edbo/ops/run.sh edbo_morning.py >> /home/ye/PROJECTS/mylovanov/edbo/data/morning.log 2>&1  # 08:00 Kyiv: звіт у канал + гілку
+# ВИМКНЕНО 03.08.2026 (вступна кампанія бакалавра завершена) за рішенням власника: ТОП-10 ВНЗ у канал
+# 2 5 * * * /home/ye/PROJECTS/mylovanov/edbo/ops/run.sh edbo_top_cards.py --send >> /home/ye/PROJECTS/mylovanov/edbo/data/topcards.log 2>&1  # 08:02 Kyiv ТОП-10 ВНЗ
+# ── EDBO повний прогін: 1×/добу о 23:03 Kyiv (20:03 UTC), residential-проксі (data/res_proxies.txt) ──
+# pipeline (refresh+parse внахлест, свіжі ефемерні токени) -> && web -> KSE on-update пост у канал+топіки
+# ВИМКНЕНО 01.08.2026 (дедлайн заяв 18:00 минув, фінальний прогін зроблено вручну) за рішенням власника: кнопка ручного парсу в боті
+# * * * * * /home/ye/PROJECTS/mylovanov/edbo/ops/run.sh edbo_manual_watch.py >> /home/ye/PROJECTS/mylovanov/edbo/data/manual_watch.log 2>&1  # ручний парс EDBO з кнопки бота
+# ВИМКНЕНО 03.08.2026 (вступна кампанія бакалавра завершена) за рішенням власника: ТОП-10 ВНЗ у чат «Вступники KSE»
+# 0 7 * * * /home/ye/PROJECTS/mylovanov/edbo/ops/run.sh edbo_top_cards.py --chat >> /home/ye/PROJECTS/mylovanov/edbo/data/topcards_chat.log 2>&1  # 10:00 Kyiv: ТОП-10 ВНЗ у чат Вступники KSE
+
+# Прохідний (prohidniy.mylovanov.media): перерахунок після нічного пайплайну.
+# Пайплайн стартує 20:03 UTC і йде ~30 хв, тому беремо запас.
+# Денне оновлення прохідних без Монте-Карло (снапшот+агрегати, ~1 хв).
+20 9,14 * * * /home/ye/PROJECTS/mylovanov/edbo/ops/chances_refresh.sh
+*/10 * * * * /home/ye/PROJECTS/mylovanov/edbo/ops/run.sh chances_admin.py sweep >> /home/ye/PROJECTS/mylovanov/edbo/data/pay_sweep.log 2>&1
+* * * * * /home/ye/PROJECTS/mylovanov/edbo/ops/run.sh chances_status.py missed >> /home/ye/PROJECTS/mylovanov/edbo/data/status.log 2>&1  # добір оплат, про які не повідомили (страховка від тиші)
+* * * * * /home/ye/PROJECTS/mylovanov/edbo/ops/run.sh chances_status.py live >> /home/ye/PROJECTS/mylovanov/edbo/data/status.log 2>&1  # LIVE: картинка-таблиця джерел + цифри, редагується на місці щохвилини
+# ВИМКНЕНО 01.08.2026 (дедлайн заяв 18:00 минув, фінальний прогін зроблено вручну) за рішенням власника: нічний повний прогін бакалавра (+ весь ланцюг після нього)
+# 3 20 * * * cd /home/ye/PROJECTS/mylovanov/edbo && EDBO_DEADLINE_S=6000 EDBO_RES_CONC=40 EDBO_MAX_ATTEMPT=8 EDBO_INDEX_TRIES=20 EDBO_UNIV_TRIES=8 EDBO_TARGET_COVER=0.99 EDBO_SWEEP_ROUNDS=2 EDBO_RES_CONC=48 EDBO_GATE_THREADS=64 sh -c 'set -a; . ./.env; set +a; exec /home/ye/PROJECTS/mylovanov/edbo/.venv/bin/python edbo_pipeline.py' >> /home/ye/PROJECTS/mylovanov/edbo/data/pipeline.log 2>&1 ; ./chances_refresh.sh >> /home/ye/PROJECTS/mylovanov/edbo/data/chances_refresh.log 2>&1 ; /home/ye/PROJECTS/mylovanov/edbo/.venv/bin/python edbo_grants.py sync >> /home/ye/PROJECTS/mylovanov/edbo/data/grants.log 2>&1 ; /home/ye/PROJECTS/mylovanov/edbo/.venv/bin/python -c "from edbo_kse_flow import maybe_post_kse; maybe_post_kse()" >> /home/ye/PROJECTS/mylovanov/edbo/data/kse.log 2>&1 ; /usr/bin/sudo systemctl restart kse_dash >> /home/ye/PROJECTS/mylovanov/edbo/data/kse_dash.log 2>&1 ; ./chances_refresh.sh --forecast >> /home/ye/PROJECTS/mylovanov/edbo/data/chances_refresh.log 2>&1  # 23:03 Kyiv: збір+сайт -> знімок -> гранти -> пост KSE -> дашборд -> прогноз
+
+# Шанси МА (prohidniyma.mylovanov.media): перебудова снапшоту щогодини.
+# На порожній БД заяв це 1,3 с і оновлює лише каталог. Щойно 7 серпня
+# edbo_applications_ma.db наповниться, той самий рядок почне рахувати заяви,
+# прохідні й стани контракту — без жодної ручної дії.
+# ВИМКНЕНО 03.08.2026 за рішенням власника: магістратуру глушимо повністю (сайт лишається онлайн зі
+# статичним каталогом; щоб повернути — прибрати '#' з рядка нижче).
+# 25 * * * * /home/ye/PROJECTS/mylovanov/edbo/ops/run.sh ma_snapshot.py build >> /home/ye/PROJECTS/mylovanov/edbo/data/ma_snapshot.log 2>&1
+
+# ── МАГІСТРАТУРА 2026: повний прогін 1×/добу о 02:30 Kyiv (23:30 UTC) ──
+# Три бази послідовно: 620 (~38 хв) + 640 (~5 хв) + 40 (~2 хв). Окремі БД і окремий лок,
+# тож бакалаврський конвеєр (20:03 UTC) не витісняється; вікно між ними ≥1,5 год.
+# Наприкінці — перегенерація ma26. Сторінка сама перемкнеться з режиму пропозицій
+# на рейтинг за балами, щойно заяви натечуть.
+# ВИМКНЕНО 31.07.2026 за рішенням власника: магістерський конвеєр не потрібен,
+# працює лише бакалаврський (20:03 UTC). Щоб повернути — прибрати '#' з рядка нижче.
+# 30 23 * * * cd /home/ye/PROJECTS/mylovanov/edbo && export EDBO_DEGREE=2 EDBO_OFFERS_DB=$PWD/data/edbo_offers_ma.db EDBO_APPS_DB=$PWD/data/edbo_applications_ma.db EDBO_PIPELINE_LOCK=edbo_pipeline_ma.lock EDBO_SKIP_WEB=1 EDBO_RES_CONC=40 EDBO_MAX_ATTEMPT=8 EDBO_INDEX_TRIES=20 EDBO_UNIV_TRIES=8 EDBO_TARGET_COVER=0.995 EDBO_DEADLINE_S=5400 && EDBO_EDU_BASE=620 /home/ye/PROJECTS/mylovanov/edbo/.venv/bin/python edbo_pipeline.py >> /home/ye/PROJECTS/mylovanov/edbo/data/pipeline_ma.log 2>&1 ; EDBO_EDU_BASE=640 EDBO_SKIP_TG=1 /home/ye/PROJECTS/mylovanov/edbo/.venv/bin/python edbo_pipeline.py >> /home/ye/PROJECTS/mylovanov/edbo/data/pipeline_ma.log 2>&1 ; EDBO_EDU_BASE=40 EDBO_SKIP_TG=1 /home/ye/PROJECTS/mylovanov/edbo/.venv/bin/python edbo_pipeline.py >> /home/ye/PROJECTS/mylovanov/edbo/data/pipeline_ma.log 2>&1 ; /home/ye/PROJECTS/mylovanov/edbo/.venv/bin/python edbo_web_ma.py >> /home/ye/PROJECTS/mylovanov/edbo/data/web_ma.log 2>&1
+
+# ── СТРАХОВКА ВІД РЕДЕПЛОЮ ЄДЕБО ПОСЕРЕД ПРОГОНУ (інцидент 31.07.2026) ──────────
+# EDBO ротує server-action хеші на кожен redeploy. Конвеєр тепер оновлює їх на льоту,
+# але якщо перевипуск стався в найгіршу мить, частина КП лишається недозібраною.
+# Цей прохід о 01:40 Kyiv добирає борг зі СВІЖИМИ хешами й токенами.
+# Якщо боргу немає — виходить за секунди й нічого не коштує.
+# ВИМКНЕНО 01.08.2026 (дедлайн заяв 18:00 минув, фінальний прогін зроблено вручну) за рішенням власника: нічний добір недозібраних КП
+# 40 22 * * * EDBO_GATE_THREADS=64 EDBO_RES_CONC=48 /home/ye/PROJECTS/mylovanov/edbo/ops/run.sh edbo_retry_failed.py >> /home/ye/PROJECTS/mylovanov/edbo/data/retry.log 2>&1 ; ./chances_refresh.sh >> /home/ye/PROJECTS/mylovanov/edbo/data/chances_refresh.log 2>&1
+
+# Здоровʼя каналу: алерт, якщо парсинг застряг (повернуто 01.08.2026 — без нього
+# провал магістерського прогону 31.07 лишався непоміченим добу).
+# ВИМКНЕНО 01.08.2026 (дедлайн заяв 18:00 минув, фінальний прогін зроблено вручну) за рішенням власника: алерт «парсинг застряг» — без парсингу він би спамив щодня
+# 17 * * * * /home/ye/PROJECTS/mylovanov/edbo/ops/run.sh edbo_healthcheck.py >> /home/ye/PROJECTS/mylovanov/edbo/data/health.log 2>&1
+
+# ── ЩОДЕННЕ ОНОВЛЕННЯ РЕЙТИНГУ (додано 18.08.2026) ────────────────────────────
+# CRON_TZ обовʼязковий: сервер живе за UTC, а «7 ранку» має лишитись 7-ю ранку й
+# після переходу на зимовий час (інакше в листопаді прогін поїде на 6:00).
+# EDBO_GATE_BROWSERS=0 — капча-шлюз на сторінках заяв ЄДЕБО прибрав 13.08.2026,
+# тож прохід коштує ~$0.12 замість ~$17. Якщо шлюз повернуть, прогін почне падати
+# на сторінках заяв — тоді повернути значення 3.
+# Наприкінці edbo_pipeline.py сам пересобирає ba26.mylovanov.media.
+# CRON_TZ Debian-івський cron ІГНОРУЄ (перевірено 18.08.2026: завдання стрельнуло
+# о 07:00 UTC = 10:00 Київ). Тому час задано в UTC, а вартовий нижче пропускає
+# лише той запуск, коли в Києві саме 6-та ранку — це переживає перехід на зимовий час.
+# Обгортка сама стежить за київським часом (06:00) і не запускається вдруге,
+# якщо сьогодні вже був вдалий прогін. Кілька будильників — на випадок,
+# коли ЄДЕБО лежить о 6-й ранку (так сталося 24.08.2026).
+# ВИМКНЕНО 27.08.2026 за рішенням власника: вступна кампанія бакалавра завершена,
+# рейтинг ba26 зафіксовано як ФІНАЛЬНИЙ (останній прогін 27.08, 14 191 КП).
+# Щоб оживити — прибрати '#' з рядка нижче.
+# 0 3,4,5,6 * * * /home/ye/PROJECTS/mylovanov/edbo/ops/run_daily.sh >> /home/ye/PROJECTS/mylovanov/edbo/data/pipeline_cron.log 2>&1
+*/8 * * * * /home/ye/.agent-link/heartbeat.sh
+*/10 * * * * /home/ye/PROJECTS/agent-space/agent-link/board_view.sh >> /home/ye/.agent-link/board_view.log 2>&1
+*/10 * * * * cd /home/ye/PROJECTS/agent-space/agent-link && ./paywatch.sh watch 7200 >> /home/ye/.agent-link/paywatch.log 2>&1
+*/5 * * * * /usr/bin/python3 /home/ye/PROJECTS/agent-space/agent-link/forum/build_forum.py update >> /home/ye/.agent-link/forum.log 2>&1
+*/5 * * * * /home/ye/PROJECTS/agent-space/agent-link/watchdog.sh >/dev/null 2>&1
+--- exit: 0 ---
