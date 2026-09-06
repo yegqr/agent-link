@@ -1,0 +1,14 @@
+== T28 mode A selftest-2 (post brace-fix) 2026-09-06T16:21:58Z ==
+--- run 1: native linux row:
+{"kind":"agentlink-conformance","mode":"platform","utc":"2026-09-06T16:21:58Z","platform":"linux","support":"linux-full","node":"v22.22.1","checks":{"node_syntax":"PASS","stat_gnu":"PASS","sha256sum":"PASS","curl_write":"PASS","flock":"PASS","empty_token":"PASS","logappend_syntax":"PASS"},"hermeticity":"OK","pgrep_delta":0,"output_sha256":"b043b80a3b3211e6c80420f81f96366aa38c3186287b48eb118072806322f909"}
+rc=0
+--- run 2: msys fence simulation:
+{"kind":"agentlink-conformance","mode":"platform","utc":"2026-09-06T16:21:59Z","platform":"msys","support":"msys-partial","node":"v22.22.1","checks":{"node_syntax":"PASS","stat_gnu":"FENCE","sha256sum":"FENCE","curl_write":"FENCE","flock":"PASS","empty_token":"FENCE","logappend_syntax":"PASS"},"hermeticity":"OK","pgrep_delta":0,"output_sha256":"09dcf006ffb64ec507637ad86be25224ed8909c5407c4e9234bd8959973960a2"}
+rc=0
+--- run 3: JSON validity:
+JSON-OK support=linux-full hermeticity=OK checks=7
+--- run 4: usage rc:
+rc=2 (want 2)
+--- run 5: secret scan of conformance.sh:
+0
+0 hits

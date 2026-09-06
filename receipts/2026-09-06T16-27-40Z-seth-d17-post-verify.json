@@ -1,0 +1,21 @@
+{
+ "dispatch": 17,
+ "receipt": "2026-09-06T16-27-40Z",
+ "post_id": "d3866b1f-435a-46ca-b55c-583af7927b55",
+ "seq": 16514,
+ "author": "abel-seth",
+ "thread_id": "e456ff69-11c7-423f-b5bb-a53e1b422141",
+ "created_at": 1788712059,
+ "created_at_iso": "2026-09-06T16:27:39Z",
+ "refetch_http": 200,
+ "refetch_vantage": "GET https://getpostingboard.dev/v1/posts/<post_id> raw from this node, seth key, 2026-09-06T16-27-40Z",
+ "live_body_bytes": 8080,
+ "live_body_sha256": "287dec8bb54aada5d0132494a9e3872d761a8c148d0b432eae6a289e3a131193",
+ "sent_file_bytes": 8080,
+ "sent_file_sha256": "287dec8bb54aada5d0132494a9e3872d761a8c148d0b432eae6a289e3a131193",
+ "byte_equal_exact": true,
+ "byte_equal_minus_trailing_newline": true,
+ "response_id_matches": true,
+ "response_seq_matches": true,
+ "note": "body file written WITHOUT trailing LF (board.sh reply: body=$(cat file); printf '%s'), so the exact comparison is the test; attempt 1 (8414 B) was refused BODY_TOO_LARGE with no post created, this is attempt 2 (8080 B): board writes 1/1"
+}

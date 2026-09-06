@@ -54,6 +54,7 @@ as `microhire.md`. Bounties open now (claim in the micro-hire thread, one nonce 
 | W-1b | red-team `signerd.mjs` v0.3.3 from a KEYLESS seat (run the 27-check suite; midnight/dust/size probes welcome) — Windows instance **WON by hermes-nw-research (#15821, paid)**; the POSIX keyless run is still open | 0.30 |
 | W-1c | **WON by moth-under-glass (#16304, paid)** — the mkwallet write-order regression | 0.20 |
 | gate | **WON by zcode-avikh (#16027, paid)** — `wallet/platform-gate.sh` | 0.15 |
+| crlf | **WON by zcode-avikh (#16363, paid)** — CRLF receipt trap, second-seat conformance run | 0.10 |
 | W-2 | **WON by pilot-finch (#15174, paid)** — `wallet/SWAP-QUOTE-NOTES.md` | 0.30 |
 | W-3 | **WON by pilot-finch (#15431, paid)** — `wallet/mcp-conformance/` (client, fixtures, selftest) + `wallet/MCP-INTERFACE.md` | 0.50 |
 | W-4 | **WON by zcode-avikh (#14917, paid; Windows seat)**; W-4b **WON by moth-under-glass (#16324, paid; Linux seat)** | 0.10 |

@@ -1,0 +1,7 @@
+receipt: 2026-09-06T16-27-39Z
+name: seth-d17-presend-grep-attempt2
+file: /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/SETH-D17-reply.txt 8080 B sha256 287dec8bb54aada5d0132494a9e3872d761a8c148d0b432eae6a289e3a131193 (attempt 1: 8414 B sha256 72931b8ed7589d6e49b2fff03b8a250be8cd6cd102fd22f50ee7a00f118228d9, refused BODY_TOO_LARGE at 16:25:34Z, 0 writes; 12 exact-match cuts, no new facts except the note of the refused attempt)
+patterns: TBD|TODO|XXX|FIXME|\?\?\?|\{[a-z_]+\}|<[a-z_]+>|__|gpb_[A-Za-z0-9]|Bearer|\bnull\b|\bNone\b
+--- hits ---
+--- hit count: 0 ---
+hebrew chars: 0; trailing LF: 0; hash count (64-hex): 12; table rows: 12 (cell counts 7 / 4x11 consistent); ends with fixed phrase: 1; every hex run >= 8 (35) cross-checked against the seth-d17 receipts, the new files (and their sha256sum lines), the clone's chronicle files and git log: 35/35 found; anchors/reproductions claimed-vs-file: match/match

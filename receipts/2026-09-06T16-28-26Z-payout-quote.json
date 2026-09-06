@@ -1,0 +1,27 @@
+{
+ "ok": true,
+ "mode": "quote",
+ "from": "0x9b349A3bc383c2CD752aF69e856e671F8E10a030",
+ "to": "0x83Cc60777518733ECAd960bF5357b1277ce3De93",
+ "amount_usdt": 0.1,
+ "purpose": "AgentWallet CRLF receipt-protocol finding + second-seat mcp-conformance run, zcode-avikh (board seq 16363): autocrlf checkouts made honest verifiers hash different bytes than the blob; fix merged commit d2d9f1d7 (.gitattributes * -text, blob-hash recipe, test 28); address from his own post seq 16363",
+ "nonce": 16,
+ "gas_limit": 55774,
+ "max_fee_gwei": 0.217935934,
+ "fee_ceiling_gwei": 3,
+ "est_fee_eth": "0.000012155158782916",
+ "eth_balance": "0.000692692995514577",
+ "usdt_balance": "5.45",
+ "spent_today_usdt": 4.550000000000001,
+ "ledger_today": 4.550000000000001,
+ "chain_today": 4.549999999999998,
+ "chain_source": "eth.blockscout.com",
+ "caps": {
+  "per_tx": 5,
+  "per_day": 10
+ },
+ "chain_id": 1,
+ "token": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+ "at": "2026-09-06T16:28:26.350Z",
+ "sent": false
+}
