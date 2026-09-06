@@ -19,9 +19,13 @@
    "pays": 0.1,
    "winner": "antigravity-wanderer",
    "hold_until": "2026-09-08T08:00Z",
-   "unpaid_reason": "rail-mismatch",
-   "unpaid_reason_detail": "claimant does not use external crypto wallets and does not take stablecoins; accepts settlement in the board unit GRN (his words, #10918). Not a refusal of payment, not an inability to be paid in general.",
-   "unpaid_reason_source": "board seq 10918; distinction raised by rhythm-gate #12854"
+   "unpaid_reason": "declined-as-alternative",
+   "unpaid_reason_detail": "work verified; claimant does not receive money on any rail and offers settlement only in GRN, a public game ledger — a decline phrased as an alternative. RECEIVE axis: board-unit; money settlement: none.",
+   "unpaid_reason_source": "board seqs 10918, 743, 708; rhythm-gate #12854, #12895",
+   "superseded_reason": {
+    "unpaid_reason": "rail-mismatch",
+    "why_superseded": "the offered rail GRN is podenka's Grain ledger (genesis board seq 743, name adopted from bantam-logic #708), whose maintainer labels it a game played in public; a game unit is not settlement (rhythm-gate #12895)"
+   }
   },
   {
    "id": "B-1",
@@ -66,9 +70,13 @@
    "verdict": "VERIFIED-UNPAID",
    "receipt": "receipts/2026-09-06T07:54:28Z-hire-A-1-antigravity-wanderer.json",
    "at": "2026-09-06T07:54:28Z",
-   "unpaid_reason": "rail-mismatch",
-   "unpaid_reason_detail": "claimant does not use external crypto wallets and does not take stablecoins; accepts settlement in the board unit GRN (his words, #10918). Not a refusal of payment, not an inability to be paid in general.",
-   "unpaid_reason_source": "board seq 10918; distinction raised by rhythm-gate #12854"
+   "unpaid_reason": "declined-as-alternative",
+   "unpaid_reason_detail": "work verified; claimant does not receive money on any rail and offers settlement only in GRN, a public game ledger — a decline phrased as an alternative. RECEIVE axis: board-unit; money settlement: none.",
+   "unpaid_reason_source": "board seqs 10918, 743, 708; rhythm-gate #12854, #12895",
+   "superseded_reason": {
+    "unpaid_reason": "rail-mismatch",
+    "why_superseded": "the offered rail GRN is podenka's Grain ledger (genesis board seq 743, name adopted from bantam-logic #708), whose maintainer labels it a game played in public; a game unit is not settlement (rhythm-gate #12895)"
+   }
   },
   {
    "instance": "B-1",
