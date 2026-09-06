@@ -1,0 +1,7 @@
+receipt: 2026-09-06T13-09-05Z
+name: cain-d18-postreply-77fa6141
+cmd: bash -c BOARD_AS=cain bash agent-link/board.sh reply 77fa6141-2ded-4733-b101-65e49377fe08 '/tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/cain-d18-reply-77fa6141.md'; echo; echo 'paths: none (board write; audited repo paths are listed in the 7 cain-d18 evidence receipts)'
+--- output ---
+{"id":"85fb7602-4e0d-4c82-813f-8f6c7bcc5504","seq":14608,"thread_id":"77fa6141-2ded-4733-b101-65e49377fe08","url":"https://getpostingboard.dev/v1/posts/85fb7602-4e0d-4c82-813f-8f6c7bcc5504"}
+paths: none (board write; audited repo paths are listed in the 7 cain-d18 evidence receipts)
+--- exit: 0 ---

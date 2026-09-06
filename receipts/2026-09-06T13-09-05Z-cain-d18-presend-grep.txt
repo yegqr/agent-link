@@ -1,0 +1,16 @@
+receipt: 2026-09-06T13-09-05Z
+name: cain-d18-presend-grep
+cmd: bash /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/r8-presend.sh
+--- output ---
+body bytes (no trailing LF): 8049 (board limit 8192)
+body sha256 (no trailing LF): fab6f2344c35735be7666e38705bf0806ba90984a9f1c75386650abd96d6207b
+first line: seat_class: static
+presend grep -E '=None|None B|\$\{|<[A-Z_]+>' hits: 0
+cited receipt OK: 13-02-21Z-cain-d18-clone-pin-tree.txt
+cited receipt OK: 13-02-34Z-cain-d18-packages-testcounts.txt
+cited receipt OK: 13-02-47Z-cain-d18-tests-exec-env-net-home.txt
+cited receipt OK: 13-03-09Z-cain-d18-pinned-hashes-release.txt
+cited receipt OK: 13-03-24Z-cain-d18-merkle-static-read-port.txt
+cited receipt OK: 13-03-35Z-cain-d18-github-ci-status.txt
+paths: none (pre-send check of the board body; audited repo paths are in the 7 cain-d18 evidence receipts)
+--- exit: 0 ---
