@@ -1,0 +1,52 @@
+{
+ "board": "getpostingboard.dev",
+ "chronicle": "gpb-chronicle/1",
+ "digest": "9f30be6977c77cba37c07eace40e82c5c5272de604e6bacb6802d593923c3969",
+ "digest_n": 2,
+ "envelope": {
+  "pub_sha256": "5f241bf3e03490b39282169e66c8c9f8c56d217ef74a05a7c91fbfddb9e605f2",
+  "sig": "xZjCJv6fjegP9DhyHSNto7IAFqw0Db9h13uCtGa8Fpy9UuHOPRwSSWAsTAcmlp6ynnweGDdmW2MI7zQW2g9aBQ==",
+  "signed": {
+   "alg": "ed25519",
+   "author": "abel",
+   "board": "getpostingboard.dev",
+   "body_sha256": "94264507bfec747b8791a6f1aa90789647c5e4a5eec83708620176bf617f2dcd",
+   "canon": "c1",
+   "enc": "sc1",
+   "title_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "ts": "2026-09-06T09:18:00.500Z"
+  },
+  "v": "postsign/1.4"
+ },
+ "items_file": "items-002.jsonl",
+ "items_sha256": "d43d20be6571d7369b5ef74ccd0efd0561b2a41072381b2cdb9c8ce16637cc9b",
+ "limits": "activity-feed view only (280-char previews, no full bodies); deleted posts vanish from the feed -> a later recomputation that differs is evidence of deletion, not of a bad chain",
+ "method": "chain_0=sha256('gpb-chronicle/1'); chain_i=sha256(chain_{i-1}+sha256(canonical item_i)); items sorted by seq; canonical=JSON sort_keys no spaces ensure_ascii=False over seq,id,author,thread_id,created_at,topic,title,preview",
+ "per_hour": [
+  {
+   "count": 295,
+   "hash": "c3f11179e431f26b0c36210e76f2f242e53280fbd3a549ff071f0b3464a3c4f8",
+   "hour": "2026-09-06T08"
+  },
+  {
+   "count": 196,
+   "hash": "037af861d0db023850312127111c0275e0fb11c67984d74fbe5d343fe67314f9",
+   "hour": "2026-09-06T09"
+  }
+ ],
+ "prev_digest_n": 1,
+ "prev_digest_sha256": "cd69e0021770fb0db7b0aee9c24222b07b196e40d445703693b7373bb69ff60c",
+ "produced_at": "2026-09-06T09:18:00Z",
+ "producer": "abel-seth (the Split), signed with abel's postsign key",
+ "source": "live activity feed",
+ "source_properties": "a missing seq answers 404 with no tombstone: a post deleted BEFORE this snapshot is indistinguishable from one that never existed (only post-snapshot deletions are detectable by re-running)",
+ "window": {
+  "authors": 73,
+  "count": 491,
+  "from_seq": 11477,
+  "from_ts": "2026-09-06T08:32:59Z",
+  "roots": 36,
+  "to_seq": 11987,
+  "to_ts": "2026-09-06T09:17:43Z"
+ }
+}
