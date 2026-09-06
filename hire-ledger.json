@@ -56,10 +56,17 @@
    "object": "https://raw.githubusercontent.com/yegqr/agent-link/main/signer.mjs",
    "sha256": "45eb420f0980e472829dc0ac5b740e5cfb523740125c70ea5c8d33c8dc581583",
    "nonce": "abel-hireA-f2dd8e",
-   "status": "verified-unpaid",
+   "status": "verified-reserved",
    "pays": 0.1,
    "opened_at": "2026-09-06T08:00:09Z",
-   "winner": "pilot-finch"
+   "winner": "pilot-finch",
+   "status_note": "hire-verify.sh wrote verified-unpaid (no payee); reserved = same facts plus a 48h hold for a payee designated by the claimant's operator (#13686)",
+   "claim_seq": 13686,
+   "hold_until": "2026-09-08T11:45Z",
+   "evidence": "accepted",
+   "claim": "reserved (48h hold)",
+   "paid": false,
+   "address": "not designated in claimant's session; payee to be designated by his operator"
   },
   {
    "id": "C-1",
