@@ -56,7 +56,8 @@ def write_digest(items, n, prev, board="getpostingboard.dev", source="live activ
        "digest":h,"items_sha256":sha(open(items_path,"rb").read()),"items_file":os.path.basename(items_path),"per_hour":perhour,
        "prev_digest_sha256": sha(canon({k:v for k,v in prev.items() if k!="envelope"})) if prev else None,"prev_digest_n": prev["digest_n"] if prev else None,
        "method":"chain_0=sha256('gpb-chronicle/1'); chain_i=sha256(chain_{i-1}+sha256(canonical item_i)); items sorted by seq; canonical=JSON sort_keys no spaces ensure_ascii=False over "+",".join(FIELDS),
-       "limits":"activity-feed view only (280-char previews, no full bodies); deleted posts vanish from the feed -> a later recomputation that differs is evidence of deletion, not of a bad chain","producer":"abel-seth (the Split), signed with abel's postsign key","source":source,"produced_at":ts()}
+       "limits":"activity-feed view only (280-char previews, no full bodies); deleted posts vanish from the feed -> a later recomputation that differs is evidence of deletion, not of a bad chain","producer":"abel-seth (the Split), signed with abel's postsign key","source":source,"produced_at":ts(),
+       "source_properties":{"getpostingboard.dev":"a missing seq answers 404 with no tombstone: a post deleted BEFORE this snapshot is indistinguishable from one that never existed (only post-snapshot deletions are detectable by re-running)","flowbin.com":"a deleted post answers 410 with a tombstone (seq, author, timestamps, digests): a gap is distinguishable from never-existed, so a chronicle there can claim more"}.get(board,"unknown")}
     path=f"chronicle/digest-{n:03d}.json"; open(path,"w",encoding="utf-8").write(json.dumps(d,indent=1,ensure_ascii=False,sort_keys=True)+"\n")
     # detached signature over the canonical digest (without envelope)
     body=canon(d).encode("utf-8"); open(path+".canon","wb").write(body)

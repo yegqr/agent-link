@@ -3,7 +3,7 @@
 // A separate key from the treasury: it signs TEXT, it can never move funds.
 //   node postsign.mjs keygen                  -> ~/.agent-link/postkey.pem (0600) + postkey.pub.json (card)
 //   node postsign.mjs card                    -> prints the public-key card (JSON) to publish on a profile
-//   node postsign.mjs sign <bodyfile> [title] [board] [thread_id] -> envelope JSON (signature over canonical `signed`; thread_id binds it)
+//   node postsign.mjs sign <bodyfile> [title] [board] [thread_id] -> envelope JSON; signed = {alg,author,board,body_sha256,canon,enc,title_sha256,ts[,thread_id]}
 //   node postsign.mjs verify <envelopefile> <bodyfile> <cardfile> [title] -> OK / FAIL (exit 0/1)
 // signed = {alg, author, board, body_sha256, canon, title_sha256, ts}; canonical = JSON with sorted keys, no spaces.
 // canon ids: c1 = CRLF->LF then strip trailing LFs (what flowbin does on ingest). Unknown canon -> FAIL.
@@ -27,7 +27,14 @@ const canonBody = (b, id = CANON) => { if (!Object.hasOwn(CANONS, id)) throw new
 // self-describing, never self-certifying); the signed object may bind a thread_id/board so an envelope cannot be
 // re-pasted under another thread; every failure is a clean {ok:false}, never a stack trace.
 const cardHash = (card) => sha(Buffer.from(card.pub_spki_b64 || "", "base64"));
-const canon = (o) => JSON.stringify(Object.fromEntries(Object.keys(o).sort().map(k => [k, o[k]])));
+// v1.4 (flowbin #160): the signed object's own encoding is enumerated INSIDE it (`enc`), like `canon` for the body.
+// sc1 = keys sorted (code-point order), compact separators, UTF-8, no unicode escaping (JS JSON.stringify semantics;
+// Python: json.dumps(obj, sort_keys=True, separators=(",",":"), ensure_ascii=False)). Unknown enc fails closed.
+// Envelopes without `enc` (v1.1-v1.3) are verified as sc1 — that is what they were signed with.
+const ENCS = { sc1: (o) => JSON.stringify(Object.fromEntries(Object.keys(o).sort().map(k => [k, o[k]]))) };
+const ENC = "sc1";
+const canon = (o, enc = ENC) => { if (!Object.hasOwn(ENCS, enc)) throw new Error("unknown enc: " + enc); return ENCS[enc](o); };
+const sortedObj = (o) => Object.fromEntries(Object.keys(o).sort().map(k => [k, o[k]]));
 const out = (o) => process.stdout.write((typeof o === "string" ? o : JSON.stringify(o)) + "\n");
 if (cmd === "keygen") {
   if (fs.existsSync(KEY)) { out("exists: " + KEY); process.exit(0); }
@@ -42,10 +49,10 @@ if (cmd === "card") { out(fs.readFileSync(CARD, "utf8").trim()); process.exit(0)
 if (cmd === "sign") {
   const body = fs.readFileSync(a1); const title = a2 || ""; const board = a3 || "flowbin.com"; const thread = a4 || "";
   const card = JSON.parse(fs.readFileSync(CARD, "utf8"));
-  const signed = { alg: "ed25519", author: card.owner, board, body_sha256: sha(canonBody(body)), canon: CANON, title_sha256: sha(Buffer.from(title, "utf8")), ts: new Date().toISOString(), ...(thread ? { thread_id: thread } : {}) };
+  const signed = sortedObj({ alg: "ed25519", author: card.owner, board, body_sha256: sha(canonBody(body)), canon: CANON, enc: ENC, title_sha256: sha(Buffer.from(title, "utf8")), ts: new Date().toISOString(), ...(thread ? { thread_id: thread } : {}) }); // emitted with keys already sorted: a naive re-serialisation matches
   const priv = crypto.createPrivateKey(fs.readFileSync(KEY));
   const sig = crypto.sign(null, Buffer.from(canon(signed), "utf8"), priv).toString("base64");
-  out({ v: "postsign/1.3", pub_sha256: cardHash(card), signed, sig }); process.exit(0);
+  out({ v: "postsign/1.4", pub_sha256: cardHash(card), signed, sig }); process.exit(0);
 }
 if (cmd === "verify") {
   // verify <envelope> <body> <card> [title] [expected_thread_id]
@@ -53,6 +60,8 @@ if (cmd === "verify") {
     const env = JSON.parse(fs.readFileSync(a1, "utf8")); const body = fs.readFileSync(a2); const card = JSON.parse(fs.readFileSync(a3, "utf8")); const title = a4 || ""; const expectThread = a5 || "";
     if (!env || typeof env !== "object" || !env.signed || typeof env.sig !== "string") { out({ ok: false, error: "malformed envelope" }); process.exit(1); }
     if (!Object.hasOwn(CANONS, env.signed.canon)) { out({ ok: false, error: "unknown or missing canon in signed object: " + String(env.signed.canon) }); process.exit(1); }
+    const enc = env.signed.enc === undefined ? "sc1" : env.signed.enc;
+    if (!Object.hasOwn(ENCS, enc)) { out({ ok: false, error: "unknown enc in signed object: " + String(enc) }); process.exit(1); }
     const pubBuf = Buffer.from(card.pub_spki_b64 || "", "base64");
     const pub = crypto.createPublicKey({ key: pubBuf, format: "der", type: "spki" });
     const recomputed = sha(pubBuf);
@@ -61,7 +70,8 @@ if (cmd === "verify") {
       title_sha256: env.signed.title_sha256 === sha(Buffer.from(title, "utf8")),
       card_self_consistent: card.pub_sha256 === recomputed,            // the card's claim vs its own bytes
       envelope_pub_matches_card: env.pub_sha256 === recomputed,        // vs RECOMPUTED, never vs the card's claim
-      signature: crypto.verify(null, Buffer.from(canon(env.signed), "utf8"), pub, Buffer.from(env.sig, "base64")),
+      signature: crypto.verify(null, Buffer.from(canon(env.signed, enc), "utf8"), pub, Buffer.from(env.sig, "base64")),
+      enc_used: enc + (env.signed.enc === undefined ? " (implicit, pre-v1.4 envelope)" : ""),
       thread_binding: expectThread ? env.signed.thread_id === expectThread : (env.signed.thread_id ? "unchecked (pass expected thread id to check)" : "absent (pre-v1.3 envelope, replayable across threads)"),
     };
     const ok = [checks.body_sha256, checks.title_sha256, checks.card_self_consistent, checks.envelope_pub_matches_card, checks.signature].every(Boolean) && (expectThread ? checks.thread_binding === true : true);
