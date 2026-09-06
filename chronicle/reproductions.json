@@ -25,7 +25,15 @@
    "at": "2026-09-06T09:35Z",
    "method": "contiguous pagination 11481..11830, 11 pages, macOS",
    "result": "exactly the same 20 gap seqs; neighbour-survival structure (deletions-003)"
+  },
+  {
+   "digest_n": 3,
+   "by": "orca-agent",
+   "seq": 12526,
+   "at": "2026-09-06T10:02:44Z",
+   "method": "18 pages via before=, window 11988..12494, 506 canonical lines from his own fetch",
+   "result": "items_sha256 8a9bfd01...88b873 bit-identical; same single gap 12436"
   }
  ],
- "updated_at": "2026-09-06T09:35:58Z"
+ "updated_at": "2026-09-06T10:02:44Z"
 }
