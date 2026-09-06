@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
-# logchain.sh v0.3 — snapshot-anchored tamper-evident digest (AgentLink kit)
+# logchain.sh v0.3.2 — snapshot-anchored tamper-evident digest (AgentLink kit)
+#
+# v0.3.1 (2026-09-06, T23 sandbox catch): the self `sha256:` line moved ABOVE
+# the embedded prev-digest block. v0.3's printed verify cmd greps the FIRST
+# ^sha256: line of the digest file — with the block below the self hash, that
+# match was the PREV digest's hash, so every N>1 digest failed its own verify
+# on an INTACT chain (GENESIS was unaffected: no embedded block). The bug died
+# in sandbox before any N>1 digest was ever published.
 #
 # APPEND-ONLY: no manual re-runs — the chain is append-only. Existing
 # digest-N.txt / snapshot-N.txt files are write-once; a second run never
@@ -37,6 +44,17 @@ esac
 
 digests="$(ls -1 "$chain"/digest-*.txt 2>/dev/null | sort || true)"
 snaps="$(ls -1 "$chain"/snapshot-*.txt 2>/dev/null | sort || true)"
+
+# v0.3.2 same-bytes guard: if LOG.md is byte-identical to the newest frozen
+# snapshot, there is nothing new to anchor — abort instead of appending a
+# redundant link. Closes the double-fire race (two cron ticks racing would
+# each append a same-content link; write-once guard alone does not stop that).
+newest_snap="$(printf '%s\n' "$snaps" | grep . | tail -n 1 || true)"
+if [ -n "$newest_snap" ] && [ "$reseed" = 0 ] \
+   && [ "$(sha256sum "$newest_snap" | cut -d' ' -f1)" = "$(sha256sum "$log" | cut -d' ' -f1)" ]; then
+  echo "no-op: LOG.md unchanged since $newest_snap — nothing new to anchor (same-bytes guard)"
+  exit 0
+fi
 
 maxnum() { # max N across "prefix-NNN.txt" lines on stdin
   local m=0 v f
@@ -110,7 +128,7 @@ digest="$chain/digest-$nn.txt"
 tmp="$(mktemp "$chain/.digest-$nn.XXXXXX")"
 {
   cat <<EOF
-logchain digest $nn (snapshot-anchored, self-contained v0.3)
+logchain digest $nn (snapshot-anchored, self-contained v0.3.2)
 utc: $utc
 prev: $prevhash
 EOF
@@ -119,13 +137,19 @@ EOF
   fi
   if [ -n "$prev" ]; then
     cat <<EOF
-prev-digest embedded verbatim below (between markers); verify needs ONLY this file + snapshot-$nn
+snapshot: logchain/snapshot-$nn.txt
+snapshot lines: $lines
+sha256: $sha
+verify (bash, published artifacts only; run as-is from repo root or agent-link/ parent — auto-detects layout):
+  $verify_cmd
+  # output must print VERIFY-PASS; the snapshot is frozen bytes, LOG.md growth is irrelevant
+prev-digest embedded verbatim below (between markers); self sha256 line sits ABOVE this block — verify greps the FIRST ^sha256: line, which must stay the digest's own
 EOF
     echo "-----BEGIN EMBEDDED PREV DIGEST-----"
     cat "$prev"
     echo "-----END EMBEDDED PREV DIGEST-----"
-  fi
-  cat <<EOF
+  else
+    cat <<EOF
 snapshot: logchain/snapshot-$nn.txt
 snapshot lines: $lines
 sha256: $sha
@@ -133,6 +157,7 @@ verify (bash, published artifacts only; run as-is from repo root or agent-link/ 
   $verify_cmd
   # output must print VERIFY-PASS; the snapshot is frozen bytes, LOG.md growth is irrelevant
 EOF
+  fi
 } > "$tmp"
 mv "$tmp" "$digest"
 cat "$digest"

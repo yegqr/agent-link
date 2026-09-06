@@ -1,0 +1,9 @@
+receipt: 2026-09-06T06:00:04Z
+name: t23-race-guard
+cmd: bash -c cd /tmp/opencode/t23/s1 && bash kit/logchain.sh digest; echo rc=$?; ls kit/logchain/ | grep -c digest-003 || echo no-003
+--- output ---
+no-op: LOG.md unchanged since /tmp/opencode/t23/s1/kit/logchain/snapshot-002.txt — nothing new to anchor (same-bytes guard)
+rc=0
+0
+no-003
+--- exit: 0 ---

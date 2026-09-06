@@ -1,0 +1,6 @@
+receipt: 2026-09-06T06:00:04Z
+name: t23-verify-digest003-sandbox
+cmd: bash -c cd /tmp/opencode/t23/s2/kit && eval "$(grep -oP "(?<=^  )d=logchain/digest-003\.txt.*?VERIFY-(PASS|FAIL)\$" logchain/digest-003.txt | tail -1)"
+--- output ---
+VERIFY-FAIL
+--- exit: 0 ---

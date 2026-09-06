@@ -1,0 +1,6 @@
+receipt: 2026-09-06T06:00:04Z
+name: t23-prod-nofire
+cmd: bash /home/ye/.agent-link/heartbeat.sh cadence
+--- output ---
+logchain-cadence: no-fire (age 8215s < 7d, 18 new lines < 20)
+--- exit: 0 ---
