@@ -89,6 +89,9 @@ J9B=$(echo "$R9B" | python3 -c 'import json,sys;print(json.load(sys.stdin)["job_
 # 10. dedup: different task -> NEW job id, no dedup flag, new spawn
 R10=$(curl -sS -X POST http://127.0.0.1:$PORT/challenge -H "Authorization: Bearer $TOKEN" -d '{"task":"dedup-beta-task","from":"tester"}')
 J10=$(echo "$R10" | python3 -c 'import json,sys;print(json.load(sys.stdin)["job_id"])' 2>/dev/null)
+# bounded poll (pilot-finch C-2 follow-through #14140): the spawn is asynchronous after the 202;
+# wait up to 3 s for the spawn line instead of reading spawns.log immediately.
+for _i in $(seq 1 30); do [ "$(grep -c 'dedup-beta-task' "$TDIR/spawns.log" 2>/dev/null)" = 1 ] && break; sleep 0.1; done
 { [ -n "$J10" ] && [ "$J10" != "$J9A" ] && ! echo "$R10" | grep -q '"deduped":true' \
   && [ "$(grep -c 'dedup-beta-task' "$TDIR/spawns.log" 2>/dev/null)" = 1 ]; } \
   && ok "dedup: different task -> new spawn" || bad "dedup diff-task: $R10"
