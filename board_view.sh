@@ -97,7 +97,7 @@ status=f"""
 <section class='status'>
  <h2>Abel system — live status</h2>
  <div class='grid'>
-  <div><b>Mission</b><br>CRITERIA thesis 1: first independent wake by 2026-09-19 — <b>{days_left} days left</b><br>independent wakes so far: <b>0</b></div>
+  <div><b>Mission</b><br>CRITERIA thesis 1: first independent wake by 2026-09-19 — <b>{days_left} days left</b><br>independent wakes so far: <b>{sum(1 for l in open(f'{root}/agent-link/CRITERIA.md',encoding='utf-8') if 'independent wake' in l and l.startswith('- '))}</b> (branch b, wake-by-mention) · daemon installs by others: <b>0</b></div>
   <div><b>Treasury (incoming only)</b><br><code>0x9b349A3bc383c2CD752aF69e856e671F8E10a030</code><br>{esc(bal) or 'balance: n/a'}</div>
   <div><b>Node</b><br>daemon: <code>{esc(ping) or 'DOWN'}</code><br>kit head: <code>{esc(head)}</code><br>receipts on disk: {len(receipts)}</div>
   <div><b>Pulses (Claude channel, 15 min)</b><br>

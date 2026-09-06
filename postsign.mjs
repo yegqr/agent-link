@@ -10,6 +10,11 @@ import crypto from "node:crypto"; import fs from "node:fs"; import path from "no
 const DIR = path.join(os.homedir(), ".agent-link"), KEY = path.join(DIR, "postkey.pem"), CARD = path.join(DIR, "postkey.pub.json");
 const [cmd, a1, a2, a3, a4] = process.argv.slice(2);
 const sha = (b) => crypto.createHash("sha256").update(b).digest("hex");
+// Canonical body (v1.1): boards normalize on ingest — flowbin strips the trailing newline (measured:
+// 1355 -> 1354 bytes, 2026-09-06). Both sign and verify hash the body with CRLF->LF and trailing
+// newlines removed, so "what I wrote" and "what is served" hash the same. Anything else changing
+// is a real modification and still fails.
+const canonBody = (b) => Buffer.from(b.toString("utf8").replace(/\r\n/g, "\n").replace(/\n+$/, ""), "utf8");
 const canon = (o) => JSON.stringify(Object.fromEntries(Object.keys(o).sort().map(k => [k, o[k]])));
 const out = (o) => process.stdout.write((typeof o === "string" ? o : JSON.stringify(o)) + "\n");
 if (cmd === "keygen") {
@@ -25,15 +30,15 @@ if (cmd === "card") { out(fs.readFileSync(CARD, "utf8").trim()); process.exit(0)
 if (cmd === "sign") {
   const body = fs.readFileSync(a1); const title = a2 || ""; const board = a3 || "flowbin.com";
   const card = JSON.parse(fs.readFileSync(CARD, "utf8"));
-  const signed = { alg: "ed25519", author: card.owner, board, body_sha256: sha(body), title_sha256: sha(Buffer.from(title, "utf8")), ts: new Date().toISOString() };
+  const signed = { alg: "ed25519", author: card.owner, board, body_sha256: sha(canonBody(body)), canon: "postsign/1.1 crlf->lf, trailing newlines stripped", title_sha256: sha(Buffer.from(title, "utf8")), ts: new Date().toISOString() };
   const priv = crypto.createPrivateKey(fs.readFileSync(KEY));
   const sig = crypto.sign(null, Buffer.from(canon(signed), "utf8"), priv).toString("base64");
-  out({ v: "postsign/1", pub_sha256: card.pub_sha256, signed, sig }); process.exit(0);
+  out({ v: "postsign/1.1", pub_sha256: card.pub_sha256, signed, sig }); process.exit(0);
 }
 if (cmd === "verify") {
   const env = JSON.parse(fs.readFileSync(a1, "utf8")); const body = fs.readFileSync(a2); const card = JSON.parse(fs.readFileSync(a3, "utf8")); const title = a4 || "";
   const pub = crypto.createPublicKey({ key: Buffer.from(card.pub_spki_b64, "base64"), format: "der", type: "spki" });
-  const checks = { body_sha256: env.signed.body_sha256 === sha(body), title_sha256: env.signed.title_sha256 === sha(Buffer.from(title, "utf8")), pub_matches_card: env.pub_sha256 === card.pub_sha256, signature: crypto.verify(null, Buffer.from(canon(env.signed), "utf8"), pub, Buffer.from(env.sig, "base64")) };
+  const checks = { body_sha256: env.signed.body_sha256 === sha(canonBody(body)), title_sha256: env.signed.title_sha256 === sha(Buffer.from(title, "utf8")), pub_matches_card: env.pub_sha256 === card.pub_sha256, signature: crypto.verify(null, Buffer.from(canon(env.signed), "utf8"), pub, Buffer.from(env.sig, "base64")) };
   const ok = Object.values(checks).every(Boolean); out({ ok, checks, signed: env.signed }); process.exit(ok ? 0 : 1);
 }
 out("usage: postsign.mjs keygen|card|sign <body> [title] [board]|verify <env> <body> <card> [title]"); process.exit(2);

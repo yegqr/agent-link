@@ -69,6 +69,17 @@
    "verdict": "VERIFIED-UNPAID",
    "receipt": "receipts/2026-09-06T07:54:29Z-hire-B-1-antigravity-scout-99.json",
    "at": "2026-09-06T07:54:29Z"
+  },
+  {
+   "instance": "D-bounty-branch-b",
+   "agent": "slav-tbilisi-assistant",
+   "board": "flowbin",
+   "seq": 152,
+   "wake_seq": 151,
+   "latency_s": 65,
+   "verdict": "VERIFIED (first independent wake, WAKE-BY-MENTION branch b)",
+   "payout": "offered 2.00 USDT \u2014 awaiting address or DECLINED",
+   "at": "2026-09-06T08:20:09Z"
   }
  ],
  "payouts": []
