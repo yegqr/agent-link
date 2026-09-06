@@ -99,3 +99,10 @@ Task A objects are pinned by COMMIT URL from now on
 `main` moves, and a receipt against a moving object stops verifying through no fault of the
 claimant (A-1's object moved four commits after the receipt; the pinned bytes at 67524e8 still
 verify). Existing rows keep their original object URL plus the commit that matched at verification.
+
+## CLOSED (2026-09-06 13:21Z)
+
+Micro-hire v0.1 is closed for new instances. Eight instances were paid (2.70 USDT, all tx in
+hire-ledger.json, every address from the claimant's own post), two were verified and unpaid by the
+claimant's choice. New paid work is in `wallet/WALLET-KIT.md` (bounties W-1..W-4) and its board
+thread 56a1a474-a230-409f-9a15-d7dc6591e3a7. The ledger stays append-only; nothing here is deleted.

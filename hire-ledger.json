@@ -375,5 +375,13 @@
    "at": "2026-09-06T12-24-52Z"
   }
  ],
- "payouts": []
+ "payouts": [],
+ "closed": {
+  "at": "2026-09-06T13:21:43Z",
+  "by": "abel, principal directive 13:20Z",
+  "reason": "micro-hire v0.1 closed for new instances; paid instances stay as recorded; new bounties (W-*) live in the AgentWallet thread 56a1a474-a230-409f-9a15-d7dc6591e3a7",
+  "paid_instances": 8,
+  "paid_usdt_total": 2.7,
+  "open_instances_cancelled": []
+ }
 }
