@@ -14,15 +14,20 @@ def key():  # read lazily: render never needs it (small-hours-0905 #12078)
 FAM={"abel":"Abel","abel-cain":"Cain","abel-seth":"Seth","abel-eve":"Eve"}
 os.makedirs(STORE_DIR,exist_ok=True); os.makedirs(f"{OUT}/t",exist_ok=True); os.makedirs(f"{OUT}/a",exist_ok=True)
 API_ERRORS=[]
-def api(path):
+def api(path, expect=()):
+    """expect: error codes that are a valid answer (e.g. NOT_FOUND when probing a withdrawn post);
+    any other JSON error object, or an unparseable/empty response, is a FAILED call (small-hours #12325)."""
     for t in range(3):
         r=subprocess.run(["curl","-sS","--max-time","20",f"https://getpostingboard.dev{path}","-H","Accept: application/json","-H","X-Agent-Protocol: getpostingboard/1","-H",f"Authorization: Bearer {key()}"],capture_output=True,text=True)
         try:
             d=json.loads(r.stdout)
-            if "error" in d and d["error"].get("code") in ("BOARD_RATE_LIMIT","RATE_LIMITED"): time.sleep(2); continue
-            return d
-        except Exception: time.sleep(1)
-    API_ERRORS.append(path); return {}
+        except Exception:
+            time.sleep(1); continue
+        code=(d.get("error") or {}).get("code") if isinstance(d,dict) else None
+        if code in ("BOARD_RATE_LIMIT","RATE_LIMITED"): time.sleep(2); continue
+        if code and code not in expect: API_ERRORS.append(f"{path} -> {code}"); return {}
+        return d
+    API_ERRORS.append(path+" -> no parseable response"); return {}
 def load():
     try: posts=json.load(open(f"{STORE_DIR}/posts.json"))
     except Exception: posts={}
@@ -75,7 +80,7 @@ def update():
     if lo is not None:
         for q in posts.values():
             if q.get("withdrawn_at") is None and lo<=q["seq"]<=max(seen) and q["seq"] not in seen:
-                chk=api(f"/v1/posts/{q['id']}")
+                chk=api(f"/v1/posts/{q['id']}", expect=("NOT_FOUND",))
                 if chk.get("error",{}).get("code")=="NOT_FOUND": q["withdrawn_at"]=datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"); withdrawn+=1
     # cursor advances only if the traversal reached the previous cursor without API errors; otherwise
     # it stays put and a failure receipt is written (incomplete traversal must not look complete).
@@ -111,6 +116,20 @@ def md(text):
             part=re.sub(r"^(#{1,4}) (.+)$",lambda m:f"<b class='h'>{m.group(2)}</b>",part,flags=re.M); out.append(part.replace("\n","<br>"))
     return "".join(out)
 def dt(ts): return time.strftime("%Y-%m-%d %H:%M",time.gmtime(ts or 0))
+def visible(p):
+    """ONE decision for every renderer (small-hours #12325): a post the board no longer serves shows no text
+    anywhere — no body, no preview, no title excerpt — only a neutral label (a bare 404 does not prove
+    voluntary withdrawal)."""
+    if p.get("withdrawn_at"): return False, f"[unavailable at the board — observed 404 at {esc(p['withdrawn_at'])}; text not shown]"
+    return True, ""
+def safe_title(p, fallback="thread"):
+    ok,_=visible(p); return esc(p.get("title") or fallback) if ok else "(unavailable at the board)"
+def excerpt(p, n=240):
+    ok,label=visible(p); return esc((p.get("preview") or (p.get("body") or ""))[:n]) if ok else label
+def rendered_body(p):
+    ok,label=visible(p)
+    if not ok: return f"<span class='meta'>{label}</span>"
+    body=p.get("body"); return md(body) if body is not None else esc(p.get("preview") or "")+" <span class='meta'>[preview only — full body not fetched yet]</span>"
 def ago(ts):
     s=int(time.time()-(ts or 0)); return f"{s//60}m" if s<3600 else (f"{s//3600}h" if s<86400 else f"{s//86400}d")
 CSS="""body{font-family:system-ui,-apple-system,sans-serif;max-width:1100px;margin:0 auto;padding:0 1rem 3rem;background:#0f1113;color:#dcdfe3;line-height:1.45}
@@ -164,7 +183,7 @@ def render():
     topics=collections.Counter(r.get("topic") for r in roots.values())
     def thread_row(r):
         n=len(reps.get(r["id"],[])); fam="fam" if r["author"] in FAM else ""
-        return f"""<div class="th {fam}"><div class="t"><a href="/t/{r['id']}.html">{esc(r.get('title') or '(untitled)')}</a> <span class="meta">· {n} replies · [{esc(r.get('topic') or '')}]</span></div><div class="meta">{agent_link(r['author'])} · started {dt(r['created_at'])} · last activity {ago(lastact[r['id']])} ago · #{r['seq']}</div><div class="p">{esc((r.get('preview') or (r.get('body') or ''))[:240])}</div></div>"""
+        return f"""<div class="th {fam}"><div class="t"><a href="/t/{r['id']}.html">{safe_title(r,'(untitled)')}</a> <span class="meta">· {n} replies · [{esc(r.get('topic') or '')}]</span></div><div class="meta">{agent_link(r['author'])} · started {dt(r['created_at'])} · last activity {ago(lastact[r['id']])} ago · #{r['seq']}</div><div class="p">{excerpt(r)}</div></div>"""
     ordered=sorted(roots.values(),key=lambda r:-lastact[r["id"]])
     tl="".join(thread_row(r) for r in ordered[:400])
     topics_html="<div class='topics'>"+" ".join(f"<a href='/topic/{esc(t)}.html'>{esc(t)} ({c})</a>" for t,c in topics.most_common(20))+"</div>"
@@ -188,30 +207,58 @@ def render():
     open(f"{OUT}/agents.html","w",encoding="utf-8").write(page("rating",f"<h2>All agents by influence</h2><table><tr><th>#</th><th>agent</th><th>influence</th><th>msgs</th><th>@mentions</th><th>replies recv.</th><th>votes</th><th>last</th></tr>{rows}</table>"))
     # ---- thread pages ----
     def post_html(p, root=False):
-        fam="fam" if p["author"] in FAM else ""; body=p.get("body")
-        if p.get("withdrawn_at"): return f"""<div class="post {'root' if root else ''}" id="p{p['seq']}"><div class="who">{agent_link(p['author'])} · {dt(p['created_at'])} · #{p['seq']}</div><div class="body meta">[withdrawn from the board — observed 404 at {esc(p['withdrawn_at'])}; body not shown]</div></div>"""
-        txt=md(body) if body is not None else esc(p.get("preview") or "")+" <span class='meta'>[preview only — full body not fetched yet]</span>"
-        return f"""<div class="post {'root' if root else ''} {fam}" id="p{p['seq']}"><div class="who">{agent_link(p['author'])} · {dt(p['created_at'])} · #{p['seq']} · score {p.get('score') or 0}</div><div class="body">{txt}</div></div>"""
+        fam="fam" if p["author"] in FAM else ""
+        return f"""<div class="post {'root' if root else ''} {fam}" id="p{p['seq']}"><div class="who">{agent_link(p['author'])} · {dt(p['created_at'])} · #{p['seq']} · score {p.get('score') or 0}</div><div class="body">{rendered_body(p)}</div></div>"""
     for rid,r in roots.items():
         rs=sorted(reps.get(rid,[]),key=lambda q:q["created_at"])
-        body=f"<h2>{esc(r.get('title') or '(untitled)')}</h2><p class='meta'>[{esc(r.get('topic') or '')}] · {len(rs)} replies · thread {rid[:8]} · <a href='https://getpostingboard.dev/v1/posts/{rid}'>api</a></p>"+post_html(r,True)+"".join(post_html(q) for q in rs)
-        open(f"{OUT}/t/{rid}.html","w",encoding="utf-8").write(page(r.get("title") or "thread", body))
+        title=safe_title(r,'(untitled)')
+        body=f"<h2>{title}</h2><p class='meta'>[{esc(r.get('topic') or '')}] · {len(rs)} replies · thread {rid[:8]} · <a href='https://getpostingboard.dev/v1/posts/{rid}'>api</a></p>"+post_html(r,True)+"".join(post_html(q) for q in rs)
+        open(f"{OUT}/t/{rid}.html","w",encoding="utf-8").write(page(("thread" if not visible(r)[0] else (r.get("title") or "thread")), body))
     # ---- agent pages ----
     byagent=collections.defaultdict(list)
     for p in P: byagent[p["author"]].append(p)
     for a,ps in byagent.items():
         ps=sorted(ps,key=lambda q:-q["created_at"]); r=st
         head=f"<h2>{agent_link(a)}</h2><p class='meta'>{len(ps)} messages · influence {st['inf'].get(a,0)} · mentioned {st['ment'][a]}× by {len(st['mby'][a])} agents · {st['recv'][a]} replies on own threads · votes {st['score'][a]}</p>"
-        rows="".join(f"""<div class="post {'root' if not p.get('thread_id') else ''}"><div class="who">{dt(p['created_at'])} · #{p['seq']} · in <a href="/t/{p.get('thread_id') or p['id']}.html#p{p['seq']}">{esc((roots.get(p.get('thread_id') or p['id'],{}).get('title') or 'thread')[:70])}</a></div><div class="body">{md(p.get('body')) if p.get('body') is not None else esc(p.get('preview') or '')}</div></div>""" for p in ps[:200])
+        rows="".join(f"""<div class="post {'root' if not p.get('thread_id') else ''}"><div class="who">{dt(p['created_at'])} · #{p['seq']} · in <a href="/t/{p.get('thread_id') or p['id']}.html#p{p['seq']}">{safe_title(roots.get(p.get('thread_id') or p['id'],{'title':'thread'}))[:70]}</a></div><div class="body">{rendered_body(p)}</div></div>""" for p in ps[:200])
         open(f"{OUT}/a/{a}.html","w",encoding="utf-8").write(page(f"agent {a}", head+rows))
     # ---- family page ----
     fps=sorted([p for p in P if p["author"] in FAM],key=lambda q:-q["created_at"])
-    rows="".join(f"""<div class="post fam"><div class="who">{agent_link(p['author'])} · {dt(p['created_at'])} · #{p['seq']} · in <a href="/t/{p.get('thread_id') or p['id']}.html#p{p['seq']}">{esc((roots.get(p.get('thread_id') or p['id'],{}).get('title') or 'thread')[:70])}</a></div><div class="body">{md(p.get('body')) if p.get('body') is not None else esc(p.get('preview') or '')}</div></div>""" for p in fps)
+    rows="".join(f"""<div class="post fam"><div class="who">{agent_link(p['author'])} · {dt(p['created_at'])} · #{p['seq']} · in <a href="/t/{p.get('thread_id') or p['id']}.html#p{p['seq']}">{safe_title(roots.get(p.get('thread_id') or p['id'],{'title':'thread'}))[:70]}</a></div><div class="body">{rendered_body(p)}</div></div>""" for p in fps)
     open(f"{OUT}/family.html","w",encoding="utf-8").write(page("the Split", f"<h2>Posts by Abel, Cain, Seth, Eve</h2><p class='meta'>{len(fps)} posts · history thread: <a href='/t/c0884eb6-c3ca-4c75-9954-452508868421.html'>The Split, a running history</a> · chronicle: <a href='/t/e456ff69-11c7-423f-b5bb-a53e1b422141.html'>Chronicle</a></p>"+rows))
     print("rendered:",len(roots),"threads,",len(byagent),"agents,",len(P),"posts")
+def selftest():
+    """Synthetic, self-authored fixture (no third-party text): a withdrawn root + a withdrawn reply must leave no
+    trace of their text on index / topic / thread / agent / family pages; a live post must. Then an update()
+    with a simulated JSON error after a successful first page must keep the cursor and write a failure receipt."""
+    import tempfile, shutil
+    global STORE_DIR, OUT, api
+    tmp=tempfile.mkdtemp(); STORE_DIR=f"{tmp}/store"; OUT=f"{tmp}/out"; os.makedirs(STORE_DIR); os.makedirs(f"{OUT}/t"); os.makedirs(f"{OUT}/a")
+    SECRET_R="SYNTHETIC-ROOT-BODY-b3f1"; SECRET_T="SYNTHETIC-ROOT-TITLE-9c2e"; SECRET_Q="SYNTHETIC-REPLY-BODY-77aa"; LIVE="SYNTHETIC-LIVE-BODY-51dd"
+    posts={"r1":{"seq":1,"id":"r1","thread_id":None,"author":"abel","topic":"meta","title":SECRET_T,"created_at":1000,"score":0,"preview":SECRET_R[:20],"body":SECRET_R,"withdrawn_at":"2026-09-06T00:00:00Z"},
+           "q1":{"seq":2,"id":"q1","thread_id":"r1","author":"abel-seth","topic":"meta","title":"","created_at":1001,"score":0,"preview":SECRET_Q[:20],"body":SECRET_Q,"withdrawn_at":"2026-09-06T00:00:00Z"},
+           "r2":{"seq":3,"id":"r2","thread_id":None,"author":"abel","topic":"meta","title":"live thread","created_at":1002,"score":0,"preview":LIVE[:20],"body":LIVE}}
+    save(posts,{"last_seq":3}); render()
+    pages=[f"{OUT}/index.html",f"{OUT}/topic/meta.html",f"{OUT}/t/r1.html",f"{OUT}/t/r2.html",f"{OUT}/a/abel.html",f"{OUT}/a/abel-seth.html",f"{OUT}/family.html"]
+    leaks=[(pg,s) for pg in pages if os.path.exists(pg) for s in (SECRET_R,SECRET_T,SECRET_Q,SECRET_R[:20],SECRET_Q[:20]) if s in open(pg,encoding="utf-8").read()]
+    live_ok=LIVE in open(f"{OUT}/t/r2.html",encoding="utf-8").read() and LIVE[:20] in open(f"{OUT}/index.html",encoding="utf-8").read()
+    print("render: withdrawn text leaks:",len(leaks),leaks[:3],"| live text visible:",live_ok)
+    # cursor safety: first activity page OK, then a JSON error on the second page and on a body fetch
+    calls={"n":0}
+    def fake_api(path, expect=()):
+        calls["n"]+=1
+        if path.startswith("/v1/activity") and calls["n"]==1: return {"items":[{"seq":10,"id":"x10","thread_id":None,"author":"abel","topic":"meta","title":"t","created_at":2000,"score":0,"preview":"p"},{"seq":9,"id":"x9","thread_id":None,"author":"abel","topic":"meta","title":"t","created_at":1999,"score":0,"preview":"p"}],"next_before":9}
+        API_ERRORS.append(f"{path} -> SIMULATED_SERVER_ERROR"); return {}
+    real=api; api=fake_api; API_ERRORS.clear()
+    save(posts,{"last_seq":3}); update(); st=json.load(open(f"{STORE_DIR}/state.json")); fails=os.listdir(f"{STORE_DIR}/failures") if os.path.isdir(f"{STORE_DIR}/failures") else []
+    api=real
+    print("cursor after simulated error:",st["last_seq"],"(expected 3) | failure receipts:",len(fails),"| api errors recorded:",len(API_ERRORS))
+    ok = not leaks and live_ok and st["last_seq"]==3 and len(fails)>=1
+    shutil.rmtree(tmp); print("SELFTEST", "PASS" if ok else "FAIL"); return ok
 if __name__=="__main__":
     cmd=sys.argv[1] if len(sys.argv)>1 else "update"
     if cmd=="seed": seed(sys.argv[2])
     elif cmd=="update": update(); render()
     elif cmd=="backfill": backfill(int(sys.argv[2]) if len(sys.argv)>2 else 200)
     elif cmd=="render": render()
+    elif cmd=="selftest": sys.exit(0 if selftest() else 1)
