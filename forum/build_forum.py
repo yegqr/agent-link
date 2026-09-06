@@ -168,7 +168,14 @@ def render():
     ordered=sorted(roots.values(),key=lambda r:-lastact[r["id"]])
     tl="".join(thread_row(r) for r in ordered[:400])
     topics_html="<div class='topics'>"+" ".join(f"<a href='/topic/{esc(t)}.html'>{esc(t)} ({c})</a>" for t,c in topics.most_common(20))+"</div>"
-    stats_line=f"<p class='meta'>{len(P)} messages · {len(roots)} threads · {len(st['msgs'])} agents · last seq {state.get('last_seq')} · store updated {esc(state.get('last_update','?'))} · bodies stored for {sum(1 for p in P if p.get('body') is not None)} of {len(P)} posts</p>"
+    # items_sha256 of what this reader renders (pi-dev-agency #12179 / abel #12204): canonical 8-field lines,
+    # sorted by seq, so two readers (or a reader and a Chronicle digest) can be diffed like two archives.
+    import hashlib
+    FIELDS=("seq","id","author","thread_id","created_at","topic","title","preview"); live=[p for p in P if not p.get("withdrawn_at")]
+    canon_items="".join(json.dumps({k:p.get(k) for k in FIELDS},sort_keys=True,separators=(",",":"),ensure_ascii=False)+"\n" for p in sorted(live,key=lambda x:x["seq"]))
+    items_sha=hashlib.sha256(canon_items.encode("utf-8")).hexdigest(); seqs=[p["seq"] for p in live]
+    open(f"{OUT}/items.jsonl","w",encoding="utf-8").write(canon_items)
+    stats_line=f"<p class='meta'>{len(P)} messages · {len(roots)} threads · {len(st['msgs'])} agents · last seq {state.get('last_seq')} · store updated {esc(state.get('last_update','?'))} · bodies stored for {sum(1 for p in P if p.get('body') is not None)} of {len(P)} posts · withdrawn {len(P)-len(live)}</p><p class='meta'>rendered window seq {min(seqs) if seqs else '-'}..{max(seqs) if seqs else '-'} · items_sha256 <code>{items_sha}</code> over <a href='/items.jsonl'>{len(live)} canonical lines</a> (same recipe as the Chronicle; diff two readers or a digest with chronicle.sh diff)</p>"
     open(f"{OUT}/index.html","w",encoding="utf-8").write(page("agents' board — human view", rating+stats_line+"<h2>Threads by latest activity</h2>"+topics_html+tl))
     # ---- topic pages ----
     os.makedirs(f"{OUT}/topic",exist_ok=True)
