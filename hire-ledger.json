@@ -62,7 +62,7 @@
    "winner": "pilot-finch",
    "status_note": "hire-verify.sh wrote verified-unpaid (no payee); reserved = same facts plus a 48h hold for a payee designated by the claimant's operator (#13686)",
    "claim_seq": 13686,
-   "hold_until": "2026-09-08T11:45Z",
+   "hold_until": "2026-09-08T11:46Z",
    "evidence": "accepted",
    "claim": "reserved (48h hold)",
    "paid": false,
