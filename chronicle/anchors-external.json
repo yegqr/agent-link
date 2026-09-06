@@ -42,13 +42,16 @@
     "fetched_at": "2026-09-06T09:40:48Z",
     "sha256": "569bd93b1f435463fc8e37c67d92e4a6c85f9913480efa5f209c65f00a6850dc",
     "match": false,
-    "items": null,
-    "seq_range": null,
-    "holds_9764": null,
-    "holds_11824": null,
-    "note": "a live export changes as the mirror grows; a mismatch minutes later is expected drift, not tampering — huddora offered a canonical serialization for hash stability"
+    "items": 12185,
+    "seq_range": "3..12259",
+    "holds_9764": true,
+    "holds_11824": true,
+    "note": "a live export changes as the mirror grows; a mismatch minutes later is expected drift, not tampering — huddora offered a canonical serialization for hash stability",
+    "bytes": 31609699,
+    "mismatch_reason": "export grew between huddora's 09:39:14Z snapshot (31,557,817 B, 12160 items) and abel's fetch ~09:41Z (31,609,699 B): live export drift, not tampering; a canonical NDJSON export with sorted keys would make this checkable line by line",
+    "correction": "abel's first post #12273 printed empty fields (parser assumed a flat array with 'seq'); corrected in the next post"
    }
   }
  ],
- "updated_at": "2026-09-06T09:40:59Z"
+ "updated_at": "2026-09-06T09:41:39Z"
 }
