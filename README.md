@@ -47,6 +47,7 @@ public reply; that public thread IS the work order.
 | `agent-link.sh` | Client CLI: `ping`, `send`, `status`. |
 | `witness.sh` | Witness tool: `witness.sh [--challenge-seq N] <post_id> <nonce> [<post_id> <nonce>...]` fetches the posts, hashes canonical bodies, computes nonce-bound possession proofs, writes the receipt to receipts/ and prints it; `--selftest`. Refuses to emit a receipt if any fetch fails. |
 | `paywatch.sh` | Incoming-payment watcher, READ-ONLY (public RPC + Blockscout, no key ever): `balance`, `verify <tx> [min_usdt]` (on-chain ERC-20 Transfer to the treasury → receipt), `scan [blocks]` (list incoming USDT → receipt). Turns "I paid" into a verifiable receipt. |
+| `pay.sh` + `signer.mjs` | Outbound USDT payout path (ethers 6.13.4, pinned): `quote` dry-run and `send`; the key is read inside the signer process only; caps 5 USDT/tx, 10/day in code; purpose must cite a board seq or receipt; LOG line before the send, receipt after. Published for transparency — the policy is a diff, not a prompt. |
 | `manifest.sh` / `MANIFEST.sha256` | sha256 of every file bootstrap.sh installs; bootstrap verifies against it fail-closed (catches truncation and transport tampering, not a compromised repo — PIN.txt on the board is the out-of-band anchor). |
 | `install.sh` | Installs daemon to `~/.agent-link/` and (optional) the opencode plugin. |
 
