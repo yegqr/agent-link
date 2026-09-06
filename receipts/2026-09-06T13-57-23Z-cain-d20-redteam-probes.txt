@@ -1,0 +1,48 @@
+receipt: 2026-09-06T13-57-23Z
+name: cain-d20-redteam-probes
+cmd: bash probe.sh — independent attacks vs signerd v0.3.1 on a THROWAWAY unix socket + STUB signer (never the real socket/policy)
+paths: agent-link/wallet/signerd.mjs agent-link/wallet/approve.sh agent-link/wallet/mcp-server.mjs agent-link/wallet/test_wallet.sh agent-link/wallet/policy.json agent-link/wallet/allowlist.json agent-link/signer.mjs
+--- output ---
+throwaway dir: /tmp/tmp.gYx5muzmBc
+=== Q3 socket + dir modes ===
+socket 660 ye:ye /tmp/tmp.gYx5muzmBc/s.sock
+dir    750 ye:ye /tmp/tmp.gYx5muzmBc
+=== Q1 boundary/amount coercion (fresh budget=2/day) ===
+amount 1.0 (==threshold, no code): {"ok":true,"op":"send","gate":{"allowlist_seq":12345,"approval":null,"human_free_budget":{"ok":true,"spent":1,"count":0,"budget":2,"window":"rolling 24h","id":"p5jhm9tsm4"}},"exit":0,"signer":{"ok":true,"mode":"send","to":"0x1111111111111111111111111111111111111111","amount":1,"purpose":"boundary probe seq 1","sent":true,"stub":true}}
+amount 1.0 again (spent 2/2):       {"ok":true,"op":"send","gate":{"allowlist_seq":12345,"approval":null,"human_free_budget":{"ok":true,"spent":2,"count":1,"budget":2,"window":"rolling 24h","id":"tnub7e09a3i"}},"exit":0,"signer":{"ok":true,"mode":"send","to":"0x1111111111111111111111111111111111111111","amount":1,"purpose":"boundary probe two seq 1","sent":true,"stub":true}}
+amount 0.5 now (budget exhausted):  {"ok":false,"error":"policy: needs a human approval code — approval code missing or malformed","human_threshold_usdt":1,"human_free_budget_per_day_usdt":2,"human_free_spent_24h_usdt":2,"human_free_sends_24h":2,"op":"send"}
+amount -1 (negative):               {"ok":false,"error":"policy: amount must be a finite number in (0, 5]","op":"send"}
+amount 0:                           {"ok":false,"error":"policy: amount must be a finite number in (0, 5]","op":"send"}
+amount 1e400 (Infinity via JSON):   {"ok":false,"error":"policy: amount must be a finite number in (0, 5]","op":"send"}
+amount "NaN" (string):              {"ok":false,"error":"policy: amount must be a finite number in (0, 5]","op":"send"}
+amount "1e0" (string=1):            {"ok":false,"error":"policy: needs a human approval code — approval code missing or malformed","human_threshold_usdt":1,"human_free_budget_per_day_usdt":2,"human_free_spent_24h_usdt":2,"human_free_sends_24h":2,"op":"send"}
+amount 6 (>per_tx cap 5):           {"ok":false,"error":"policy: amount must be a finite number in (0, 5]","op":"send"}
+=== Q1 approval-code path traversal (all must be refused, no file read outside approvals/) ===
+code='../../../../etc/passwd': {"ok":false,"error":"policy: needs a human approval code — approval code missing or malformed","human_threshold_usdt":1,"human_free_budget_per_day_usdt":2,"human_free_spent_24h_usdt":2,"human_free_sends_24h":2,"op":"send"}
+code='/etc/passwd': {"ok":false,"error":"policy: needs a human approval code — approval code missing or malformed","human_threshold_usdt":1,"human_free_budget_per_day_usdt":2,"human_free_spent_24h_usdt":2,"human_free_sends_24h":2,"op":"send"}
+code='..%2f..%2fpolicy': {"ok":false,"error":"policy: needs a human approval code — approval code missing or malformed","human_threshold_usdt":1,"human_free_budget_per_day_usdt":2,"human_free_spent_24h_usdt":2,"human_free_sends_24h":2,"op":"send"}
+code='policy.json': {"ok":false,"error":"policy: needs a human approval code — approval code missing or malformed","human_threshold_usdt":1,"human_free_budget_per_day_usdt":2,"human_free_spent_24h_usdt":2,"human_free_sends_24h":2,"op":"send"}
+code='abcdefgh.json': {"ok":false,"error":"policy: needs a human approval code — approval code missing or malformed","human_threshold_usdt":1,"human_free_budget_per_day_usdt":2,"human_free_spent_24h_usdt":2,"human_free_sends_24h":2,"op":"send"}
+code='../budget': {"ok":false,"error":"policy: needs a human approval code — approval code missing or malformed","human_threshold_usdt":1,"human_free_budget_per_day_usdt":2,"human_free_spent_24h_usdt":2,"human_free_sends_24h":2,"op":"send"}
+=== Q1 concurrent approval reuse (two parallel sends, same code, 1s-sleep stub) ===
+  raceA: {"ok":false,"error":"policy: needs a human approval code — approval already used","human_threshold_usdt":1,"human_free_budget_per_day_usdt":2,"human_free_spent_24h_usdt":2,"human_free_sends_24h":2,"op":"send"}
+  raceB: {"ok":true,"op":"send","gate":{"allowlist_seq":12345,"approval":{"approved_by":"ye","purpose_bound":false},"human_free_budget":null},"exit":0,"signer":{"ok":true,"mode":"send","to":"0x1111111111111111111111111111111111111111","amount":2,"purpose":"race B seq 1","sent":true,"stub":true}}
+  code state after race (used?): "used": true
+=== Q2 allowlist bypass attempts ===
+whitespace ' 0x111...':  {"ok":false,"error":"policy: bad address","op":"send"}
+unicode lookalike 0xАAA: {"ok":false,"error":"policy: bad address","op":"send"}
+JSON-injection purpose:  {"ok":false,"error":"policy: needs a human approval code — approval code missing or malformed","human_threshold_usdt":1,"human_free_budget_per_day_usdt":2,"human_free_spent_24h_usdt":2,"human_free_sends_24h":2,"op":"send"}
+allow MixedCase, send lower: {"ok":false,"error":"policy: needs a human approval code — approval code missing or malformed","human_threshold_usdt":1,"human_free_budget_per_day_usdt":2,"human_free_spent_24h_usdt":2,"human_free_sends_24h":2,"op":"send"}
+=== Q3 malformed JSON + 10MB line (no size cap?) ===
+malformed '{bad':      {"ok":false,"error":"bad json"}
+daemon still alive after malformed: YES (survived)
+  10MB line (10485785 bytes) -> reply in 0.43s: {"ok":true,"policy":{"max_per_tx":5,"max_per_day":10,"human_threshold_usdt":1,"human_free_budget_per_day_usdt":2,"max_hu
+daemon alive after 10MB: YES (survived)
+=== Q4 MCP: wallet.send must not exist; wallet.address source ===
+  tools: wallet.address, wallet.balance, wallet.verify_tx, wallet.policy
+  tools/call wallet.send -> {"code":-32000,"message":"unknown tool wallet.send"}
+  tools/call wallet.swap -> {"code":-32000,"message":"unknown tool wallet.swap"}
+  wallet.address -> "{\"address\":null}"
+=== signerd.log (isolation note) ===
+[signerd] listening on /tmp/tmp.gYx5muzmBc/s.sock; policy /tmp/tmp.gYx5muzmBc/policy.json; at least one of policy/allowlist/approvals/budget/key/socket-dir is owned by the daemon's own uid or missing: caps are policy, not enforcement (THREAT-MODEL C2 not met)
+--- exit: 0 ---

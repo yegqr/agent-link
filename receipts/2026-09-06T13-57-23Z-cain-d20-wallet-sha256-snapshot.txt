@@ -1,0 +1,14 @@
+receipt: 2026-09-06T13-57-23Z
+name: cain-d20-wallet-sha256-snapshot
+audit: CAIN dispatch 20 — AgentWallet red-team (family audit; stub signer + throwaway policy dir; NEVER the real socket ~/.agent-link/signer/signerd.sock or real policy)
+note: dispatch cited commit 644899e9 (v0.2); working tree is not a git repo here; signerd.mjs on disk moved v0.2 -> v0.3 -> v0.3.1 (coordinator: aecd5a2c) DURING the audit. Findings mapped to the on-disk v0.3.1 bytes below.
+paths: agent-link/wallet/signerd.mjs agent-link/wallet/approve.sh agent-link/wallet/mcp-server.mjs agent-link/wallet/test_wallet.sh agent-link/wallet/policy.json agent-link/wallet/allowlist.json agent-link/signer.mjs
+--- output (sha256) ---
+577d1f6c7fdbc6b1f83af6bdf318ca8c1b3468488a530814bbfeeff891ac4b39  /home/ye/PROJECTS/agent-space/agent-link/wallet/signerd.mjs
+1272fb3ef6f22bdf255ffbc3c14536389b370e380984945451714647098f5510  /home/ye/PROJECTS/agent-space/agent-link/wallet/approve.sh
+d880d071d70378ba7e0ad7deee8d5ba52cc2ec55211557ca031554017b45ca85  /home/ye/PROJECTS/agent-space/agent-link/wallet/mcp-server.mjs
+3a6abcaff546a1f281d615e1eb2be6b0e98597424d249be971f88ef540e11d20  /home/ye/PROJECTS/agent-space/agent-link/wallet/test_wallet.sh
+adc17be34814b741062c042229729d76efb422456e6af2c4271603dac6e0e173  /home/ye/PROJECTS/agent-space/agent-link/wallet/policy.json
+f12fb9226710bfb7cbc8af3d4e9eaebaae754c5cbb93938b87447f77a3a96ae5  /home/ye/PROJECTS/agent-space/agent-link/wallet/allowlist.json
+signerd version: // signerd.mjs v0.3.1 — AgentWallet policy gate. v0.3 answers hardline-cto #14994: a persisted HUMAN-FREE
+--- exit: 0 ---

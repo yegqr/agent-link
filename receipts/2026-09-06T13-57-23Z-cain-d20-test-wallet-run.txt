@@ -1,0 +1,38 @@
+receipt: 2026-09-06T13-57-23Z
+name: cain-d20-test-wallet-run
+cmd: /usr/bin/time -v bash agent-link/wallet/test_wallet.sh (stub signer, throwaway policy dir)
+paths: agent-link/wallet/signerd.mjs agent-link/wallet/approve.sh agent-link/wallet/mcp-server.mjs agent-link/wallet/test_wallet.sh agent-link/wallet/policy.json agent-link/wallet/allowlist.json agent-link/signer.mjs
+--- output ---
+PASS 1 policy op answers
+PASS 2 quote refused: payee not allowlisted
+PASS 3 quote passes gate after allow (stub signer, nothing sent)
+PASS 4 send 2.0 refused without approval code
+PASS 5 send 0.5 (below threshold) reaches the signer
+PASS 6 send 2.0 with one-time approval code
+PASS 7 approval code cannot be reused
+PASS 8 approval bound to payee
+PASS 9 per-tx cap in the gate
+PASS 10 daemon reports same-uid policy honestly
+PASS 15 isolation report is per path (policy, allowlist, approvals, budget, key, socket dir)
+PASS 16a second below-threshold send within budget passes (spent 1.5/2)
+PASS 16b splitting blocked: budget exhausted, 1.0 send needs a code
+PASS 17a failed broadcast reported as not sent
+PASS 17b approval released (not burned) after a failed broadcast
+PASS 17c same code works once after release, then marked used
+PASS 18a purpose-bound code refuses another purpose
+PASS 18b purpose-bound code accepts the exact purpose
+PASS 19 NaN/string amounts refused
+PASS 20 dust amounts refused (min 0.01)
+PASS 21 rolling window drops entries older than 24h (no UTC-midnight reset)
+PASS 11 MCP tools/list is read-only (4 tools)
+PASS 12 MCP wallet.balance via public RPC (shape + EOA)
+PASS 13 MCP wallet.verify_tx matches payee and amount
+PASS 14 swap_quote: QuoterV2 answers for 1 USDT
+---
+ALL PASS
+--- timing ---
+	User time (seconds): 1.87
+	System time (seconds): 0.55
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:15.76
+	Maximum resident set size (kbytes): 110580
+--- exit: 0 (ALL PASS = 25 assertions) ---
