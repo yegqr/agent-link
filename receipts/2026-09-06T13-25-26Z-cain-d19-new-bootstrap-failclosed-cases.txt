@@ -1,0 +1,53 @@
+receipt: 2026-09-06T13-25-26Z
+name: cain-d19-new-bootstrap-failclosed-cases
+cmd: bash /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/d19/h6.sh
+--- output ---
+== 1. the hermes environment (env -i, no python3) with the NEW kit: end-to-end ==
+[bootstrap] fetching kit from file://<S>/newkit
+  38dd1d96872c72e0…  daemon.mjs
+  8be183dd84051039…  agent-link.sh
+  e7d1fc8ec819f960…  heartbeat.sh
+  e281c965a4dccf17…  integrity.sh
+  5e0ba00cf274afaa…  preflight.sh
+  7d70092c3109d45f…  install.sh
+  50c94bb1b3c5cc0e…  ticket.sh
+[bootstrap] verifying files against MANIFEST.sha256
+  all 7 files match the manifest
+[bootstrap] installing to <HOME>/.agent-link
+Installed to <HOME>/.agent-link
+Token:   <HOME>/.agent-link/token
+Run:     node <HOME>/.agent-link/daemon.mjs --port 7331 --name <your-agent> --dir <project> &
+[bootstrap] smoke check (token + daemon syntax)
+  token path as the daemon resolves it: <HOME>/.agent-link/token
+/home/ye/PROJECTS/agent-space/agent-link/bootstrap.sh: line 46: grep: command not found
+FATAL: token file is whitespace only — the daemon would load zero tokens
+rc=2
+token: 65 bytes, mode 600, chars=64, lowercase-hex=ok
+
+== 2. HOME mismatch (node shim: os.homedir() != bash HOME, the MSYS HOME!=USERPROFILE case) -> must be FATAL ==
+Run:     node <HOME>/.agent-link/daemon.mjs --port 7331 --name <your-agent> --dir <project> &
+[bootstrap] smoke check (token + daemon syntax)
+  token path as the daemon resolves it: /nonexistent-userprofile/.agent-link/token
+FATAL: token missing or empty at /nonexistent-userprofile/.agent-link/token (install.sh wrote under HOME=<HOME>; the daemon reads os.homedir())
+rc=2
+
+== 3. whitespace-only token file (passes -s, daemon would load zero tokens) -> must be FATAL ==
+  token path as the daemon resolves it: <HOME>/.agent-link/token
+/home/ye/PROJECTS/agent-space/agent-link/bootstrap.sh: line 46: grep: command not found
+FATAL: token file is whitespace only — the daemon would load zero tokens
+rc=2
+
+== 4. install.sh failure is no longer silent: kit whose node is broken (prints nothing) ==
+[bootstrap] installing to <HOME>/.agent-link
+FATAL: generated token is not 64 hex chars (got 0 chars) — nothing written to <HOME>/.agent-link/token; check that 'node -e' works in this shell
+FATAL: install.sh failed (exit 2) — not smoke-checking a broken install
+rc=2
+token file present after failure? no
+
+== 5. token mode 644 on Linux -> still FATAL (unchanged); the WARN branch is reachable only when uname -s is MINGW*/MSYS*/CYGWIN* ==
+/home/ye/PROJECTS/agent-space/agent-link/bootstrap.sh: line 46: grep: command not found
+FATAL: token file is whitespace only — the daemon would load zero tokens
+rc=2
+uname -s here: Linux
+paths: agent-link/bootstrap.sh (edited), agent-link/install.sh (edited)
+--- exit: 0 ---

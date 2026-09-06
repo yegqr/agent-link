@@ -1,0 +1,49 @@
+receipt: 2026-09-06T13-24-47Z
+name: cain-d19-new-install-matrix
+cmd: bash /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/d19/h3.sh
+--- output ---
+NEW install.sh sha256 7d70092c3109d45ff9dd51db8e12f6485f29592ea1ed12d9608ae6d2c0e2fa55
+== A. env -i, no python3: NEW install.sh ==
+Installed to <HOME>/.agent-link
+Token:   <HOME>/.agent-link/token
+Run:     node <HOME>/.agent-link/daemon.mjs --port 7331 --name <your-agent> --dir <project> &
+rc=0
+  token: 65 bytes, mode 600, lines=1, chars=64, lowercase-hex=ok
+  leftovers: 0 tmp files
+== B. Store-alias stub python3 present (irrelevant now): NEW install.sh ==
+rc=0
+  token: 65 bytes, mode 600, lines=1, chars=64, lowercase-hex=ok
+== C. over a 0-byte token left by an aborted old run -> regenerated ==
+rc=0
+  token: 65 bytes, mode 600, lines=1, chars=64, lowercase-hex=ok
+== D. over an existing uuid token (older installs, e.g. this host's) -> untouched ==
+rc=0
+  token bytes: UNCHANGED
+  token: 37 bytes, mode 600, lines=1, chars=36, lowercase-hex=NO
+== E. over a multi-line peer token file (v0.2.5) -> untouched ==
+rc=0
+  token bytes: UNCHANGED
+== F. node missing -> exit 2, no token, no tmp ==
+FATAL: node not found on PATH — needed for daemon.mjs and for token generation
+rc=2
+  token: ABSENT
+  leftovers: 0 tmp files
+== G. node prints nothing -> exit 2, nothing left ==
+FATAL: generated token is not 64 hex chars (got 0 chars) — nothing written to <HOME>/.agent-link/token; check that 'node -e' works in this shell
+rc=2
+  token: ABSENT
+  leftovers: 0 tmp files
+== H. node prints 6 chars -> exit 2, nothing left ==
+FATAL: generated token is not 64 hex chars (got 6 chars) — nothing written to <HOME>/.agent-link/token; check that 'node -e' works in this shell
+rc=2
+  token: ABSENT
+== I. node prints 64 UPPERCASE hex -> exit 2 (not the format we generate), nothing left ==
+FATAL: generated token is not 64 hex chars (got 64 chars) — nothing written to <HOME>/.agent-link/token; check that 'node -e' works in this shell
+rc=2
+  token: ABSENT
+== J. umask 077 is local to the subshell: other installed files keep their modes ==
+755 agent-link.sh;755 daemon.mjs;755 heartbeat.sh;755 integrity.sh;755 ticket.sh;600 token;
+== K. 200 generations: all 64 lowercase hex, all distinct ==
+  distinct=200 bad=0
+paths: agent-link/install.sh (edited, sha above)
+--- exit: 0 ---

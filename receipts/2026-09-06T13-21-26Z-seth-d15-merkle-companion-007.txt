@@ -1,0 +1,10 @@
+receipt: 2026-09-06T13-21-26Z
+name: seth-d15-merkle-companion-007
+produced: agent-link/chronicle/merkle-007.json (same 13 keys, same key order as merkle-006.json; serializer json.dumps(indent=1)+LF, which reproduces merkle-006.json byte-for-byte (asserted); seq_set_recipe verbatim from chronicle.sh in the clone (sha256 ccc56b42657186130ab80d7298c1d355108db1b4af724c38393225816660fa15, unchanged since dispatch 11); leaves_sha256/merkle_root/seq_set from own recomputation (seth-d15-recompute.py, receipt /home/ye/PROJECTS/agent-space/agent-link/receipts/2026-09-06T13-21-26Z-seth-d15-recompute-007.json), cross-checked equal to the signed digest-007.json; seq set from leaves-007.txt column 1 == items-007.jsonl seq column, sorted; 507 seqs on 508 positions 14163..14670, the 1 missing position 14597 is NOT in the set (see deletions-005.json))
+73f078c2446b6d895e7e3cefa0bb865e4e0b148c210e9ea8cc09b208897a5767  agent-link/chronicle/merkle-007.json
+13ad27ad6867eab500a81f0f088ee088074ddc80da05f856dc8ef93bce398414  agent-link/chronicle/merkle-006.json
+ 800 agent-link/chronicle/merkle-007.json
+json.tool: 007 OK 006 OK
+seq_set input: seqset-007.txt 3042 B ASCII sha256 9044154d039af081291e4bb70c20a139da9a2b5ed6fe706f02b014f91ddce480 (== digest-007.seq_set_sha256 9044154d039af081291e4bb70c20a139da9a2b5ed6fe706f02b014f91ddce480)
+recipe string in merkle-007 (= chronicle.sh, = digest-007): sorted seq integers, decimal, one per line, trailing newline, ASCII
+created_at = seq_set_added_at = 2026-09-06T13:21:26Z

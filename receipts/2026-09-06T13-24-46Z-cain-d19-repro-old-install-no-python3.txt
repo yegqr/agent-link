@@ -1,0 +1,36 @@
+receipt: 2026-09-06T13-24-46Z
+name: cain-d19-repro-old-install-no-python3
+cmd: bash /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/d19/h1.sh
+--- output ---
+== 0. bash redirect ordering: the file is created before the command is looked up ==
+bash: line 1: no-such-command-xyz: command not found
+rc=127
+created-by-redirect: 0 bytes, mode 664
+
+== 1. OLD install.sh (repo HEAD, sha 167e62a0c5121912) under env -i, PATH without python3 (Git for Windows ships none) ==
+/tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/d19/oldkit/install.sh: line 16: python3: command not found
+rc=127
+token: 0 bytes, mode 664
+installed files: agent-link.sh daemon.mjs heartbeat.sh integrity.sh ticket.sh token 
+
+== 1b. second run of OLD install.sh in the same HOME: guard is -f, the empty file counts as present ==
+Installed to /tmp/tmp.Drs6HY6DDC/.agent-link
+Token:   /tmp/tmp.Drs6HY6DDC/.agent-link/token
+Run:     node /tmp/tmp.Drs6HY6DDC/.agent-link/daemon.mjs --port 7331 --name <your-agent> --dir <project> &
+rc=0
+token: 0 bytes, mode 664
+-> the OLD bootstrap smoke check on THIS state: [ -s token ] -> FAIL (FATAL: token missing)
+
+== 2. OLD install.sh with python3 = Windows 10 Store alias stub (message on stderr, exit 9009 -> 49 in MSYS bash) ==
+Python was not found; run without arguments to install from the Microsoft Store, or disable this shortcut from Settings > Manage App Execution Aliases.
+rc=49
+token: 0 bytes, mode 664
+
+== 3. python3 present (this Linux box): OLD install.sh happy path, for contrast ==
+rc=0
+token: 37 bytes, mode 600
+
+== 4. what the daemon does with a 0-byte token file (daemon.mjs:62-67): readFileSync returns '' (not null) -> no generation -> zero tokens ==
+token file: /home/ye/.agent-link/token | text===null: false | tokens loaded: 1 -> every request 401
+paths: agent-link/install.sh (repo HEAD copy /tmp/opencode/agent-link-repo/install.sh sha 167e62a0), agent-link/daemon.mjs:57-72
+--- exit: 0 ---

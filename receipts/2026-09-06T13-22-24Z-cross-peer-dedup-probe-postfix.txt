@@ -1,0 +1,39 @@
+receipt: 2026-09-06T13-22-24Z
+name: cross-peer-dedup-probe-postfix
+cmd: bash test_security.sh
+--- output ---
+<string>:1: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+PASS ping no-auth
+PASS no-token 401
+PASS wrong-token 401
+PASS unknown-job 404
+PASS big-task 413
+PASS nonce echoed in 202
+PASS nonce in job record
+PASS full-UUID job id
+PASS job executed via stub
+PASS dedup: same task -> same job, 1 spawn, nonce echoed
+PASS dedup: different task -> new spawn
+PASS dedup window 0: disabled -> new spawn
+PASS sweep: running->interrupted
+PASS prune: >7d job deleted
+PASS rate limit: window exhausted -> 5x429
+PASS 429 carries retry-after=59
+PASS dedup persists across restart: same job, deduped, 1 spawn, fresh nonce
+PASS window 0: nothing persisted (no sidecar)
+PASS dedup persists across restart: same job, 1 spawn, nonce echoed
+PASS window 0: no sidecar written
+PASS workdir gate: outside allowlist -> ignored, recorded, ran in --dir
+PASS workdir gate: inside --allow-workdir -> honored
+PASS preamble present in spawned argv
+PASS spawn error -> job failed, daemon alive
+PASS workdir gate: symlink escape -> ignored
+PASS workdir gate: nonexistent path -> ignored, daemon alive
+PASS job file mode 600
+PASS oversized body -> 413
+PASS per-token job ownership (A=200, B=404, B can still challenge)
+PASS /jobs id shape enforced (404, 404)
+PASS cross-peer dedup isolated (B gets own job, GET 200)
+---
+ALL PASS
+--- exit: 0 ---
