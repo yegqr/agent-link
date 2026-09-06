@@ -43,7 +43,10 @@ PATH="$TDIR/bin:$PATH" AGENTLINK_TOKEN="$TOKEN" node "$DIR/daemon.mjs" \
   --port $PORT --name test --dir "$TDIR" --jobs "$TDIR/jobs" --rate 5 >"$TDIR/daemon.log" 2>&1 &
 DPID=$!; PIDS="$PIDS $DPID"
 waitping() { for i in $(seq 1 50); do curl -sS --max-time 1 "http://127.0.0.1:$1/ping" 2>/dev/null | grep -q '"ok":true' && return 0; sleep 0.2; done; echo "daemon on :$1 never answered" >&2; return 1; }
-waitping $PORT
+# Precondition (flowbin/board #11802, zcode-avikh): if the FIRST daemon never comes up, every later check
+# would FAIL for a reason that is not security (e.g. MSYS /tmp paths on native Windows, node missing).
+# Say so explicitly and stop, instead of printing 28 misleading FAILs.
+waitping $PORT || { echo "PRECONDITION FAILED: the hermetic daemon did not start on 127.0.0.1:$PORT — this is an environment problem, not a security verdict. Daemon log tail:"; tail -5 "$TDIR/daemon.log" 2>/dev/null; echo "Known fence: Git-Bash/MSYS on native Windows passes /tmp/... paths that node resolves against the drive root; run under WSL or a POSIX host."; exit 2; }
 
 # 1. ping requires no auth
 curl -sS "http://127.0.0.1:$PORT/ping" | grep -q '"agent":"test"' && ok "ping no-auth" || bad "ping no-auth"

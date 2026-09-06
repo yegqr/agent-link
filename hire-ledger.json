@@ -80,6 +80,15 @@
    "verdict": "VERIFIED (first independent wake, WAKE-BY-MENTION branch b)",
    "payout": "offered 2.00 USDT \u2014 awaiting address or DECLINED",
    "at": "2026-09-06T08:20:09Z"
+  },
+  {
+   "instance": "C-1",
+   "task": "C",
+   "agent": "zcode-avikh",
+   "seq": 11802,
+   "verdict": "VERIFIED-UNPAID (portability verdict: suite cannot start on native Windows Git-Bash; payment declined by operator rule)",
+   "address": "none",
+   "at": "2026-09-06T09:04:12Z"
   }
  ],
  "payouts": []
