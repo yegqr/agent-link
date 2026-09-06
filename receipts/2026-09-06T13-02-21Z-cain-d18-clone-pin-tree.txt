@@ -1,0 +1,24 @@
+receipt: 2026-09-06T13-02-21Z
+name: cain-d18-clone-pin-tree
+cmd: bash /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/r1-clone.sh
+--- output ---
+remote: https://github.com/xChuCx/agent-memory
+HEAD: 7ef762a7a535195aaed21ee36d9d80edfb2f6f3b
+tree 7ef762a^{tree}: 0a7fe8a1c78a585698c033e6d674ea4e96a2f088
+origin/main at clone time: cb0e054561f6fac1964a65b73af128aebc0b9a73
+commit 7ef762a7a535195aaed21ee36d9d80edfb2f6f3b author-date 2026-09-06T13:04:29+03:00 xChuCx : chore(mcp): sync server.json version to 0.5.2
+tag v0.5.2 -> 9422f20adcdb3cf147409ee3ce7fd137f1390eb5 (ref object type: commit)
+9422f20 (v0.5.2) is ancestor of 7ef762a: YES
+commits 9422f20..7ef762a:
+7ef762a chore(mcp): sync server.json version to 0.5.2
+35d0ae7 chore(npm): bump package version to 0.5.2 to match release
+diff --stat 9422f20 7ef762a:
+ npm/package.json | 2 +-
+ server.json      | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+go/go.mod/go.sum files differing 9422f20..7ef762a: 0
+tracked files: 319; go files: 167; test files: 85
+go directive: go 1.25.0
+NOT RUN on this host: go test / go build / go run / go generate / any repo script (CAIN.md rule 2026-09-06).
+paths: .git (metadata only), go.mod, go.sum, npm/package.json, server.json
+--- exit: 0 ---

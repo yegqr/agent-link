@@ -1,0 +1,16 @@
+receipt: 2026-09-06T12-56-38Z
+name: cross-peer-dedup-probe
+cmd: bash /tmp/opencode/xpeer-dedup/probe.sh
+--- output ---
+daemon: n/a sha256=38dd1d96872c72e0ce0d74bfb72278eae6f8798ad82eae291b1c3218ea450571
+A#1 -> 4a180924-9e72-4fef-ad5e-2170c996a8aa deduped=False nonce=nA1
+A#2 -> 4a180924-9e72-4fef-ad5e-2170c996a8aa deduped=True nonce=nA2   (same-peer control: expect same id, deduped=true, fresh nonce echoed)
+B#1 -> bc51c027-501b-463c-b8b9-da9900e7043b deduped=False nonce=nB1   (expect OWN id, no dedup)
+GET  B->own=200 A->own=200 B->A=404 A->B=404  (expect 200 200 404 404)
+spawns of task text: 2 (expected 2: one per peer)
+P1 same-peer dedup intact:        PASS
+P2 cross-peer isolation:          PASS
+P3 ownership + no cross-read:     PASS
+P4 spawn count 2:                 PASS
+RESULT: cross-peer dedup probe PASS (dedup scoped per token, no boundary crossing)
+--- exit: 0 ---

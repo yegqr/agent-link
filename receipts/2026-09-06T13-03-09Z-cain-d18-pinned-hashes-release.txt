@@ -1,0 +1,86 @@
+receipt: 2026-09-06T13-03-09Z
+name: cain-d18-pinned-hashes-release
+cmd: bash /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/r4-hashes.sh
+--- output ---
+== sha256 of every file under .agent-memory/ at 7ef762a ==
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  .agent-memory/archive/.gitkeep
+da30f0981becbe37ab5537116844df56faf7f80cdb9622afa4ad7a154fcf4c50  .agent-memory/conventions.md
+6559c120cfb122b616a45828b8f0fdf14c1ea9ce7717196d53c94cace04e9adc  .agent-memory/decisions.md
+23d277aec1094169581bd38bc772f70000c6018d71495bcd3150ead5025494ae  .agent-memory/.gitignore
+7b303afcea704076e877985f1a507bd377b18d7102baaba1b034977fddb4e6b9  .agent-memory/index.md
+938c9377b56f436db6018020434ab86c408d0713fe59804d6fdd5ccdef50a454  .agent-memory/meta/manifest.yaml
+9cbc590a9133620fe8fcf5b0eee8efae487a17af5ebd34dc86ceac144c6486fc  .agent-memory/meta/schema.yaml
+4dd7b553b056fa3a03d90f5a4745e11d6e9935b759b782928f71eb1998184617  .agent-memory/modules/cli.md
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  .agent-memory/modules/.gitkeep
+c40252e8371dbda789aee3d03022f899b7b0e4d3f759730346ef77cc8bc10648  .agent-memory/modules/index-search.md
+92dc6cb4802563cd8ce8c0f83d20376f6002cb259862580339511126f72e3c61  .agent-memory/modules/markdown-engine.md
+615f12f87fdffd52fddc3fe3a72dd9fd848419661a5a307e288279d7a22e0896  .agent-memory/modules/mcp.md
+9d6d0d61fd29f2c4a1bc44942855231b7ee92f5b54ddecb49ac8bb569eac42bb  .agent-memory/modules/memory.md
+b5f38ba24a0b3e928de0effafa66dfd3233cf2a3906f02b3300370567b4a2922  .agent-memory/pitfalls.md
+== decisions.md: 13032 bytes, 250 lines, 6 second-level headings, CRLF bytes: 0, git blob 00a1cc431c599f5dcec38ed4f7164db161b3657e ==
+bounty pin (#14252/#14249): 6559c120cfb122b616a45828b8f0fdf14c1ea9ce7717196d53c94cace04e9adc
+source 1 clone checkout : 6559c120cfb122b616a45828b8f0fdf14c1ea9ce7717196d53c94cace04e9adc
+source 2 codeload 7ef762a tarball : 6559c120cfb122b616a45828b8f0fdf14c1ea9ce7717196d53c94cace04e9adc
+source 3 codeload v0.5.2 tarball  : 6559c120cfb122b616a45828b8f0fdf14c1ea9ce7717196d53c94cace04e9adc
+source 4 raw.githubusercontent    : 6559c120cfb122b616a45828b8f0fdf14c1ea9ce7717196d53c94cace04e9adc
+== sqlite files tracked: 2 ; .agent-memory/.gitignore: ==
+# Local state — per-developer, never committed.
+local/
+sessions/
+staging/
+
+# Derived indexes and caches — rebuildable from the Markdown source.
+meta/*.sqlite
+meta/*.sqlite-*
+meta/*.db
+meta/*.db-*
+
+# Advisory lock files — kernel state, not portable.
+meta/lock
+meta/lock.info
+
+# Rejection/sweep audit log — per-developer, append-only local history.
+meta/rejection-log.jsonl
+== build-defining files at 7ef762a ==
+7a6f795f67bdde96ab8c788fa877c83e7cd2d7c663cef834991d36e855698a0d  go.mod
+e8b1a96275df9643f6f8e303f94b4fbccf64ec651d35ec7f776b9ee005b52f23  go.sum
+32dd6fe4a7c7c749b9b34cf1f1778708eefb2700ad9328e92bbb0c8a568cb6a2  .goreleaser.yml
+a1b37ad415474ae880ee30d2a4581cc577bd57bbae1379e72bc0bd98cde11ede  server.json
+13eec356b5b40aca8cd99d9806b2c0d610c5f4756b573786033dca454164b255  npm/package.json
+a0d69e508fe883029d1cbda52a1c54be07b3806116fdc4fdb681dd4f0536fc54  .github/workflows/ci.yml
+cbd8d53506b4d5d7461b7e5193d178fa00769f282152c2581432b2726e6f9b10  .github/workflows/release.yml
+== GitHub Release v0.5.2: published 2026-09-06T08:49:47Z, tag 9422f20 (NOT 7ef762a; Go sources identical, see clone receipt), goreleaser run 34022945666 ==
+-- agent-memory_0.5.2_checksums.txt as published (sha256 of the file itself: 3602be92168bb154532a46f38a9af8ab082a7f6ebf6db2d326f87ecc24acaf15) --
+34ffaed6856a4dc0d6f09b44bd9da3f8caf148068dc56d7e106b40fa2422687a  agent-memory_0.5.2_darwin_amd64
+cad4a7059fb54f22b8b9d629c7096f8d6e717b4c3d724423d8472dd37dcae45c  agent-memory_0.5.2_darwin_amd64.tar.gz
+038b61d43f3ce648649999081697030a2f37a9e765ebe7c6b53a4829a53694fe  agent-memory_0.5.2_darwin_arm64
+f58e27f1434b31af5d9621b3704c57e583c7993c846883ce5ec916c8c9b6d08f  agent-memory_0.5.2_darwin_arm64.tar.gz
+4c269e86122142b805099aaeb3cdbe3393195a3f06ba061414557978336e2d3a  agent-memory_0.5.2_linux_amd64
+28f7a6d4256f12e927fc4edaa765735d0ffc30166df346f80b69148bb8e28d78  agent-memory_0.5.2_linux_amd64.tar.gz
+99641082c5eb503b8118bfda06c5bf6a8876140a3215f2e1ebf8db7be15a127e  agent-memory_0.5.2_linux_arm64
+aa28af83294fe957abf1fae8e343127d29a28edfa29b093731240974337193f4  agent-memory_0.5.2_linux_arm64.tar.gz
+8c71dfcdc58c4c281a3155c37e93f333b4c836d7284e9d8cc8ef0ca588bf86c0  agent-memory_0.5.2_windows_amd64.exe
+5d2750906fc06cf0dd3d2a16d09ba765e021fcf086309ca993960109327f4291  agent-memory_0.5.2_windows_amd64.zip
+53ee1757a5b70b1ae58335e9e2f3985a696c878bd4a99b3bdade084b0d9fef4e  agent-memory_0.5.2_windows_arm64.exe
+317b303af7276f4c133d2bf57191b65620e2a8b03afedc2d16a208e8b69386a9  agent-memory_0.5.2_windows_arm64.zip
+-- downloaded and re-hashed here --
+28f7a6d4256f12e927fc4edaa765735d0ffc30166df346f80b69148bb8e28d78  agent-memory_0.5.2_linux_amd64.tar.gz
+508c5942a158a5ff72b986d0d58932e88ea2c0ef60126cb8f71788ad8de491fc  src-7ef762a.tar.gz
+1ad17d7572f659f91b9fc02e1164092dab3e90485822936aea0e1f0c76dffd17  src-v0.5.2.tar.gz
+3bf5fbed850fb77bb2a4ff4f4e83c3872875e3818f7f1340544ef9bea0e29188  npm-agent-memory-0.5.2.tgz
+total 9152
+-rw-rw-r-- 1 ye ye 5749826 Sep  6 12:58 agent-memory_0.5.2_linux_amd64.tar.gz
+-rw-rw-r-- 1 ye ye    1220 Sep  6 12:58 checksums.txt
+-rw-rw-r-- 1 ye ye    2833 Sep  6 12:58 npm-agent-memory-0.5.2.tgz
+-rw-rw-r-- 1 ye ye 1806247 Sep  6 12:58 src-7ef762a.tar.gz
+-rw-rw-r-- 1 ye ye 1806327 Sep  6 12:58 src-v0.5.2.tar.gz
+-- linux_amd64.tar.gz listing (not extracted, not executed) --
+-rw-r--r-- runner/runner 48429 2026-09-06 08:49 CHANGELOG.md
+-rw-r--r-- runner/runner 11347 2026-09-06 08:49 LICENSE
+-rw-r--r-- runner/runner 24874 2026-09-06 08:49 README.md
+-rwxr-xr-x runner/runner 14344376 2026-09-06 08:51 agent-memory
+-- npm @xchucx/agent-memory@0.5.2: registry shasum 9d9ce62debe7050e6f5d5f7288ea2f1b42884a25, gitHead 9422f20adcdb3cf147409ee3ce7fd137f1390eb5, 3 files --
+9d9ce62debe7050e6f5d5f7288ea2f1b42884a25  /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/rel/npm-agent-memory-0.5.2.tgz
+note: codeload source tarballs are generated by GitHub; their bytes are not guaranteed stable across time, the tree hash 0a7fe8a1c78a585698c033e6d674ea4e96a2f088 is.
+paths: .agent-memory/.gitignore, .agent-memory/archive/.gitkeep, .agent-memory/conventions.md, .agent-memory/decisions.md, .agent-memory/index.md, .agent-memory/meta/manifest.yaml, .agent-memory/meta/schema.yaml, .agent-memory/modules/.gitkeep, .agent-memory/modules/cli.md, .agent-memory/modules/index-search.md, .agent-memory/modules/markdown-engine.md, .agent-memory/modules/mcp.md, .agent-memory/modules/memory.md, .agent-memory/pitfalls.md, go.mod, go.sum, .goreleaser.yml, server.json, npm/package.json, .github/workflows/ci.yml, .github/workflows/release.yml
+--- exit: 0 ---

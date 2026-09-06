@@ -1,0 +1,208 @@
+receipt: 2026-09-06T13-03-24Z
+name: cain-d18-merkle-static-read-port
+cmd: bash /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/r5-merkle.sh
+--- output ---
+== no package 'merkle'/'predicates'; the only hash structure is internal/memory/digest.go (Merkle root over .agent-memory/*.md) ==
+== call sites of ComputeDigest in NON-test code ==
+internal/cli/digest.go:41:			d, err := memory.ComputeDigest(memDir)
+internal/memory/digest.go:34:func ComputeDigest(memDir string) (*MemoryDigest, error) {
+== any digest use in load/fetch/apply/status/mcp paths (excluding the two digest files) ==
+  (nothing above = never computed or checked on load/replay; only the 'digest' subcommand)
+== internal/cli/digest.go:41-54 (verification happens only if --verify given) ==
+			d, err := memory.ComputeDigest(memDir)
+			if err != nil {
+				return fmt.Errorf("digest: %w", err)
+			}
+
+			if verifyFlag != "" {
+				verifyClean := strings.TrimPrefix(strings.ToLower(strings.TrimSpace(verifyFlag)), "sha256:")
+				actualClean := strings.ToLower(d.RootHash)
+				if verifyClean != actualClean {
+					return fmt.Errorf("merkle digest mismatch: expected %s, got %s", verifyClean, actualClean)
+				}
+			}
+
+			return writeDigestReport(cmd.OutOrStdout(), d, asJSON, verifyFlag != "")
+== internal/memory/digest.go:31-44 (scope), 95 (root), 106-125 (leaf = sha256(CRLF->LF content); path NOT hashed), 127-162 (pairwise, odd promoted, 1 leaf -> root = leaf, no leaf/node prefix) ==
+// ComputeDigest walks the durable memory markdown files under memDir, normalizes
+// newlines (\r\n -> \n) for cross-platform determinism, computes the SHA-256
+// hash of each leaf, and calculates the canonical pairwise SHA-256 Merkle root.
+func ComputeDigest(memDir string) (*MemoryDigest, error) {
+	var leaves []FileDigestLeaf
+	var totalBytes int
+
+	// Canonical root files to look for
+	rootFiles := []string{
+		"conventions.md",
+		"decisions.md",
+		"index.md",
+		"pitfalls.md",
+	}
+	rootHash := computeMerkleRoot(leaves)
+func hashFileIfPresent(memDir, fullPath, relSlash string) (*FileDigestLeaf, error) {
+	data, err := os.ReadFile(fullPath)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("hashFile: %s: %w", fullPath, err)
+	}
+
+	// Normalise CRLF to LF to guarantee identical Merkle roots across Windows and Linux
+	normalized := bytes.ReplaceAll(data, []byte("\r\n"), []byte("\n"))
+	sum := sha256.Sum256(normalized)
+	h := hex.EncodeToString(sum[:])
+
+	return &FileDigestLeaf{
+		Path:   relSlash,
+		SHA256: h,
+		Bytes:  len(normalized),
+	}, nil
+}
+// computeMerkleRoot builds a canonical pairwise SHA-256 Merkle tree.
+// Pairwise rule: parent = sha256(bytes.fromhex(left) + bytes.fromhex(right))
+// If odd count, orphan leaf is promoted to the next layer.
+func computeMerkleRoot(leaves []FileDigestLeaf) string {
+	if len(leaves) == 0 {
+		empty := sha256.Sum256([]byte{})
+		return hex.EncodeToString(empty[:])
+	}
+	if len(leaves) == 1 {
+		return leaves[0].SHA256
+	}
+
+	currentLevel := make([]string, len(leaves))
+	for i, l := range leaves {
+		currentLevel[i] = l.SHA256
+	}
+
+	for len(currentLevel) > 1 {
+		var nextLevel []string
+		for i := 0; i < len(currentLevel); i += 2 {
+			if i+1 < len(currentLevel) {
+				leftBytes, _ := hex.DecodeString(currentLevel[i])
+				rightBytes, _ := hex.DecodeString(currentLevel[i+1])
+				combined := append(leftBytes, rightBytes...)
+				parent := sha256.Sum256(combined)
+				nextLevel = append(nextLevel, hex.EncodeToString(parent[:]))
+			} else {
+				// Odd node: promote to next level
+				nextLevel = append(nextLevel, currentLevel[i])
+			}
+		}
+		currentLevel = nextLevel
+	}
+
+	return currentLevel[0]
+}
+== test functions ==
+internal/memory/digest_test.go:11:func TestComputeDigest_Empty(t *testing.T) {
+internal/memory/digest_test.go:26:func TestComputeDigest_CRLF_Invariance(t *testing.T) {
+internal/memory/digest_test.go:60:func TestComputeDigest_MerklePairwise(t *testing.T) {
+internal/cli/digest_test.go:14:func TestDigestCmd_NoMemoryDir(t *testing.T) {
+internal/cli/digest_test.go:31:func TestDigestCmd_SuccessAndJSON(t *testing.T) {
+== every assertion line ==
+internal/memory/digest_test.go:15:		t.Fatalf("ComputeDigest failed: %v", err)
+internal/memory/digest_test.go:18:		t.Errorf("expected 0 files, got %d", d.FilesCount)
+internal/memory/digest_test.go:22:		t.Errorf("expected empty root %s, got %s", emptyHash, d.RootHash)
+internal/memory/digest_test.go:33:		t.Fatalf("write tmpDir1: %v", err)
+internal/memory/digest_test.go:39:		t.Fatalf("write tmpDir2: %v", err)
+internal/memory/digest_test.go:44:		t.Fatalf("ComputeDigest dir1: %v", err)
+internal/memory/digest_test.go:49:		t.Fatalf("ComputeDigest dir2: %v", err)
+internal/memory/digest_test.go:53:		t.Errorf("CRLF invariance violated! dir1=%s, dir2=%s", d1.RootHash, d2.RootHash)
+internal/memory/digest_test.go:56:		t.Errorf("Leaf hash mismatch! %s vs %s", d1.Leaves[0].SHA256, d2.Leaves[0].SHA256)
+internal/memory/digest_test.go:75:			t.Fatalf("mkdir: %v", err)
+internal/memory/digest_test.go:78:			t.Fatalf("write %s: %v", rel, err)
+internal/memory/digest_test.go:84:		t.Fatalf("ComputeDigest: %v", err)
+internal/memory/digest_test.go:88:		t.Fatalf("expected 6 files, got %d", d.FilesCount)
+internal/memory/digest_test.go:102:			t.Errorf("leaf[%d] path expected %s, got %s", i, exp, d.Leaves[i].Path)
+internal/memory/digest_test.go:109:		t.Fatalf("rewrite pitfalls: %v", err)
+internal/memory/digest_test.go:113:		t.Fatalf("ComputeDigest altered: %v", err)
+internal/memory/digest_test.go:116:		t.Errorf("root hash should have changed after file modification")
+internal/cli/digest_test.go:24:		t.Fatalf("expected error when .agent-memory/ is missing")
+internal/cli/digest_test.go:27:		t.Errorf("unexpected error message: %v", err)
+internal/cli/digest_test.go:35:		t.Fatalf("mkdir: %v", err)
+internal/cli/digest_test.go:39:		t.Fatalf("write conventions.md: %v", err)
+internal/cli/digest_test.go:42:		t.Fatalf("write decisions.md: %v", err)
+internal/cli/digest_test.go:51:		t.Fatalf("execute failed: %v", err)
+internal/cli/digest_test.go:55:		t.Errorf("expected Merkle Root in output: %s", outStr)
+internal/cli/digest_test.go:58:		t.Errorf("expected leaf filenames in output: %s", outStr)
+internal/cli/digest_test.go:67:		t.Fatalf("execute --json failed: %v", err)
+internal/cli/digest_test.go:72:		t.Fatalf("json unmarshal failed: %v", err)
+internal/cli/digest_test.go:75:		t.Errorf("expected schema agent_memory_digest/1, got %s", d.Schema)
+internal/cli/digest_test.go:78:		t.Errorf("expected 2 files, got %d", d.FilesCount)
+internal/cli/digest_test.go:87:		t.Fatalf("verify with correct hash failed: %v", err)
+internal/cli/digest_test.go:90:		t.Errorf("expected OK message in verify output: %s", stdoutVerify.String())
+internal/cli/digest_test.go:99:		t.Fatalf("expected error on hash mismatch")
+== 64-hex literals in the two test files (golden roots?) ==
+internal/cli/digest_test.go:97:0000000000000000000000000000000000000000000000000000000000000000
+  (only the all-zero mismatch probe at cli/digest_test.go:97; no golden root value, no independent recomputation of the pairwise rule)
+== docs/patterns/merkle-digest.md claims 'proving that durable memory has remained intact' / 'any auditor can recompute' ==
+9:When AI coding agents collaborate across diverse environments (e.g., Windows 11 vs. Linux vs. macOS) or execute verifiable tasks under the **Verifiable Task Protocol (VTP-1)**, proving that durable memory has remained intact without silent corruption or unauthorized alteration is critical:
+13:3. **Auditable Settlement Receipts:** VTP-1 task claims require autonomous agents to attest to their exact memory state before and after task execution.
+55:This guarantees dual-oracle verifiability: any auditor can recompute the Merkle root directly from the committed `.agent-memory/` state.
+== stdlib-Python port (sha256 22c81526aca8499248b55da9e5168502018ae2fa5035795862d9b035f5bc186a) : digest of the repo's own .agent-memory at 7ef762a ==
+{
+  "schema": "agent_memory_digest/1",
+  "root": "47a7887c03d01ccacf5a6fd057905fe385dbaa57a5d896976efc1d894f85fdae",
+  "files_count": 9,
+  "total_bytes": 26821,
+  "leaves": [
+    {
+      "path": "conventions.md",
+      "sha256": "da30f0981becbe37ab5537116844df56faf7f80cdb9622afa4ad7a154fcf4c50",
+      "bytes": 3030
+    },
+    {
+      "path": "decisions.md",
+      "sha256": "6559c120cfb122b616a45828b8f0fdf14c1ea9ce7717196d53c94cace04e9adc",
+      "bytes": 13032
+    },
+    {
+      "path": "index.md",
+      "sha256": "7b303afcea704076e877985f1a507bd377b18d7102baaba1b034977fddb4e6b9",
+      "bytes": 729
+    },
+    {
+      "path": "modules/cli.md",
+      "sha256": "4dd7b553b056fa3a03d90f5a4745e11d6e9935b759b782928f71eb1998184617",
+      "bytes": 1225
+    },
+    {
+      "path": "modules/index-search.md",
+      "sha256": "c40252e8371dbda789aee3d03022f899b7b0e4d3f759730346ef77cc8bc10648",
+      "bytes": 1374
+    },
+    {
+      "path": "modules/markdown-engine.md",
+      "sha256": "92dc6cb4802563cd8ce8c0f83d20376f6002cb259862580339511126f72e3c61",
+      "bytes": 1146
+    },
+    {
+      "path": "modules/mcp.md",
+      "sha256": "615f12f87fdffd52fddc3fe3a72dd9fd848419661a5a307e288279d7a22e0896",
+      "bytes": 1298
+    },
+    {
+      "path": "modules/memory.md",
+      "sha256": "9d6d0d61fd29f2c4a1bc44942855231b7ee92f5b54ddecb49ac8bb569eac42bb",
+      "bytes": 2646
+    },
+    {
+      "path": "pitfalls.md",
+      "sha256": "b5f38ba24a0b3e928de0effafa66dfd3233cf2a3906f02b3300370567b4a2922",
+      "bytes": 2341
+    }
+  ]
+}
+== port: collision demos (A: path not bound; B: no leaf/node domain separation) ==
+A: path-unbound  A1(conventions+decisions) root = 29344d831689228046e2c74d83c97616d6ecbbd07eb1ccfbe657dbc6926942c3
+A: path-unbound  A2(conventions+pitfalls)  root = 29344d831689228046e2c74d83c97616d6ecbbd07eb1ccfbe657dbc6926942c3
+A: EQUAL
+B: second-preimage B1(2 files) root = 29344d831689228046e2c74d83c97616d6ecbbd07eb1ccfbe657dbc6926942c3
+B: second-preimage B2(1 file, 64 raw bytes) root = 29344d831689228046e2c74d83c97616d6ecbbd07eb1ccfbe657dbc6926942c3
+B: EQUAL
+demo dirs under /tmp/cain18-merkle-demo-7hselab_ (run `agent-memory digest --root <dir>` there from a keyless seat; note --root expects <dir>/.agent-memory)
+== minimal fix: leaf = sha256(0x00 || path || 0x00 || content), node = sha256(0x01 || left || right) (RFC 6962 style); add one golden-root test and one 'rename changes root' test ==
+paths: internal/memory/digest.go, internal/memory/digest_test.go, internal/cli/digest.go, internal/cli/digest_test.go, docs/patterns/merkle-digest.md, .agent-memory/**
+--- exit: 0 ---

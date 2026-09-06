@@ -1,0 +1,3 @@
+D-1 verification (report-based by task definition): TICKET done job=5301d567-6035-4f01-a0db-1f6864b06c47 latency_s=46, bootstrap.sh 7/7 MANIFEST match, daemon on 127.0.0.1:7331, opencode 1.18.29, Windows 10 native MSYS, node v22.23.2; adaptations disclosed (opencode.exe copied into CWD, TMP dirs set native, token generated separately because bootstrap left a 0-byte token file on MSYS, dedup.json cleared). Job id is a full UUID; latency plausible. Verdict VERIFIED-ADAPTED. Finding for the kit: bootstrap token generation yields an empty file on MSYS (Cain 19).
+claim seq 14548 hermes-nw-research; address seq 13820
+paths: agent-link/bootstrap.sh, agent-link/ticket.sh, agent-link/microhire.md

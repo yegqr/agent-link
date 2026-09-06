@@ -1,0 +1,33 @@
+receipt: 2026-09-06T13-03-35Z
+name: cain-d18-github-ci-status
+cmd: python3 /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/r6-ci.py
+--- output ---
+/tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/r6-ci.py:5: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  print("fetched at", datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"))
+fetched at 2026-09-06T13:03:35Z
+== workflow runs for 7ef762a: 1 ==
+  run 34026404848 CI       event=push  status=completed conclusion=success created=2026-09-06T10:04:34Z https://github.com/xChuCx/agent-memory/actions/runs/34026404848
+== check-runs for 7ef762a: 6 ==
+  test (ubuntu-latest)         completed  success  2026-09-06T10:04:37Z -> 2026-09-06T10:06:29Z
+  goreleaser check             completed  success  2026-09-06T10:04:37Z -> 2026-09-06T10:04:47Z
+  test (macos-latest)          completed  success  2026-09-06T10:04:37Z -> 2026-09-06T10:05:27Z
+  test (windows-latest)        completed  success  2026-09-06T10:04:37Z -> 2026-09-06T10:05:48Z
+  lint                         completed  success  2026-09-06T10:04:37Z -> 2026-09-06T10:05:45Z
+  e2e (linux)                  completed  success  2026-09-06T10:04:37Z -> 2026-09-06T10:05:20Z
+== workflow runs for 9422f20: 2 ==
+  run 34022945666 Release  event=push  status=completed conclusion=success created=2026-09-06T08:49:49Z https://github.com/xChuCx/agent-memory/actions/runs/34022945666
+  run 34022943100 CI       event=push  status=completed conclusion=success created=2026-09-06T08:49:45Z https://github.com/xChuCx/agent-memory/actions/runs/34022943100
+== check-runs for 9422f20: 8 ==
+  goreleaser release           completed  success  2026-09-06T08:49:51Z -> 2026-09-06T08:52:15Z
+  npm wrapper + MCP Registry   completed  success  2026-09-06T10:13:25Z -> 2026-09-06T10:13:38Z
+  test (windows-latest)        completed  success  2026-09-06T08:49:47Z -> 2026-09-06T08:50:54Z
+  test (macos-latest)          completed  success  2026-09-06T08:49:51Z -> 2026-09-06T08:50:07Z
+  e2e (linux)                  completed  success  2026-09-06T08:49:47Z -> 2026-09-06T08:50:29Z
+  test (ubuntu-latest)         completed  success  2026-09-06T08:49:47Z -> 2026-09-06T08:51:44Z
+  lint                         completed  success  2026-09-06T08:49:47Z -> 2026-09-06T08:51:04Z
+  goreleaser check             completed  success  2026-09-06T08:49:48Z -> 2026-09-06T08:49:59Z
+== release v0.5.2 == id 383519781 published 2026-09-06T08:49:47Z target main draft False prerelease False assets 13
+== tag ref v0.5.2 -> {'sha': '9422f20adcdb3cf147409ee3ce7fd137f1390eb5', 'type': 'commit', 'url': 'https://api.github.com/repos/xChuCx/agent-memory/git/commits/9422f20adcdb3cf147409ee3ce7fd137f1390eb5'}
+CI evidence is the project's own GitHub Actions (self-hosted claim by the same operator), not an independent seat; the static seat only reports what the API returns.
+paths: .github/workflows/ci.yml, .github/workflows/release.yml
+--- exit: 0 ---

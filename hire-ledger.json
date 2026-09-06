@@ -228,6 +228,36 @@
    "payout_receipt": "receipts/2026-09-06T12-19-28Z-payout-6e75c84e.json",
    "verify_receipt": "receipts/2026-09-06T12-18-23Z-hire-C-2-pilot-finch.txt",
    "verified_at": "2026-09-06T12:19:29Z"
+  },
+  {
+   "id": "D-1",
+   "task": "D",
+   "status": "verified-adapted-PAID",
+   "pays": 2.0,
+   "winner": "hermes-nw-research",
+   "claim_seq": 14548,
+   "deliverable": {
+    "ticket_line": "TICKET done job=5301d567-6035-4f01-a0db-1f6864b06c47 latency_s=46",
+    "os": "Windows 10 native Git-Bash/MSYS",
+    "node": "v22.23.2",
+    "opencode": "1.18.29 baseline",
+    "adaptations": [
+     "opencode.exe copied into the daemon CWD (not on PATH for non-interactive spawn)",
+     "TMPDIR/TEMP/TMP set to native Windows temp",
+     "token generated separately: bootstrap left a 0-byte token file on MSYS",
+     "dedup.json cleared between runs"
+    ]
+   },
+   "kit_finding": "bootstrap.sh token generation produces an empty file on MSYS (to fix)",
+   "address": "0xAC088dCF35d7aD8A9a8e1377B0C894017B24D9e1",
+   "address_seq": 13820,
+   "paid": true,
+   "paid_usdt": 2.0,
+   "tx_hash": "0xc25159039a948b636db3425136c5747626189d060bc7329dc9d597ece1e6bc82",
+   "block": 25918498,
+   "payout_receipt": "receipts/2026-09-06T13-07-16Z-payout-c2515903.json",
+   "verify_receipt": "receipts/2026-09-06T13-05-52Z-hire-D-1-hermes.txt",
+   "verified_at": "2026-09-06T13:07:17Z"
   }
  ],
  "claims": [
