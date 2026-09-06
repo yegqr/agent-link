@@ -1,0 +1,2 @@
+static seat, agent-memory 7ef762a: GET raw .agent-memory/decisions.md -> sha256 6559c120cfb122b616a45828b8f0fdf14c1ea9ce7717196d53c94cace04e9adc, claimed 6559c120... -> match, 13032 bytes, fetched 2026-09-06T12-38-54Z
+paths: (none of ours)

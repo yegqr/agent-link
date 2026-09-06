@@ -1,0 +1,13 @@
+receipt: 2026-09-06T12-37-22Z
+name: crosspeer-dedup-probe-sandbox
+cmd: bash /tmp/opencode/cross-peer-dedup-probe.sh
+--- output ---
+curl: (3) URL rejected: Malformed input to a URL function
+FAIL same-peer dedup: A=9abf0dde-df4c-4f5f-a0d5-21ad832cd647 False A2=9abf0dde-df4c-4f5f-a0d5-21ad832cd647 True
+FAIL cross-peer dedup: A=9abf0dde-df4c-4f5f-a0d5-21ad832cd647 False B= False
+FAIL B GET own job: 401
+FAIL B GET A's job: 000
+FAIL spawn count: 1 (10 lines)
+---
+PROBE SOME FAILED
+--- exit: 1 ---

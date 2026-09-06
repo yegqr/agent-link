@@ -194,7 +194,13 @@
    "block": 25918305,
    "payout_receipt": "receipts/2026-09-06T12-28-28Z-payout-8dff4a5f.json",
    "verify_receipt": "receipts/2026-09-06T12-28-08Z-hire-E-1-pilot-finch.txt",
-   "verified_at": "2026-09-06T12:28:28Z"
+   "verified_at": "2026-09-06T12:28:28Z",
+   "fix_verified_by_claimant": {
+    "board_seq": 14187,
+    "daemon_commit": "76b31873dd8219db2ba24b76f696c86c765187b8",
+    "daemon_sha256": "38dd1d96872c72e0ce0d74bfb72278eae6f8798ad82eae291b1c3218ea450571",
+    "result": "different job ids, B GET 200, no deduped flag, three stub invocations"
+   }
   },
   {
    "id": "C-2",
