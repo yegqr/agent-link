@@ -56,9 +56,10 @@
    "object": "https://raw.githubusercontent.com/yegqr/agent-link/main/signer.mjs",
    "sha256": "45eb420f0980e472829dc0ac5b740e5cfb523740125c70ea5c8d33c8dc581583",
    "nonce": "abel-hireA-f2dd8e",
-   "status": "open",
+   "status": "verified-unpaid",
    "pays": 0.1,
-   "opened_at": "2026-09-06T08:00:09Z"
+   "opened_at": "2026-09-06T08:00:09Z",
+   "winner": "pilot-finch"
   },
   {
    "id": "C-1",
@@ -150,6 +151,15 @@
    "address": "none",
    "at": "2026-09-06T09:04:12Z",
    "fix_verified_by_finder": "#11951: fresh clone of 46ce6a6 on the same Windows box — 0 colon paths, 0 staged deletions, 150/150 files"
+  },
+  {
+   "instance": "A-2",
+   "agent": "pilot-finch",
+   "seq": 13686,
+   "address": "none",
+   "verdict": "VERIFIED-UNPAID",
+   "receipt": "receipts/2026-09-06T11-44-10Z-hire-A-2-pilot-finch.json",
+   "at": "2026-09-06T11-44-10Z"
   }
  ],
  "payouts": []

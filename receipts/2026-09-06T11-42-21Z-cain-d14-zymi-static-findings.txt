@@ -1,0 +1,244 @@
+receipt: 2026-09-06T11-42-21Z
+name: cain-d14-zymi-static-findings
+cmd: bash /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/zymi_static_findings.sh /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/zymi-audit.N86Sb9/zymi-core
+--- output ---
+paths: Cargo.toml pyproject.toml .github/workflows/ci.yml zymi/_cli.py zymi/__init__.py src/events/mod.rs src/events/bus.rs src/events/store/event_store.rs src/events/store/sqlite.rs src/events/store/postgres.rs src/cli/verify.rs src/cli/mod.rs src/cli/fetch.rs src/cli/observe/app.rs src/python/store.rs src/approval.rs src/webhook.rs src/mcp/server/elicitation.rs src/esaa/orchestrator.rs src/esaa/contracts.rs src/policy.rs src/handlers/run_pipeline.rs src/handlers/resume_pipeline.rs src/runtime/tool_catalog.rs src/runtime/action_executor.rs src/runtime/shell_session.rs src/engine/tools.rs src/config/tool.rs src/config/template.rs src/services/mod.rs src/llm/mod.rs assets/scaffold/default/project.yml assets/scaffold/default/agents/default.yml assets/scaffold/telegram/project.yml assets/scaffold/telegram/agents/assistant.yml docs/events-and-replay.md docs/approvals.md docs/tools.md README.md adr/0014-declarative-custom-tools.md adr/0018-idempotent-fork-resume.md adr/0022-event-sourced-approvals.md adr/0035-hash-chain-verification.md adr/0036-file-contract-secret-deny-and-path-normalization.md adr/0038-fork-resume-tool-step-output.md adr/0040-hash-covers-sequence-and-stream-heads.md
+audited-sha: 32e3b59a39c1819f2722e7eab052bdda2839e02b  tag: v0.9.0-1-g32e3b59  commit-date: 2026-07-10 14:31:45 +0300
+files: 198  src-lines: 44170
+
+== Q1 hash chain: formula + write path ==
+15:    hasher.update(event_id.as_bytes());
+16:    hasher.update(data.as_bytes());
+17:    hasher.update(prev_hash.as_bytes());
+24:pub fn compute_hash_v2(event_id: &str, sequence: u64, data: &str, prev_hash: &str) -> String {
+26:    hasher.update(b"v2");
+27:    hasher.update(event_id.as_bytes());
+28:    hasher.update(sequence.to_le_bytes());
+29:    hasher.update(data.as_bytes());
+30:    hasher.update(prev_hash.as_bytes());
+sqlite.rs:109+1:                let (next_seq, prev_hash): (u64, String) = conn
+sqlite.rs:109+2:                    .query_row(
+sqlite.rs:109+3:                        "SELECT COALESCE(MAX(sequence), 0) + 1, COALESCE(
+sqlite.rs:109+4:                            (SELECT hash FROM events WHERE stream_id = ?1 ORDER BY sequence DESC LIMIT 1),
+sqlite.rs:109+5:                            ''
+sqlite.rs:109+6:                         ) FROM events WHERE stream_id = ?1",
+sqlite.rs:109+7:                        [&stream_id],
+sqlite.rs:109+8:                        |row| Ok((row.get(0)?, row.get(1)?)),
+sqlite.rs:109+9:                    )
+sqlite.rs:109+10:                    .map_err(|e| EventStoreError::Connection(e.to_string()))?;
+sqlite.rs:109+11:
+sqlite.rs:109+12:                let hash = compute_hash_v2(&event_id, next_seq, &data, &prev_hash);
+104:            conn.execute_batch("BEGIN IMMEDIATE")
+145:                    "INSERT INTO stream_heads (stream_id, last_sequence, last_hash)
+1014:                "INSERT INTO stream_heads (stream_id, last_sequence, last_hash) VALUES ('old', 1, ?1)",
+-- read/replay path reads NO hash columns:
+184:                    "SELECT data, sequence FROM events WHERE stream_id = ?1 AND sequence >= ?2 ORDER BY sequence ASC",
+230:                    "SELECT id, data, sequence FROM events WHERE id > ?1 ORDER BY id ASC LIMIT ?2",
+-- verify_chain callers (whole tree):
+src/python/store.rs:104:    fn verify_chain(&self, py: Python<'_>, stream_id: &str) -> PyResult<u64> {
+src/python/store.rs:108:            runtime().block_on(store.verify_chain(&stream_id))
+src/cli/verify.rs:55:                match rt.block_on(store.verify_chain(stream_id)) {
+src/cli/verify.rs:89:    match rt.block_on(store.verify_chain(stream_id)) {
+-- resume reads parent via read_stream, copies with fresh id/hash, drops causation_id:
+92:    let parent_top = store
+93:        .read_stream(&cmd.parent_stream_id, 1)
+308:    let parent_top = store
+309:        .read_stream(&cmd.parent_stream_id, 1)
+316:        let events = store
+317:            .read_stream(&sub_stream, 1)
+493:    store
+534:    let events = store
+535:        .read_stream(&sub_stream_src, 1)
+540:            id: Uuid::new_v4(),
+546:            causation_id: None,
+549:        store
+-- ResumeForked carries no parent hash:
+    ResumeForked {
+        parent_stream_id: String,
+        parent_correlation_id: Uuid,
+        fork_at_step: String,
+    },
+-- no secret/key input anywhere in hashing:
+0
+-- in-tree test for in-place UPDATE detection:
+0
+-- hash tests present:
+src/events/store/sqlite.rs:869:    async fn hash_chain_valid_after_appends() {
+src/events/store/sqlite.rs:902:    async fn hash_chain_empty_stream_is_valid() {
+src/events/store/sqlite.rs:909:    async fn hash_chain_exempts_legacy_rows() {
+src/events/store/sqlite.rs:948:    async fn hash_chain_detects_tail_truncation() {
+src/events/store/sqlite.rs:974:    async fn hash_chain_detects_whole_stream_deletion() {
+src/events/store/sqlite.rs:999:    async fn hash_chain_verifies_v1_rows() {
+src/events/store/sqlite.rs:1025:    async fn hash_chain_per_stream_independent() {
+src/events/store/postgres.rs:562:    async fn hash_chain_is_valid_after_appends() {
+-- doc formula (v1) vs code (v2):
+23:- `prev_hash` / `hash` — links to the previous event in the same stream. `hash = SHA-256(event_id || payload || prev_hash)`, chained per stream; enables `zymi verify` to detect tampering.
+src/events/store/event_store.rs:21:/// v2 hash: `SHA-256("v2" || event_id || sequence_le || data || prev_hash)`,
+adr/0040-hash-covers-sequence-and-stream-heads.md:21:  `SHA-256("v2" || event_id || sequence_le || data || prev_hash)`, stored as
+-- ADR-0040 concession:
+  - **Not tamper-evidence against a DB-write attacker.** The head lives in the
+    same database, so an attacker who can write `events` can also update
+    `stream_heads` and pass verify. This raises the bar (two places to edit)
+
+== Q2 refusals ==
+    ApprovalDenied {
+        approval_id: String,
+        stream_id: String,
+        decided_by: String,
+        reason: Option<String>,
+    },
+-- publish persists (bus -> store.append):
+    pub async fn publish(&self, mut event: Event) -> Result<(), EventStoreError> {
+        let tag = event.kind_tag();
+        self.store.append(&mut event).await?;
+-- emit sites: decided_by / reason:
+2:168:            decided_by: "orchestrator".into(),
+3:169:            reason: Some("timeout".into()),
+4:257:                            decided_by: format!("terminal:{channel_name_owned}"),
+5:258:                            reason: None,
+6:264:                            decided_by: format!("terminal:{channel_name_owned}"),
+7:265:                            reason: None,
+12:503:                    decided_by: "orchestrator".into(),
+13:504:                    reason: Some("restart_timeout".into()),
+14:863:            reason: None,
+15:870:            reason: None,
+16:1058:                decided_by: "telegram:bob".into(),
+17:1059:                reason: None,
+src/webhook.rs:252:    pub decided_by: Option<String>,
+src/webhook.rs:348:    let decided_by = body.decided_by.clone().unwrap_or_else(|| "http".into());
+src/webhook.rs:353:            decided_by,
+src/webhook.rs:354:            reason: body.reason,
+src/webhook.rs:360:            decided_by,
+src/webhook.rs:361:            reason: body.reason,
+src/webhook.rs:550:                decided_by: "test".into(),
+src/webhook.rs:551:                reason: None,
+src/webhook.rs:624:                decided_by,
+src/webhook.rs:628:                assert_eq!(decided_by, "http");
+src/mcp/server/elicitation.rs:143:                    let decided_by = format!("mcp_elicitation:{channel_name}");
+src/mcp/server/elicitation.rs:148:                            decided_by,
+-- terminal: EOF/IO error => Ok(false) => same Denied{reason: None} as a human 'n':
+    match stdin.lock().read_line(&mut line) {
+        Ok(0) => Ok(false), // EOF — deny
+        Ok(_) => {
+            let answer = line.trim().to_ascii_lowercase();
+            Ok(matches!(answer.as_str(), "y" | "yes"))
+        }
+        Err(_) => Ok(false), // IO error — deny
+    }
+5:                            decided_by: format!("terminal:{channel_name_owned}"),
+6:                            reason: None,
+9:                        EventKind::ApprovalDenied {
+12:                            decided_by: format!("terminal:{channel_name_owned}"),
+13:                            reason: None,
+-- stream used for approval events = step sub-stream:
+592:    let step_stream_id = format!("{stream_id}:step:{step_id}");
+873:    let step_stream_id = format!("{stream_id}:step:{step_id}");
+778:                            .process_intention(
+921:            .process_intention(
+-- doc says no_channel, code says no_approval_channel:
+docs/approvals.md:22:4. Fail closed (`ApprovalDenied{reason: no_channel}`) — when none of the above apply.
+src/esaa/orchestrator.rs:169:                            reason: Some("no_approval_channel".into()),
+
+== Q3 fork ==
+-- EventStore trait write surface (only append; no update/delete):
+95:    async fn append(&self, event: &mut Event) -> Result<u64, EventStoreError>;
+98:    async fn read_stream(
+106:    async fn read_all(
+117:    async fn tail(
+125:    async fn current_global_seq(&self) -> Result<u64, EventStoreError>;
+128:    async fn last_sequence(&self, stream_id: &str) -> Result<u64, EventStoreError>;
+131:    async fn count(
+140:    async fn verify_chain(&self, stream_id: &str) -> Result<ChainVerification, EventStoreError>;
+143:    async fn list_streams(&self) -> Result<Vec<(String, u64)>, EventStoreError>;
+149:    async fn head_stream_ids(&self) -> Result<Vec<String>, EventStoreError> {
+156:    async fn find_unmatched(
+168:    async fn checkpoint(&self) -> Result<(), EventStoreError> {
+-- new stream id + all append targets in resume:
+304:    let new_stream_id = format!("pipeline-{}-{}", pipeline_name, Uuid::new_v4());
+330:    append_event(
+341:    append_event(
+353:    append_event(
+485:async fn append_event(
+521:    append_event(
+533:    let sub_stream_dst = format!("{new_stream_id}:step:{step_id}");
+541:            stream_id: sub_stream_dst.clone(),
+555:    append_event(
+-- tests assert new!=parent but never parent-unchanged:
+913:        assert_ne!(outcome.new_stream_id, parent_stream);
+-- 'verbatim' claims vs copy re-ids:
+docs/events-and-replay.md:75:- All steps **upstream** of `--from-step` are frozen: their events are copied into the new stream verbatim, in original order.
+src/handlers/resume_pipeline.rs:5://! verbatim onto the new stream and they are not re-executed. The fork step
+src/handlers/resume_pipeline.rs:52:    /// Steps copied verbatim from the parent stream, in DAG order.
+
+== Q4 secrets / network / shell ==
+-- dotenv scope:
+4:        tried.push(d.join(".env"));
+6:    if let Ok(cwd) = std::env::current_dir() {
+7:        let cwd_env = cwd.join(".env");
+-- ${env.*} expansion, no allowlist:
+        };
+
+        match std::env::var(env_name) {
+    if let Some(env_name) = key.strip_prefix("env.") {
+        return std::env::var(env_name).ok();
+    }
+-- outbound only when configured:
+115:    if let Some(ref langfuse_config) = config.langfuse {
+75:                .unwrap_or_else(|| "https://api.openai.com/v1".into());
+86:                .unwrap_or_else(|| "http://localhost:11434/v1".into());
+97:                .unwrap_or_else(|| "http://localhost:8000/v1".into());
+108:                .unwrap_or_else(|| "https://api.together.xyz/v1".into());
+122:                .unwrap_or_else(|| "https://api.anthropic.com/v1".into());
+-- fetch.rs prints (does not run) curl|sh:
+25:    let status = Command::new(&uv)
+56:         curl -LsSf https://astral.sh/uv/install.sh | sh   # macOS / Linux\n  \
+-- shell exec sites:
+207:    let child = tokio::process::Command::new("sh")
+208:        .arg("-c")
+99:        let mut cmd = tokio::process::Command::new(shell_path);
+-- shell gate = policy globs only; deny-list only on ReadFile/WriteFile:
+    }
+
+    /// Evaluate an intention against all applicable boundary contracts.
+108:    fn evaluate_shell_command(&self, command: &str) -> IntentionVerdict {
+121:    fn evaluate_file_read(&self, path: &str) -> IntentionVerdict {
+130:    fn evaluate_file_write(&self, path: &str) -> IntentionVerdict {
+-- check_dangerous has no secret-file rule:
+0
+-- policy order: deny -> dangerous -> require_approval -> allow -> default RequireApproval:
+127:        // Check deny list first (highest priority)
+138:        if let Some(reason) = check_dangerous(command) {
+142:        // Check require_approval list
+149:        // Check allow list
+156:        // Default: require approval (safe default)
+-- scaffold default allowlist + agent tools:
+policy:
+  enabled: true
+  allow: ["ls *", "cat *", "echo *"]
+  deny: ["rm -rf *"]
+tools:
+  - web_search
+  - read_file
+  - write_memory
+-- .env lives in project root per quickstart:
+185:    println!("  2. cp .env.example .env  &&  fill TELEGRAM_BOT_TOKEN + OPENAI_API_KEY");
+-- ADR-0036 rationale that shell path ignores:
+  must not depend on the operator remembering to deny secrets. `ReadFile` now
+  runs through this deny check instead of auto-approving; a match is `Denied`,
+  not merely approval-gated, because a human clicking "approve" on a secret
+  read still lands the secret in the log.
+
+== Q5 tests ==
+-- CI recipe:
+      - run: cargo test --features services,webhook
+      - run: cargo clippy --all-features -- -D warnings
+-- test fns in src:
+657
+-- toolchain on this box:
+cargo=MISSING
+rustc=MISSING
+uv=MISSING
+maturin=MISSING
+-- cargo registry cache:
+0
+--- exit: 0 ---

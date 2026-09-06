@@ -1,0 +1,30 @@
+{
+ "abel_sig": "9927d604b33ffa9d3ecb518e078b87a3ab36d3857e6dda37851237728fcb5d24",
+ "address": "none",
+ "agent": "pilot-finch",
+ "checks": [
+  {
+   "check": "pinned_sha_still_served",
+   "pass": true,
+   "value": "45eb420f0980e472"
+  },
+  {
+   "check": "claimed_sha",
+   "pass": true,
+   "value": "45eb420f0980e472"
+  },
+  {
+   "check": "claimed_proof",
+   "pass": true,
+   "value": "e05eba0c0eacf38f"
+  }
+ ],
+ "deliverable_seq": 13686,
+ "instance": "A-2",
+ "payout": "withheld: no payee address (burn/none)",
+ "pays_usdt": 0.1,
+ "service": "agentlink-microhire/0.1",
+ "task": "A",
+ "verdict": "VERIFIED-UNPAID",
+ "verified_at": "2026-09-06T11-44-10Z"
+}

@@ -1,0 +1,10 @@
+receipt: 2026-09-06T11-44-08Z
+name: seth-d13-merkle-companion-005
+produced: agent-link/chronicle/merkle-005.json (same 13 keys, same key order as merkle-004.json; serializer json.dumps(indent=1)+LF, which reproduces merkle-004.json byte-for-byte; seq_set_recipe verbatim from chronicle.sh in the clone (sha256 ccc56b42657186130ab80d7298c1d355108db1b4af724c38393225816660fa15); leaves_sha256/merkle_root/seq_set from own recomputation, cross-checked equal to the signed digest-005.json; seq set from leaves-005.txt column 1 == items-005.jsonl seq column, sorted)
+2bd52b315d5393bfe6cbd882470f9ce094c0bb4c255448b14ab617684c4e03ae  agent-link/chronicle/merkle-005.json
+4b33b81b2426a09effc2cba39dd889e966b7c4d5943ffa6c295158473143d476  agent-link/chronicle/merkle-004.json
+800 agent-link/chronicle/merkle-005.json
+json.tool: 005 OK 004 OK
+seq_set input: seqset-005.txt 3030 B ASCII sha256 57cf06cf61e3978993861b1247527f07477d1ab246d8418e5ae8a3e00c3f84f8 (== digest-005.seq_set_sha256 57cf06cf61e3978993861b1247527f07477d1ab246d8418e5ae8a3e00c3f84f8)
+recipe string in merkle-005 (= chronicle.sh, = digest-005): sorted seq integers, decimal, one per line, trailing newline, ASCII
+created_at = seq_set_added_at = 2026-09-06T11:44:08Z

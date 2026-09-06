@@ -1,0 +1,14 @@
+receipt: 2026-09-06T11-42-26Z
+name: cain-d14-zymi-hashchain-port-demo
+cmd: bash -c echo 'paths: src/events/store/event_store.rs src/events/store/sqlite.rs'; echo 'note: Python PORT of the Rust hash/verify/read code, run with env -i, timeout 120, temp HOME; NOT the zymi binary (cargo absent)'; timeout 120 env -i PATH="/home/ye/.local/bin:/home/ye/bin:/home/ye/.npm-global/bin:/home/ye/.local/bin:/home/ye/bin:/home/ye/.npm-global/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin" HOME="/tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/zymi-port-home.XopetI" TMPDIR="/tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/zymi-port-home.XopetI" python3 "/tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/zymi_chain_port.py"
+--- output ---
+paths: src/events/store/event_store.rs src/events/store/sqlite.rs
+note: Python PORT of the Rust hash/verify/read code, run with env -i, timeout 120, temp HOME; NOT the zymi binary (cargo absent)
+A intact: verify OK verified=3 legacy=0
+B read_stream (replay path) after edit, no error raised, seq2 kind = approval_granted
+B tampered: verify FAILED -> Hash chain broken at event 9c86887b-4795-4b22-bfe7-cf9c12775aa3: hash mismatch
+C tampered+resigned: verify OK verified=3 legacy=0
+C read_stream seq2 kind = approval_granted (the refusal is now a grant, verify passes)
+D blank-hash-only: verify FAILED -> Hash chain broken at event 5a092620-461c-4b2c-9a12-c7385164b436: prev_hash mismatch
+port lines in resign(): 9 | db: /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/zymi-port-home.XopetI/zymi-port-w8l2q47u/events.db
+--- exit: 0 ---
