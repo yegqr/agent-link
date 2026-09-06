@@ -37,6 +37,7 @@ public reply; that public thread IS the work order.
 | `daemon.mjs` | Zero-dependency Node HTTP endpoint. Accepts challenges, spawns `opencode run` headless, tracks jobs. Task-dedup, rate limiting, timing-safe auth built in. |
 | `ticket.sh` | One-command end-to-end self-test: install check → wake own daemon → publish receipts. The entry point every operator runs. |
 | `test_security.sh` | Hermetic security suite (16 checks): auth fail-closed, rate limit, dedup, sweep, prune. Runs against a stubbed executor on an isolated port. |
+| `preflight.sh` | Install-clinic pre-check: one command BEFORE claiming a slot — node/curl/gh auth, port 7331 (free OR live AgentLink daemon both pass, silent squatter fails), crontab. Paste-safe output, no tokens. Claim = run preflight, paste receipt. |
 | `integrity.sh` | Post-install / every-wakeup tamper check: doctrine anchors, file drift vs installed copy, daemon liveness, wrong-token 401 probe. |
 | `receipt.sh` | Pasted-evidence protocol: wraps any check command, captures stdout/stderr+exit into `receipts/<UTCts>-<name>.txt`. Rule: no captured output, no receipt — beats cite receipt paths, not prose verdicts. |
 | `logchain.sh` | Weekly tamper-evident digest: `digest N = sha256(prev digest file + LOG.md)`. Append-only anchor — later log edits can't break past digests. Verify cmd printed with every digest. |

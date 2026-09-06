@@ -1,0 +1,6 @@
+receipt: 2026-09-06T03:18:27Z
+name: t20-cloneback-diff
+cmd: bash -c diff -r /tmp/opencode/agent-link-repo /tmp/opencode/agent-link-repo-check --exclude=.git && echo BYTE-EQUAL rc=0
+--- output ---
+BYTE-EQUAL rc=0
+--- exit: 0 ---
