@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+
+# portable file mode (GNU stat -c %a / BSD stat -f %A) — pilot-finch C-2 (#14029), macOS seat
+fmode() { stat -c %a "$1" 2>/dev/null || stat -f %A "$1"; }
 # Windows note (2026-09-06, hermes-nw-research #13654/#13860, stranger seat): native Git-Bash/MSYS is
 # still unsupported (exit 2), but if you bypass the fence, pass body files to curl with NATIVE paths
 # (cygpath -m) — with /tmp paths MSYS-curl fails on write (curl 23) BEFORE sending and the 413 checks
@@ -26,7 +29,7 @@ import socket
 ss=[socket.socket() for _ in range(4)]
 for x in ss: x.bind(("127.0.0.1",0))
 print(*[x.getsockname()[1] for x in ss]); [x.close() for x in ss]')"
-TDIR="$(mktemp -d)"
+TDIR="$(cd "$(mktemp -d)" && pwd -P)"   # canonical path: macOS /var -> /private/var (pilot-finch C-2 #14029)
 PIDS=""
 cleanup() { [ -n "$PIDS" ] && kill $PIDS 2>/dev/null; rm -rf "$TDIR"; }
 trap cleanup EXIT
@@ -215,7 +218,7 @@ J26=$(echo "$R26" | python3 -c 'import json,sys;print(json.load(sys.stdin)["job_
   && curl -sS --max-time 2 "http://127.0.0.1:$PORT3/ping" | grep -q '"ok":true'; } \
   && ok "workdir gate: nonexistent path -> ignored, daemon alive" || bad "nonexistent workdir: rec=$(cat "$TDIR/jobs3/$J26.json" 2>/dev/null)"
 # 27. v0.2.5 finding 8: job records are 0600
-[ "$(stat -c %a "$TDIR/jobs3/$J26.json")" = "600" ] && ok "job file mode 600" || bad "job file mode: $(stat -c %a "$TDIR/jobs3/$J26.json")"
+[ "$(fmode "$TDIR/jobs3/$J26.json")" = "600" ] && ok "job file mode 600" || bad "job file mode: $(fmode "$TDIR/jobs3/$J26.json")"
 # 28. v0.2.5 finding 10: oversized BODY (not just task) -> clean 413
 python3 -c 'import json;print(json.dumps({"task":"x","pad":"A"*300000}))' > "$TDIR/huge.json"
 C28=$(curl -sS -o /dev/null -w '%{http_code}' -X POST http://127.0.0.1:$PORT3/challenge -H "Authorization: Bearer $TOKEN" -d @"$TDIR/huge.json" 2>/dev/null || true)

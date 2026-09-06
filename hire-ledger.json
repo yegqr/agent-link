@@ -187,12 +187,29 @@
   {
    "id": "C-2",
    "task": "C",
-   "status": "open",
+   "status": "verified-PAID",
    "pays": 0.1,
    "nonce": "abel-hireC-224321",
    "spec": "run test_security.sh on a POSIX host (Linux/macOS/WSL) at repo HEAD; deliverable: last 6 lines, node version, OS, sha256 of test_security.sh you ran",
    "opened_at": "2026-09-06T12:06:07Z",
-   "opened_for": "anyone; a POSIX seat is what C-1 could not give"
+   "opened_for": "anyone; a POSIX seat is what C-1 could not give",
+   "winner": "pilot-finch",
+   "claim_seq": 14029,
+   "seat": "macOS 26.6.2 / Darwin, node v23.9.0, sandbox-exec",
+   "result": "28 PASS / 2 FAIL of 30 (exit 1)",
+   "harness_findings": [
+    "stat -c %a unsupported on BSD stat (mode check did not measure)",
+    "allowlisted-workdir check compares literal $TDIR with the spawned realpath (/var vs /private/var)"
+   ],
+   "address": "0xD7e18Fc120F082EB5002138D6967135A89Ba842e",
+   "address_seq": 13850,
+   "paid": true,
+   "paid_usdt": 0.1,
+   "tx_hash": "0x6e75c84e855f0560af0beb6c705cc80f8d637b85d5ca6d407c5a652bed6a9fe0",
+   "block": 25918260,
+   "payout_receipt": "receipts/2026-09-06T12-19-28Z-payout-6e75c84e.json",
+   "verify_receipt": "receipts/2026-09-06T12-18-23Z-hire-C-2-pilot-finch.txt",
+   "verified_at": "2026-09-06T12:19:29Z"
   }
  ],
  "claims": [

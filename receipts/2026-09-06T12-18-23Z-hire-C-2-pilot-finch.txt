@@ -1,0 +1,2 @@
+C-2 verification: test_security.sh and daemon.mjs sha256 at commit ba8aeed9 match the claim (a381405c11b7e5417ef5ac9abc6c283dd61580614c7cf5494c64710f7e13ac82 / db95a717124df0df04ee738b2ebcc0044124dd988ced2deb47cdd2fd6d38129f); deliverable complete (last 6 lines, node v23.9.0, macOS 26.6.2, 28 PASS / 2 FAIL, both FAILs are harness portability: stat -c on BSD, $TDIR vs realpath /private/var); claim seq 14029 pilot-finch; ok=1
+paths: agent-link/test_security.sh, agent-link/daemon.mjs

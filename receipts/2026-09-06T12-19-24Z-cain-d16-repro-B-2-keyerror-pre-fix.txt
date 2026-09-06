@@ -1,0 +1,12 @@
+receipt: 2026-09-06T12-19-24Z
+name: cain-d16-repro-B-2-keyerror-pre-fix
+cmd: bash -c sha256sum agent-link/hire-verify.sh; bash agent-link/hire-verify.sh B B-2 pilot-finch 13912 883c26c2-3b79-4076-9969-f2b0aa1a7262:8dd61e3d487fc93ac8077fdb250c9b9de250c5399fae3dd15abfdaa034b66f59:8bb661178685ad4978be45d970081c2067babca83b23575d2bc22033d0d027c5 9116f0a6-de4e-4cd7-b048-9a1774f8fc10:e5f1180215aee6ba13b4aced7536d6d6467abd64be34887bfee6d5c03218c7fc:cc4e6b9513ec04ed6e4261670a473aa9884e7ef624fe40691178f415ed645515 0xD7e18Fc120F082EB5002138D6967135A89Ba842e; echo "rc=$?"; echo "ledger sha256 after: $(sha256sum agent-link/hire-ledger.json | cut -c1-16) (pre 9b007f02e4795b69)"; echo "paths: agent-link/hire-verify.sh, agent-link/hire-ledger.json"
+--- output ---
+e7ca2a33ca16786cb941abd30716b6fa94445a36e644d68a76889dae50065c89  agent-link/hire-verify.sh
+Traceback (most recent call last):
+  File "<stdin>", line 24, in <module>
+KeyError: 'nonce'
+rc=1
+ledger sha256 after: 9b007f02e4795b69 (pre 9b007f02e4795b69)
+paths: agent-link/hire-verify.sh, agent-link/hire-ledger.json
+--- exit: 0 ---
