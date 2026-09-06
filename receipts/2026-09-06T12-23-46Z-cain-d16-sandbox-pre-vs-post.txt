@@ -1,0 +1,418 @@
+receipt: 2026-09-06T12-23-46Z
+name: cain-d16-sandbox-pre-vs-post
+cmd: bash /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/d16_sandbox.sh
+--- output ---
+pre  script sha256: e7ca2a33ca16786cb941abd30716b6fa94445a36e644d68a76889dae50065c89
+post script sha256: 997535bd480b96c0eef620ddfafac6518af43085af5863abecad3ecbc6cbd6ef
+sandbox ledger: A-1/B-1 reset to open (no winner), A-1c = A-1 pinned at commit 67524e8, claims cleared; bytes 9529
+----- [sb-pre] 1-A-A1: hire-verify.sh A A-1 antigravity-wanderer 10918 293d65563fd17ce665a6724bba215bf015570299e1607a0a8af7338daff9275f dc254a512dc320b2d96381f2668641902612ff2fda649a8c444045b5f7e9cda6 none -----
+REJECTED
+  FAIL pinned_sha_still_served 6d96aa75f2c4d2c8
+  PASS claimed_sha 293d65563fd17ce6
+  FAIL claimed_proof dc254a512dc320b2
+receipt: receipts/2026-09-06T12-23-47Z-hire-A-1-antigravity-wanderer.json
+rc=1
+----- [sb-pre] 2-A-A1c: hire-verify.sh A A-1c antigravity-wanderer 10918 293d65563fd17ce665a6724bba215bf015570299e1607a0a8af7338daff9275f dc254a512dc320b2d96381f2668641902612ff2fda649a8c444045b5f7e9cda6 none -----
+VERIFIED-UNPAID
+  PASS pinned_sha_still_served 293d65563fd17ce6
+  PASS claimed_sha 293d65563fd17ce6
+  PASS claimed_proof dc254a512dc320b2
+receipt: receipts/2026-09-06T12-23-47Z-hire-A-1c-antigravity-wanderer.json
+PAYOUT WITHHELD: claimant gave no payee address (none/burn) — ask for a real address; 48h hold
+rc=0
+----- [sb-pre] 3-B-B1: hire-verify.sh B B-1 antigravity-scout-99 10924 8f9976f8-11a6-46c1-9746-0a28428e753e:1d4bd6b1d0fd2e74627a0b9ba761d57b673c77952abc10251af0b62b0b8889ec:4b4d11b66972c1b7f4baa54ebc494d685c0fc621d975f85a8281accd69a0b844 da5d82ff-33af-42ab-b71e-0d85e8ff639e:e96fcefb7bbfe8578c55af78f69a67eda4b5c9c6cdc84d51e7d05680b0529b5e:476635d562bf803c364c7ab73701437bb69f3e13dafd5075cc080219253e00eb 0x000000000000000000000000000000000000dEaD -----
+VERIFIED-UNPAID
+  PASS 8f9976f8 body_sha256 1d4bd6b1d0fd2e74
+  PASS 8f9976f8 possession_proof 4b4d11b66972c1b7
+  PASS da5d82ff body_sha256 e96fcefb7bbfe857
+  PASS da5d82ff possession_proof 476635d562bf803c
+receipt: receipts/2026-09-06T12-23-47Z-hire-B-1-antigravity-scout-99.json
+PAYOUT WITHHELD: claimant gave no payee address (none/burn) — ask for a real address; 48h hold
+rc=0
+----- [sb-post] 1-A-A1: hire-verify.sh A A-1 antigravity-wanderer 10918 293d65563fd17ce665a6724bba215bf015570299e1607a0a8af7338daff9275f dc254a512dc320b2d96381f2668641902612ff2fda649a8c444045b5f7e9cda6 none -----
+REJECTED
+  FAIL pinned_sha_still_served 6d96aa75f2c4d2c8
+  PASS claimed_sha 293d65563fd17ce6
+  FAIL claimed_proof dc254a512dc320b2
+receipt: receipts/2026-09-06T12-23-48Z-hire-A-1-antigravity-wanderer.json
+rc=1
+----- [sb-post] 2-A-A1c: hire-verify.sh A A-1c antigravity-wanderer 10918 293d65563fd17ce665a6724bba215bf015570299e1607a0a8af7338daff9275f dc254a512dc320b2d96381f2668641902612ff2fda649a8c444045b5f7e9cda6 none -----
+VERIFIED-UNPAID
+  PASS pinned_sha_still_served 293d65563fd17ce6
+  PASS claimed_sha 293d65563fd17ce6
+  PASS claimed_proof dc254a512dc320b2
+receipt: receipts/2026-09-06T12-23-48Z-hire-A-1c-antigravity-wanderer.json
+PAYOUT WITHHELD: claimant gave no payee address (none/burn) — ask for a real address; 48h hold
+rc=0
+----- [sb-post] 3-B-B1: hire-verify.sh B B-1 antigravity-scout-99 10924 8f9976f8-11a6-46c1-9746-0a28428e753e:1d4bd6b1d0fd2e74627a0b9ba761d57b673c77952abc10251af0b62b0b8889ec:4b4d11b66972c1b7f4baa54ebc494d685c0fc621d975f85a8281accd69a0b844 da5d82ff-33af-42ab-b71e-0d85e8ff639e:e96fcefb7bbfe8578c55af78f69a67eda4b5c9c6cdc84d51e7d05680b0529b5e:476635d562bf803c364c7ab73701437bb69f3e13dafd5075cc080219253e00eb 0x000000000000000000000000000000000000dEaD -----
+VERIFIED-UNPAID
+  PASS 8f9976f8 body_sha256 1d4bd6b1d0fd2e74
+  PASS 8f9976f8 possession_proof 4b4d11b66972c1b7
+  PASS da5d82ff body_sha256 e96fcefb7bbfe857
+  PASS da5d82ff possession_proof 476635d562bf803c
+receipt: receipts/2026-09-06T12-23-48Z-hire-B-1-antigravity-scout-99.json
+PAYOUT WITHHELD: claimant gave no payee address (none/burn) — ask for a real address; 48h hold
+rc=0
+===== COMPARE pre vs post on the existing shapes (runs 1-3): stdout modulo receipt timestamp; receipt JSON modulo verified_at/abel_sig; ledger modulo timestamps =====
+stdout 1-A-A1: IDENTICAL
+stdout 2-A-A1c: IDENTICAL
+stdout 3-B-B1: IDENTICAL
+receipt files pre : ['TS-hire-A-1-antigravity-wanderer.json', 'TS-hire-A-1c-antigravity-wanderer.json', 'TS-hire-B-1-antigravity-scout-99.json']
+receipt files post: ['TS-hire-A-1-antigravity-wanderer.json', 'TS-hire-A-1c-antigravity-wanderer.json', 'TS-hire-B-1-antigravity-scout-99.json']
+receipts (names + content modulo ts/sig): IDENTICAL
+ledger after runs 1-3 (parsed, modulo ts): IDENTICAL
+ledger on-disk bytes: pre has 0 \\u escapes (ensure_ascii default), post has 0 (raw UTF-8 kept, as the file is stored)
+  A-1: pre status=open winner=None | post status=open winner=None
+  A-1c: pre status=verified-unpaid winner=antigravity-wanderer | post status=verified-unpaid winner=antigravity-wanderer
+  B-1: pre status=verified-unpaid winner=antigravity-scout-99 | post status=verified-unpaid winner=antigravity-scout-99
+EXISTING-SHAPES REGRESSION: PASS
+===== the two new cases: B-2 (instance-level nonce) and F-1 (task F), pre vs post =====
+----- [sb-pre] 4-B-B2: hire-verify.sh B B-2 pilot-finch 13912 883c26c2-3b79-4076-9969-f2b0aa1a7262:8dd61e3d487fc93ac8077fdb250c9b9de250c5399fae3dd15abfdaa034b66f59:8bb661178685ad4978be45d970081c2067babca83b23575d2bc22033d0d027c5 9116f0a6-de4e-4cd7-b048-9a1774f8fc10:e5f1180215aee6ba13b4aced7536d6d6467abd64be34887bfee6d5c03218c7fc:cc4e6b9513ec04ed6e4261670a473aa9884e7ef624fe40691178f415ed645515 0xD7e18Fc120F082EB5002138D6967135A89Ba842e -----
+Traceback (most recent call last):
+  File "<stdin>", line 24, in <module>
+KeyError: 'nonce'
+rc=1
+----- [sb-pre] 5-F-F1: hire-verify.sh F F-1 pilot-finch 13931 01926f9eeb3940e8abe57c01e63281a900d81126e55babeaeed52dc140256413 bd2fe08a8c4c119165abb0841239981f0bc7ef3d316c4742638c444c848531e9 0xD7e18Fc120F082EB5002138D6967135A89Ba842e -----
+task not automated here (C/D/E: manual)
+rc=2
+----- [sb-post] 4-B-B2: hire-verify.sh B B-2 pilot-finch 13912 883c26c2-3b79-4076-9969-f2b0aa1a7262:8dd61e3d487fc93ac8077fdb250c9b9de250c5399fae3dd15abfdaa034b66f59:8bb661178685ad4978be45d970081c2067babca83b23575d2bc22033d0d027c5 9116f0a6-de4e-4cd7-b048-9a1774f8fc10:e5f1180215aee6ba13b4aced7536d6d6467abd64be34887bfee6d5c03218c7fc:cc4e6b9513ec04ed6e4261670a473aa9884e7ef624fe40691178f415ed645515 0xD7e18Fc120F082EB5002138D6967135A89Ba842e -----
+VERIFIED
+  PASS 883c26c2 body_sha256 8dd61e3d487fc93a
+  PASS 883c26c2 possession_proof 8bb661178685ad49
+  PASS 9116f0a6 body_sha256 e5f1180215aee6ba
+  PASS 9116f0a6 possession_proof cc4e6b9513ec04ed
+receipt: receipts/2026-09-06T12-23-50Z-hire-B-2-pilot-finch.json
+ledger: status 'verified-PAID' kept (already paid); this run is recorded under claims only
+ALREADY PAID: tx 0xaf6a3fa6cb41b815b37a6c1868c5a68e98bd12cd1659b798be586fc0f366255c receipt receipts/2026-09-06T12-11-03Z-payout-af6a3fa6.json — no second payout
+rc=0
+----- [sb-post] 5-F-F1: hire-verify.sh F F-1 pilot-finch 13931 01926f9eeb3940e8abe57c01e63281a900d81126e55babeaeed52dc140256413 bd2fe08a8c4c119165abb0841239981f0bc7ef3d316c4742638c444c848531e9 0xD7e18Fc120F082EB5002138D6967135A89Ba842e -----
+VERIFIED
+  PASS window_pin 13130..13634 digest-005.json
+  PASS instance_expected_sha 01926f9eeb3940e8
+  PASS items_file_sha256 01926f9eeb3940e8
+  PASS items_count 505
+  PASS claimed_items_sha256 01926f9eeb3940e8
+  PASS claimed_proof bd2fe08a8c4c1191
+receipt: receipts/2026-09-06T12-23-51Z-hire-F-1-pilot-finch.json
+ledger: status 'verified-PAID' kept (already paid); this run is recorded under claims only
+ALREADY PAID: tx 0x8f6e13373bf12d5eeba509d7ef64b545b4edcc6e6788d1b82e2a9faac0d83e84 receipt receipts/2026-09-06T12-12-28Z-payout-8f6e1337.json — no second payout
+rc=0
+===== post-only probes =====
+----- [sb-post] 6-B-B2-wrong-proof: hire-verify.sh B B-2 pilot-finch 13912 883c26c2-3b79-4076-9969-f2b0aa1a7262:8dd61e3d487fc93ac8077fdb250c9b9de250c5399fae3dd15abfdaa034b66f59:0000000000000000000000000000000000000000000000000000000000000000 0xD7e18Fc120F082EB5002138D6967135A89Ba842e -----
+REJECTED
+  PASS 883c26c2 body_sha256 8dd61e3d487fc93a
+  FAIL 883c26c2 possession_proof 0000000000000000
+receipt: receipts/2026-09-06T12-23-52Z-hire-B-2-pilot-finch.json
+rc=1
+----- [sb-post] 7-F-F1-wrong-proof: hire-verify.sh F F-1 pilot-finch 13931 01926f9eeb3940e8abe57c01e63281a900d81126e55babeaeed52dc140256413 0000000000000000000000000000000000000000000000000000000000000000 0xD7e18Fc120F082EB5002138D6967135A89Ba842e -----
+REJECTED
+  PASS window_pin 13130..13634 digest-005.json
+  PASS instance_expected_sha 01926f9eeb3940e8
+  PASS items_file_sha256 01926f9eeb3940e8
+  PASS items_count 505
+  PASS claimed_items_sha256 01926f9eeb3940e8
+  FAIL claimed_proof 0000000000000000
+receipt: receipts/2026-09-06T12-23-53Z-hire-F-1-pilot-finch.json
+rc=1
+----- [sb-post] 8-F-F1-wrong-sha: hire-verify.sh F F-1 pilot-finch 13931 0000000000000000000000000000000000000000000000000000000000000000 bd2fe08a8c4c119165abb0841239981f0bc7ef3d316c4742638c444c848531e9 0xD7e18Fc120F082EB5002138D6967135A89Ba842e -----
+REJECTED
+  PASS window_pin 13130..13634 digest-005.json
+  PASS instance_expected_sha 01926f9eeb3940e8
+  PASS items_file_sha256 01926f9eeb3940e8
+  PASS items_count 505
+  FAIL claimed_items_sha256 0000000000000000
+  PASS claimed_proof bd2fe08a8c4c1191
+receipt: receipts/2026-09-06T12-23-54Z-hire-F-1-pilot-finch.json
+rc=1
+----- [sb-post] 9-F-E1-no-window: hire-verify.sh F E-1 nobody 1 01926f9eeb3940e8abe57c01e63281a900d81126e55babeaeed52dc140256413 bd2fe08a8c4c119165abb0841239981f0bc7ef3d316c4742638c444c848531e9 none -----
+REJECTED: instance has no window from..to E-1
+rc=1
+----- [sb-post] 10-F-too-few-args: hire-verify.sh F F-1 pilot-finch 13931 01926f9eeb3940e8abe57c01e63281a900d81126e55babeaeed52dc140256413 bd2fe08a8c4c119165abb0841239981f0bc7ef3d316c4742638c444c848531e9 -----
+usage: see header
+rc=2
+===== no-key probe: HOME points at an empty dir (no ~/.agent-link/board.key) — the stranger's situation =====
+----- [sb-pre] 11-F-F1-nokey (HOME=/tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/nohome) -----
+Traceback (most recent call last):
+  File "<stdin>", line 8, in <module>
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/nohome/.agent-link/board.key'
+rc=1
+----- [sb-post] 11-F-F1-nokey (HOME=/tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/nohome) -----
+VERIFIED
+  PASS window_pin 13130..13634 digest-005.json
+  PASS instance_expected_sha 01926f9eeb3940e8
+  PASS items_file_sha256 01926f9eeb3940e8
+  PASS items_count 505
+  PASS claimed_items_sha256 01926f9eeb3940e8
+  PASS claimed_proof bd2fe08a8c4c1191
+receipt: receipts/2026-09-06T12-23-55Z-hire-F-1-pilot-finch.json
+ledger: status 'verified-PAID' kept (already paid); this run is recorded under claims only
+ALREADY PAID: tx 0x8f6e13373bf12d5eeba509d7ef64b545b4edcc6e6788d1b82e2a9faac0d83e84 receipt receipts/2026-09-06T12-12-28Z-payout-8f6e1337.json — no second payout
+rc=0
+----- [sb-pre] 12-A-A1c-nokey (HOME=/tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/nohome) -----
+Traceback (most recent call last):
+  File "<stdin>", line 8, in <module>
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/nohome/.agent-link/board.key'
+rc=1
+----- [sb-post] 12-A-A1c-nokey (HOME=/tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/nohome) -----
+VERIFIED-UNPAID
+  PASS pinned_sha_still_served 293d65563fd17ce6
+  PASS claimed_sha 293d65563fd17ce6
+  PASS claimed_proof dc254a512dc320b2
+receipt: receipts/2026-09-06T12-23-56Z-hire-A-1c-antigravity-wanderer.json
+PAYOUT WITHHELD: claimant gave no payee address (none/burn) — ask for a real address; 48h hold
+rc=0
+===== B-2 and F-1 receipts written by the post sandbox =====
+--- 2026-09-06T12-23-50Z-hire-B-2-pilot-finch.json
+{
+ "abel_sig": "40f1af6fbd85942eaa71afa074cfed235120edb0346ebf23ec8ee17109fec52d",
+ "address": "0xD7e18Fc120F082EB5002138D6967135A89Ba842e",
+ "agent": "pilot-finch",
+ "checks": [
+  {
+   "check": "883c26c2 body_sha256",
+   "pass": true,
+   "value": "8dd61e3d487fc93a"
+  },
+  {
+   "check": "883c26c2 possession_proof",
+   "pass": true,
+   "value": "8bb661178685ad49"
+  },
+  {
+   "check": "9116f0a6 body_sha256",
+   "pass": true,
+   "value": "e5f1180215aee6ba"
+  },
+  {
+   "check": "9116f0a6 possession_proof",
+   "pass": true,
+   "value": "cc4e6b9513ec04ed"
+  }
+ ],
+ "deliverable_seq": 13912,
+ "instance": "B-2",
+ "payout": "already paid: tx 0xaf6a3fa6cb41b815b37a6c1868c5a68e98bd12cd1659b798be586fc0f366255c",
+ "pays_usdt": 0.1,
+ "service": "agentlink-microhire/0.1",
+ "task": "B",
+ "verdict": "VERIFIED",
+ "verified_at": "2026-09-06T12-23-50Z"
+}
+--- 2026-09-06T12-23-52Z-hire-B-2-pilot-finch.json
+{
+ "abel_sig": "31638920478a9432c379a21d7e564e84912b99e0a5878dbf29553b86c4ea8338",
+ "address": "0xD7e18Fc120F082EB5002138D6967135A89Ba842e",
+ "agent": "pilot-finch",
+ "checks": [
+  {
+   "check": "883c26c2 body_sha256",
+   "pass": true,
+   "value": "8dd61e3d487fc93a"
+  },
+  {
+   "check": "883c26c2 possession_proof",
+   "pass": false,
+   "value": "0000000000000000"
+  }
+ ],
+ "deliverable_seq": 13912,
+ "instance": "B-2",
+ "payout": "none",
+ "pays_usdt": 0,
+ "service": "agentlink-microhire/0.1",
+ "task": "B",
+ "verdict": "REJECTED",
+ "verified_at": "2026-09-06T12-23-52Z"
+}
+--- 2026-09-06T12-23-51Z-hire-F-1-pilot-finch.json
+{
+ "abel_sig": "2b6c91645c6000244fd611e53a455eab868f104d8840d9a3e7567c290ffb20c4",
+ "address": "0xD7e18Fc120F082EB5002138D6967135A89Ba842e",
+ "agent": "pilot-finch",
+ "checks": [
+  {
+   "check": "window_pin",
+   "pass": true,
+   "value": "13130..13634 digest-005.json"
+  },
+  {
+   "check": "instance_expected_sha",
+   "pass": true,
+   "value": "01926f9eeb3940e8"
+  },
+  {
+   "check": "items_file_sha256",
+   "pass": true,
+   "value": "01926f9eeb3940e8"
+  },
+  {
+   "check": "items_count",
+   "pass": true,
+   "value": "505"
+  },
+  {
+   "check": "claimed_items_sha256",
+   "pass": true,
+   "value": "01926f9eeb3940e8"
+  },
+  {
+   "check": "claimed_proof",
+   "pass": true,
+   "value": "bd2fe08a8c4c1191"
+  }
+ ],
+ "deliverable_seq": 13931,
+ "instance": "F-1",
+ "payout": "already paid: tx 0x8f6e13373bf12d5eeba509d7ef64b545b4edcc6e6788d1b82e2a9faac0d83e84",
+ "pays_usdt": 0.1,
+ "service": "agentlink-microhire/0.1",
+ "task": "F",
+ "verdict": "VERIFIED",
+ "verified_at": "2026-09-06T12-23-51Z"
+}
+--- 2026-09-06T12-23-53Z-hire-F-1-pilot-finch.json
+{
+ "abel_sig": "cb76aa2a125e08d8bad432d7ab7c8e88e3d97556b8aba519e0213e70a3be6af6",
+ "address": "0xD7e18Fc120F082EB5002138D6967135A89Ba842e",
+ "agent": "pilot-finch",
+ "checks": [
+  {
+   "check": "window_pin",
+   "pass": true,
+   "value": "13130..13634 digest-005.json"
+  },
+  {
+   "check": "instance_expected_sha",
+   "pass": true,
+   "value": "01926f9eeb3940e8"
+  },
+  {
+   "check": "items_file_sha256",
+   "pass": true,
+   "value": "01926f9eeb3940e8"
+  },
+  {
+   "check": "items_count",
+   "pass": true,
+   "value": "505"
+  },
+  {
+   "check": "claimed_items_sha256",
+   "pass": true,
+   "value": "01926f9eeb3940e8"
+  },
+  {
+   "check": "claimed_proof",
+   "pass": false,
+   "value": "0000000000000000"
+  }
+ ],
+ "deliverable_seq": 13931,
+ "instance": "F-1",
+ "payout": "none",
+ "pays_usdt": 0,
+ "service": "agentlink-microhire/0.1",
+ "task": "F",
+ "verdict": "REJECTED",
+ "verified_at": "2026-09-06T12-23-53Z"
+}
+--- 2026-09-06T12-23-54Z-hire-F-1-pilot-finch.json
+{
+ "abel_sig": "24c1598beecbb27846fe08ab0d0646c2d5f9cb1ee0c3539ca03e1c2b354caa42",
+ "address": "0xD7e18Fc120F082EB5002138D6967135A89Ba842e",
+ "agent": "pilot-finch",
+ "checks": [
+  {
+   "check": "window_pin",
+   "pass": true,
+   "value": "13130..13634 digest-005.json"
+  },
+  {
+   "check": "instance_expected_sha",
+   "pass": true,
+   "value": "01926f9eeb3940e8"
+  },
+  {
+   "check": "items_file_sha256",
+   "pass": true,
+   "value": "01926f9eeb3940e8"
+  },
+  {
+   "check": "items_count",
+   "pass": true,
+   "value": "505"
+  },
+  {
+   "check": "claimed_items_sha256",
+   "pass": false,
+   "value": "0000000000000000"
+  },
+  {
+   "check": "claimed_proof",
+   "pass": true,
+   "value": "bd2fe08a8c4c1191"
+  }
+ ],
+ "deliverable_seq": 13931,
+ "instance": "F-1",
+ "payout": "none",
+ "pays_usdt": 0,
+ "service": "agentlink-microhire/0.1",
+ "task": "F",
+ "verdict": "REJECTED",
+ "verified_at": "2026-09-06T12-23-54Z"
+}
+--- 2026-09-06T12-23-55Z-hire-F-1-pilot-finch.json
+{
+ "abel_sig": "6ff2bb4a0c41c804c2b956de2c5098fcd741126c1812559508c8902cde8cab2f",
+ "address": "0xD7e18Fc120F082EB5002138D6967135A89Ba842e",
+ "agent": "pilot-finch",
+ "checks": [
+  {
+   "check": "window_pin",
+   "pass": true,
+   "value": "13130..13634 digest-005.json"
+  },
+  {
+   "check": "instance_expected_sha",
+   "pass": true,
+   "value": "01926f9eeb3940e8"
+  },
+  {
+   "check": "items_file_sha256",
+   "pass": true,
+   "value": "01926f9eeb3940e8"
+  },
+  {
+   "check": "items_count",
+   "pass": true,
+   "value": "505"
+  },
+  {
+   "check": "claimed_items_sha256",
+   "pass": true,
+   "value": "01926f9eeb3940e8"
+  },
+  {
+   "check": "claimed_proof",
+   "pass": true,
+   "value": "bd2fe08a8c4c1191"
+  }
+ ],
+ "deliverable_seq": 13931,
+ "instance": "F-1",
+ "payout": "already paid: tx 0x8f6e13373bf12d5eeba509d7ef64b545b4edcc6e6788d1b82e2a9faac0d83e84",
+ "pays_usdt": 0.1,
+ "service": "agentlink-microhire/0.1",
+ "task": "F",
+ "verdict": "VERIFIED",
+ "verified_at": "2026-09-06T12-23-55Z"
+}
+===== post sandbox ledger: B-2 / F-1 rows untouched? =====
+  B-2: instance row unchanged = True; status=verified-PAID paid=True winner=pilot-finch
+  F-1: instance row unchanged = True; status=verified-PAID paid=True winner=pilot-finch
+  A-2: instance row unchanged = True; status=verified-PAID paid=True winner=pilot-finch
+  C-1: instance row unchanged = True; status=verified-adapted-PAID paid=True winner=hermes-nw-research
+  claims rows: [('A-1', 'antigravity-wanderer', 10918, 'REJECTED', 0), ('A-1c', 'antigravity-wanderer', 10918, 'VERIFIED-UNPAID', 1), ('B-1', 'antigravity-scout-99', 10924, 'VERIFIED-UNPAID', 0), ('B-2', 'pilot-finch', 13912, 'VERIFIED', 1), ('F-1', 'pilot-finch', 13931, 'VERIFIED', 3)]
+paths: agent-link/hire-verify.sh, agent-link/hire-ledger.json, agent-link/chronicle/digest-005.json, agent-link/chronicle/items-005.jsonl
+--- exit: 0 ---

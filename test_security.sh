@@ -239,6 +239,18 @@ C30a=$(curl -sS -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $TOKEN"
 C30b=$(curl -sS -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $TOKEN" "http://127.0.0.1:$PORT3/jobs/..%2f..%2fdedup")
 { [ "$C30a" = 404 ] && [ "$C30b" = 404 ]; } && ok "/jobs id shape enforced (404, 404)" || bad "/jobs id shape: $C30a $C30b"
 
+# 31. v0.2.6 (pilot-finch E-1 #14121): dedup is scoped per token — peer B posting the SAME text as
+#     peer A must get its OWN job id (not deduped), and B can read it.
+T31=$(mktemp -d); mkdir -p "$T31/jobs"; TOKB31="tokB-$RANDOM$RANDOM"; printf '%s peerB\n' "$TOKB31" > "$T31/tokens"; chmod 600 "$T31/tokens"
+P31=$(python3 -c 'import socket;s=socket.socket();s.bind(("127.0.0.1",0));print(s.getsockname()[1]);s.close()'); ( AGENTLINK_TOKEN="$TOKEN" node "$DIR/daemon.mjs" --port $P31 --dir "$TDIR" --jobs "$T31/jobs" --token-file "$T31/tokens" --rate 100 >"$T31/log" 2>&1 & echo $! > "$T31/pid" ); sleep 1.5
+JA31=$(curl -sS -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -d '{"task":"cross-peer dedup probe"}' http://127.0.0.1:$P31/challenge | python3 -c 'import json,sys;print(json.load(sys.stdin).get("job_id",""))')
+RB31=$(curl -sS -H "Authorization: Bearer $TOKB31" -H 'Content-Type: application/json' -d '{"task":"cross-peer dedup probe"}' http://127.0.0.1:$P31/challenge)
+JB31=$(printf '%s' "$RB31" | python3 -c 'import json,sys;j=json.load(sys.stdin);print(j.get("job_id",""),j.get("deduped",False))')
+GB31=$(curl -sS -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $TOKB31" http://127.0.0.1:$P31/jobs/${JB31%% *})
+kill "$(cat "$T31/pid")" 2>/dev/null; sleep 0.5
+[ -n "$JA31" ] && [ "${JB31%% *}" != "$JA31" ] && [ "${JB31##* }" = "False" ] && [ "$GB31" = 200 ] && ok "cross-peer dedup isolated (B gets own job, GET 200)" || bad "cross-peer dedup: A=$JA31 B=$JB31 GET=$GB31"
+rm -rf "$T31"
+
 echo "---"
 [ $fail = 0 ] && echo "ALL PASS" || echo "SOME FAILED"
 exit $fail

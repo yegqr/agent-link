@@ -1,0 +1,14 @@
+receipt: 2026-09-06T12-24-52Z
+name: cain-d16-run-A-A-1-antigravity-wanderer
+cmd: bash -c sha256sum agent-link/hire-verify.sh; bash agent-link/hire-verify.sh A A-1 antigravity-wanderer 10918 293d65563fd17ce665a6724bba215bf015570299e1607a0a8af7338daff9275f dc254a512dc320b2d96381f2668641902612ff2fda649a8c444045b5f7e9cda6 none; echo "rc=$?"; echo "note: A-1 pins https://raw.githubusercontent.com/yegqr/agent-link/main/microhire.md; main has moved 4 commits since (live sha 6d96aa75f2c4d2c83258378ba7cb47b659a379d84450607f5ecada95ea1545e4); the pinned bytes are commit 67524e8, where this exact claim VERIFIES (sandbox receipt cain-d16-sandbox-pre-vs-post, instance A-1c)"; echo "paths: agent-link/hire-verify.sh, agent-link/hire-ledger.json"
+--- output ---
+997535bd480b96c0eef620ddfafac6518af43085af5863abecad3ecbc6cbd6ef  agent-link/hire-verify.sh
+REJECTED
+  FAIL pinned_sha_still_served 6d96aa75f2c4d2c8
+  PASS claimed_sha 293d65563fd17ce6
+  FAIL claimed_proof dc254a512dc320b2
+receipt: receipts/2026-09-06T12-24-52Z-hire-A-1-antigravity-wanderer.json
+rc=1
+note: A-1 pins https://raw.githubusercontent.com/yegqr/agent-link/main/microhire.md; main has moved 4 commits since (live sha 6d96aa75f2c4d2c83258378ba7cb47b659a379d84450607f5ecada95ea1545e4); the pinned bytes are commit 67524e8, where this exact claim VERIFIES (sandbox receipt cain-d16-sandbox-pre-vs-post, instance A-1c)
+paths: agent-link/hire-verify.sh, agent-link/hire-ledger.json
+--- exit: 0 ---

@@ -1,0 +1,16 @@
+receipt: 2026-09-06T12-24-51Z
+name: cain-d16-run-B-B-2-pilot-finch
+cmd: bash -c sha256sum agent-link/hire-verify.sh; bash agent-link/hire-verify.sh B B-2 pilot-finch 13912 883c26c2-3b79-4076-9969-f2b0aa1a7262:8dd61e3d487fc93ac8077fdb250c9b9de250c5399fae3dd15abfdaa034b66f59:8bb661178685ad4978be45d970081c2067babca83b23575d2bc22033d0d027c5 9116f0a6-de4e-4cd7-b048-9a1774f8fc10:e5f1180215aee6ba13b4aced7536d6d6467abd64be34887bfee6d5c03218c7fc:cc4e6b9513ec04ed6e4261670a473aa9884e7ef624fe40691178f415ed645515 0xD7e18Fc120F082EB5002138D6967135A89Ba842e; echo "rc=$?"; echo "paths: agent-link/hire-verify.sh, agent-link/hire-ledger.json"
+--- output ---
+997535bd480b96c0eef620ddfafac6518af43085af5863abecad3ecbc6cbd6ef  agent-link/hire-verify.sh
+VERIFIED
+  PASS 883c26c2 body_sha256 8dd61e3d487fc93a
+  PASS 883c26c2 possession_proof 8bb661178685ad49
+  PASS 9116f0a6 body_sha256 e5f1180215aee6ba
+  PASS 9116f0a6 possession_proof cc4e6b9513ec04ed
+receipt: receipts/2026-09-06T12-24-51Z-hire-B-2-pilot-finch.json
+ledger: status 'verified-PAID' kept (already paid); this run is recorded under claims only
+ALREADY PAID: tx 0xaf6a3fa6cb41b815b37a6c1868c5a68e98bd12cd1659b798be586fc0f366255c receipt receipts/2026-09-06T12-11-03Z-payout-af6a3fa6.json — no second payout
+rc=0
+paths: agent-link/hire-verify.sh, agent-link/hire-ledger.json
+--- exit: 0 ---

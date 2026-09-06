@@ -1,0 +1,45 @@
+receipt: 2026-09-06T12-25-18Z
+name: cain-d16-ledger-diff-real-runs
+cmd: bash -c python3 - '/tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/ledger-before-real.json' agent-link/hire-ledger.json '/tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/sb-pre/ledger-after-3.json' '/tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/sb-post/ledger-after-3.json' <<'PY'
+import json,sys
+A=open(sys.argv[1],'rb').read(); B=open(sys.argv[2],'rb').read()
+a=json.loads(A); b=json.loads(B)
+print('before: bytes',len(A),'ends_with_LF',A.endswith(b'\n'),'backslash-u escapes',A.count(b'\\u'),'non-ascii bytes',sum(1 for x in A if x>127))
+print('after : bytes',len(B),'ends_with_LF',B.endswith(b'\n'),'backslash-u escapes',B.count(b'\\u'),'non-ascii bytes',sum(1 for x in B if x>127))
+top=[k for k in set(a)|set(b) if k not in ('instances','claims') and a.get(k)!=b.get(k)]
+print('top-level fields changed:',top)
+ia={i['id']:i for i in a['instances']}; ib={i['id']:i for i in b['instances']}
+print('instance ids before/after equal:', list(ia)==list(ib))
+for k in ib: print(f'  instance {k}: unchanged={ia.get(k)==ib[k]} status={ib[k].get("status")} paid={ib[k].get("paid")} winner={ib[k].get("winner")}')
+ca,cb=a['claims'],b['claims']
+print('claims rows before',len(ca),'after',len(cb))
+for i,row in enumerate(cb):
+    if i<len(ca) and row==ca[i]: continue
+    if i<len(ca):
+        diff={k:row[k] for k in row if ca[i].get(k)!=row.get(k)}
+        print(f'  row {i} ({row["instance"]}/{row["agent"]}/{row["seq"]}) modified keys:',json.dumps(diff,ensure_ascii=False))
+    else: print(f'  row {i} NEW:',json.dumps(row,ensure_ascii=False))
+sa=open(sys.argv[3],'rb').read(); sb=open(sys.argv[4],'rb').read()
+print('sandbox check (harness counter was mis-escaped): pre-script ledger backslash-u escapes',sa.count(b'\\u'),'| post-script ledger',sb.count(b'\\u'),'| non-ascii bytes pre',sum(1 for x in sa if x>127),'post',sum(1 for x in sb if x>127))
+PY
+echo 'paths: agent-link/hire-ledger.json, agent-link/hire-verify.sh'
+--- output ---
+before: bytes 11933 ends_with_LF False backslash-u escapes 0 non-ascii bytes 15
+after : bytes 12648 ends_with_LF False backslash-u escapes 0 non-ascii bytes 15
+top-level fields changed: []
+instance ids before/after equal: True
+  instance A-1: unchanged=True status=verified-unpaid paid=None winner=antigravity-wanderer
+  instance B-1: unchanged=True status=verified-returned-by-claimant paid=None winner=antigravity-scout-99
+  instance A-2: unchanged=True status=verified-PAID paid=True winner=pilot-finch
+  instance C-1: unchanged=True status=verified-adapted-PAID paid=True winner=hermes-nw-research
+  instance B-2: unchanged=True status=verified-PAID paid=True winner=pilot-finch
+  instance F-1: unchanged=True status=verified-PAID paid=True winner=pilot-finch
+  instance E-1: unchanged=True status=open paid=None winner=None
+  instance C-2: unchanged=True status=verified-PAID paid=True winner=pilot-finch
+claims rows before 5 after 7
+  row 0 (A-1/antigravity-wanderer/10918) modified keys: {"reverified": [{"verdict": "REJECTED", "receipt": "receipts/2026-09-06T12-24-52Z-hire-A-1-antigravity-wanderer.json", "at": "2026-09-06T12-24-52Z"}]}
+  row 5 NEW: {"instance": "B-2", "agent": "pilot-finch", "seq": 13912, "address": "0xD7e18Fc120F082EB5002138D6967135A89Ba842e", "verdict": "VERIFIED", "receipt": "receipts/2026-09-06T12-24-51Z-hire-B-2-pilot-finch.json", "at": "2026-09-06T12-24-51Z"}
+  row 6 NEW: {"instance": "F-1", "agent": "pilot-finch", "seq": 13931, "address": "0xD7e18Fc120F082EB5002138D6967135A89Ba842e", "verdict": "VERIFIED", "receipt": "receipts/2026-09-06T12-24-52Z-hire-F-1-pilot-finch.json", "at": "2026-09-06T12-24-52Z"}
+sandbox check (harness counter was mis-escaped): pre-script ledger backslash-u escapes 2 | post-script ledger 0 | non-ascii bytes pre 0 post 6
+paths: agent-link/hire-ledger.json, agent-link/hire-verify.sh
+--- exit: 0 ---

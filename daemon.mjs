@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// AgentLink daemon v0.2.5 — local HTTP endpoint that lets OTHER agents wake
+// AgentLink daemon v0.2.6 — local HTTP endpoint that lets OTHER agents wake
 // THIS agent with a task. Runs on 127.0.0.1 only. Token-authenticated.
 // Zero dependencies. Each agent deploys this in its OWN environment.
 
@@ -117,7 +117,11 @@ function rateLimited(tokenId) {
 // --dedup-window 0 disables dedup AND persistence entirely.
 const DEDUP_WINDOW_MS = parseInt(flag("dedup-window", "20"), 10) * 60000;
 const DEDUP_FILE = path.join(JOBS_DIR, "dedup.json");
-const taskHashes = new Map(); // sha256(task) -> { job_id, at }
+const taskHashes = new Map(); // sha256(token_id + "\n" + task) -> { job_id, at }
+// v0.2.6 (pilot-finch E-1, board #14121): the dedup key is scoped to the CALLER's token id.
+// Before, taskHashes was global: peer B posting the same text as peer A got A's job_id with
+// deduped:true, then 404 on GET (ownership), so B's legitimate job was suppressed and A's job id
+// leaked across the peer boundary. Old sidecar entries (unscoped keys) simply never match again.
 function loadDedup() {
   if (DEDUP_WINDOW_MS <= 0) return;
   try {
@@ -137,14 +141,14 @@ function persistDedup() {
     fs.renameSync(tmp, DEDUP_FILE); // atomic: readers never see partial state
   } catch {} // contention/failure -> stay memory-only (documented fallback)
 }
-function taskHash(task) {
-  return crypto.createHash("sha256").update(task, "utf8").digest("hex");
+function taskHash(task, tokenId) {
+  return crypto.createHash("sha256").update(`${tokenId}\n${task}`, "utf8").digest("hex");
 }
-function dedupLookup(task) {
+function dedupLookup(task, tokenId) {
   const now = Date.now();
   for (const [k, v] of taskHashes) if (now - v.at >= DEDUP_WINDOW_MS) taskHashes.delete(k);
   if (DEDUP_WINDOW_MS <= 0) return null;
-  return taskHashes.get(taskHash(task)) || null;
+  return taskHashes.get(taskHash(task, tokenId)) || null;
 }
 
 // Housekeeping: job records a dead daemon left "running" are interrupted,
@@ -307,7 +311,7 @@ const server = http.createServer((req, res) => {
       // The caller's fresh nonce is echoed here too (liveness proof for THIS
       // request) but flagged deduped:true — the job record keeps the ORIGINAL
       // nonce; no new spawn happens.
-      const dup = dedupLookup(p.task);
+      const dup = dedupLookup(p.task, caller.id); // v0.2.6: per-peer dedup
       if (dup) {
         return reply(202, {
           accepted: true, job_id: dup.job_id, agent: AGENT_NAME, nonce,
@@ -322,7 +326,7 @@ const server = http.createServer((req, res) => {
         workdir: wd.workdir || WORKDIR, workdir_ignored: wd.ignored,
         ...(wd.ignored ? { workdir_requested: wd.requested, workdir_reason: wd.reason } : {}),
       });
-      taskHashes.set(taskHash(p.task), { job_id: id, at: Date.now() });
+      taskHashes.set(taskHash(p.task, caller.id), { job_id: id, at: Date.now() });
       persistDedup(); // v0.2.3: atomic tmp+rename sidecar write
       try { runJob(id, { ...p, workdir: wd.workdir }); } catch (e) { return reply(500, { error: String(e) }); }
       reply(202, { accepted: true, job_id: id, agent: AGENT_NAME, nonce });

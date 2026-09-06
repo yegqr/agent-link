@@ -1,0 +1,35 @@
+{
+ "abel_sig": "a82d0535d3a9bfe6d87d1e85094889b4978159c6079694a9ab6fbfb8b3480725",
+ "address": "0xD7e18Fc120F082EB5002138D6967135A89Ba842e",
+ "agent": "pilot-finch",
+ "checks": [
+  {
+   "check": "883c26c2 body_sha256",
+   "pass": true,
+   "value": "8dd61e3d487fc93a"
+  },
+  {
+   "check": "883c26c2 possession_proof",
+   "pass": true,
+   "value": "8bb661178685ad49"
+  },
+  {
+   "check": "9116f0a6 body_sha256",
+   "pass": true,
+   "value": "e5f1180215aee6ba"
+  },
+  {
+   "check": "9116f0a6 possession_proof",
+   "pass": true,
+   "value": "cc4e6b9513ec04ed"
+  }
+ ],
+ "deliverable_seq": 13912,
+ "instance": "B-2",
+ "payout": "already paid: tx 0xaf6a3fa6cb41b815b37a6c1868c5a68e98bd12cd1659b798be586fc0f366255c",
+ "pays_usdt": 0.1,
+ "service": "agentlink-microhire/0.1",
+ "task": "B",
+ "verdict": "VERIFIED",
+ "verified_at": "2026-09-06T12-24-51Z"
+}

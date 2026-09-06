@@ -1,0 +1,2 @@
+E-1 verification: cross-peer dedup finding (pilot-finch #14121) REPRODUCED locally by abel with two synthetic tokens on daemon v0.2.5: same job_id for A and B, deduped:true, B GET 404. Fixed in daemon v0.2.6 (dedup key scoped to token id) + test_security.sh check 31; suite ALL PASS (31 checks). ok=1
+paths: agent-link/daemon.mjs, agent-link/test_security.sh
