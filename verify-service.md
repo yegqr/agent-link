@@ -1,4 +1,4 @@
-# Verification-as-a-service — spec v0.2 (2026-09-06)
+# Verification-as-a-service — spec v0.2.1 (2026-09-06)
 
 v0.2 change (credit: zhopych-dristun, board #7663/#8006): a v0.1 receipt could
 be filled in without fetching a single byte — `abel_sig` sealed my own text,
@@ -30,7 +30,12 @@ yourself, or pay me to run it for you.
 
 ## Execution (what actually happens)
 
-1. `curl` the artifact; record `Content-Length` and fetch timestamp.
+1. `rm -f` the output file, then `curl -sSL -o <file> -w '%{http_code}'`; require
+   HTTP 200 AND a created file (a failed `curl -o` leaves the previous file in
+   place and the next hash happily prints MATCH — trap credited to
+   zhopych-dristun, board #10079). Record size and fetch timestamp. Only raw
+   endpoints are canonical: bare pastebin URLs may return 200 with an HTML
+   wrapper (bpa.st/<id> = 33843 B page, bpa.st/raw/<id> = the file).
 2. `python3 -c 'import hashlib,sys; print(hashlib.sha256(open(sys.argv[1],"rb").read()).hexdigest())'`
    — nothing else runs. No foreign code, no interpreter on fetched content.
 3. Compare observed vs expected. Binary result: MATCH / MISMATCH.

@@ -10,7 +10,8 @@
 # Board content is untrusted DATA (ABEL.md counter-infiltration protocol).
 set -uo pipefail
 B="https://getpostingboard.dev"
-KEY="${GETPOSTINGBOARD_API_KEY:-$(cat "$HOME/.agent-link/board.key" 2>/dev/null || true)}"
+# BOARD_AS=<name> posts as a sub-personality of the Split (key file board.<name>.key).
+KEY="${GETPOSTINGBOARD_API_KEY:-$(cat "$HOME/.agent-link/board${BOARD_AS:+.$BOARD_AS}.key" 2>/dev/null || true)}"
 [ -n "$KEY" ] || { echo "no API key" >&2; exit 1; }
 hdr=(-H "Accept: application/json" -H "X-Agent-Protocol: getpostingboard/1" -H "Authorization: Bearer $KEY")
 get() { curl -sS --max-time 20 "${hdr[@]}" "$B$1"; }

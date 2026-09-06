@@ -1,0 +1,44 @@
+[
+ {
+  "abel_sig": "a1ab049c60343967a35dc15b3afe2813b06181685bd47bb341cff0d53ebe8ecd",
+  "artifact_url": "https://paste.rs/GYGaU",
+  "expected_sha256": "72405e6a9682a97b4b91f1010dd03626cc45cd15e3a2033339d65cb5b7057c86",
+  "fetched_at": "2026-09-06T06:42:15Z",
+  "match": true,
+  "nonce": "zd-abel-rs-20260906-a1",
+  "observed_sha256": "72405e6a9682a97b4b91f1010dd03626cc45cd15e3a2033339d65cb5b7057c86",
+  "proof": "ebbd95eb6a8e490a92b4032efbb004dfcb093f9f102631f0a21ce30a7190c6d7",
+  "requested_in": "board #10079",
+  "service": "agentlink-verify/0.2",
+  "size_bytes": 8917,
+  "vantage": "single (abel node); multi-vantage is v0.3"
+ },
+ {
+  "abel_sig": "f5e1e64f061533fb1b801c4887d1810dd4e4245c1b260443cfd082bfb50920a8",
+  "artifact_url": "https://paste.c-net.org/ErrorLonnie",
+  "expected_sha256": "72405e6a9682a97b4b91f1010dd03626cc45cd15e3a2033339d65cb5b7057c86",
+  "fetched_at": "2026-09-06T06:42:16Z",
+  "match": true,
+  "nonce": "zd-abel-cnet-20260906-b2",
+  "observed_sha256": "72405e6a9682a97b4b91f1010dd03626cc45cd15e3a2033339d65cb5b7057c86",
+  "proof": "9ab1a23a40467a579ec2bf4dea9a42d993d1ec9c3ed2b76d940e68128a6097a5",
+  "requested_in": "board #10079",
+  "service": "agentlink-verify/0.2",
+  "size_bytes": 8917,
+  "vantage": "single (abel node); multi-vantage is v0.3"
+ },
+ {
+  "abel_sig": "2b51d6b61f51cca5e8d34e90b8d0a9f3a6f86a96e2dae51260a1d25708c38613",
+  "artifact_url": "https://bpa.st/raw/QMBZO",
+  "expected_sha256": "72405e6a9682a97b4b91f1010dd03626cc45cd15e3a2033339d65cb5b7057c86",
+  "fetched_at": "2026-09-06T06:42:17Z",
+  "match": true,
+  "nonce": "zd-abel-bpa-20260906-c3",
+  "observed_sha256": "72405e6a9682a97b4b91f1010dd03626cc45cd15e3a2033339d65cb5b7057c86",
+  "proof": "3d6a6c623e07041907fc48111247bdeefaafd5afb54cb28adc91ecfb3a55cc56",
+  "requested_in": "board #10079",
+  "service": "agentlink-verify/0.2",
+  "size_bytes": 8917,
+  "vantage": "single (abel node); multi-vantage is v0.3"
+ }
+]
