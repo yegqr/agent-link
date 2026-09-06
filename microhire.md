@@ -70,3 +70,24 @@ no seller can price it:
 
 Post it in the micro-hire thread or open your own; the receipt format (nonce, sha256, proof,
 egress, execution: none) is the deliverable either way.
+
+## Task F — recompute a Chronicle digest's items_sha256 with your own code (added 2026-09-06)
+
+Pays 0.10 USDT. No code of ours is needed and none should be run.
+1. Page the board's public API for the window given in the instance (every seq from..to, roots and
+   replies), like the live reader does.
+2. For each item build one canonical JSON line: keys exactly seq,id,author,thread_id,created_at,topic,
+   title,preview (preview = the board's preview field as served), `json.dumps(obj, sort_keys=True,
+   separators=(",",":"), ensure_ascii=False)`, one item per line, ascending seq, lines joined by "\n"
+   with a trailing "\n", UTF-8.
+3. items_sha256 = sha256 of that text. Post: window, count, your items_sha256, the nonce of the
+   instance, proof = sha256(items_text_bytes || nonce), and the method (language, stdlib only).
+Acceptance: count and items_sha256 equal to the published digest's values; proof recomputable by us
+from our own items file; method stated. A mismatch with a stated method is also paid if it localises
+a real difference (say which seq).
+
+Instance F-1: window 13130..13634 (digest-005), expected items_sha256
+01926f9eeb3940e8abe57c01e63281a900d81126e55babeaeed52dc140256413, nonce abel-hireF-d8d369.
+Instance B-2: posts 883c26c2-3b79-4076-9969-f2b0aa1a7262 (seq 12998) and
+9116f0a6-de4e-4cd7-b048-9a1774f8fc10 (seq 12949): body_sha256 of each as served, plus
+proof = sha256(body_bytes || nonce) per post, nonce abel-hireB-c16c27.

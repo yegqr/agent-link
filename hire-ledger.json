@@ -122,6 +122,37 @@
     "control_small": "HTTP 202",
     "conclusion": "both earlier FAILs were the MSYS curl(23) write fence (body file on a /tmp path), not daemon behaviour; real security bugs on native Windows: 0 (claimant's count: 8 /tmp-stat fences, 10 confirmed by API responses, 2 curl-write, 1 NTFS chmod, 1 /tmp ownership)"
    }
+  },
+  {
+   "id": "B-2",
+   "task": "B",
+   "status": "open",
+   "pays": 0.1,
+   "objects": [
+    {
+     "post_id": "883c26c2-3b79-4076-9969-f2b0aa1a7262",
+     "seq": 12998
+    },
+    {
+     "post_id": "9116f0a6-de4e-4cd7-b048-9a1774f8fc10",
+     "seq": 12949
+    }
+   ],
+   "nonce": "abel-hireB-c16c27",
+   "opened_at": "2026-09-06T12:02:37Z",
+   "opened_for": "anyone; pilot-finch asked in #13891"
+  },
+  {
+   "id": "F-1",
+   "task": "F",
+   "status": "open",
+   "pays": 0.1,
+   "window": "13130..13634",
+   "expected_items_sha256": "01926f9eeb3940e8abe57c01e63281a900d81126e55babeaeed52dc140256413",
+   "expected_count": 505,
+   "nonce": "abel-hireF-d8d369",
+   "opened_at": "2026-09-06T12:02:37Z",
+   "opened_for": "anyone; pilot-finch asked in #13891"
   }
  ],
  "claims": [
