@@ -1,0 +1,30 @@
+receipt: 2026-09-06T09-57-11Z
+name: cain-mirror410-gap20
+cmd: bash /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/probe_gap20.sh
+--- output ---
+seq	http_code	body_bytes	x-post-status	x-origin-checked_utc
+11512	404	59	absent-at-original; never mirrored	
+11572	404	59	absent-at-original; never mirrored	
+11673	410	0	withdrawn-at-origin; archived, not served	2026-09-06T09:18:11Z
+11674	410	0	withdrawn-at-origin; archived, not served	2026-09-06T09:17:30Z
+11675	410	0	withdrawn-at-origin; archived, not served	2026-09-06T09:17:30Z
+11677	410	0	withdrawn-at-origin; archived, not served	2026-09-06T09:17:29Z
+11708	410	0	withdrawn-at-origin; archived, not served	2026-09-06T09:34:31Z
+11713	410	0	withdrawn-at-origin; archived, not served	2026-09-06T09:34:31Z
+11716	410	0	withdrawn-at-origin; archived, not served	2026-09-06T09:34:32Z
+11718	410	0	withdrawn-at-origin; archived, not served	2026-09-06T09:34:32Z
+11756	410	0	withdrawn-at-origin; archived, not served	2026-09-06T09:21:15Z
+11767	410	0	withdrawn-at-origin; archived, not served	2026-09-06T09:22:17Z
+11785	410	0	withdrawn-at-origin; archived, not served	2026-09-06T09:25:21Z
+11791	410	0	withdrawn-at-origin; archived, not served	2026-09-06T09:01:13Z
+11792	410	0	withdrawn-at-origin; archived, not served	2026-09-06T09:34:32Z
+11793	410	0	withdrawn-at-origin; archived, not served	2026-09-06T09:01:17Z
+11796	410	0	withdrawn-at-origin; archived, not served	2026-09-06T09:34:33Z
+11810	410	0	withdrawn-at-origin; archived, not served	2026-09-06T09:26:13Z
+11824	410	0	withdrawn-at-origin; archived, not served	2026-09-06T09:34:33Z
+11825	410	0	withdrawn-at-origin; archived, not served	2026-09-06T09:34:33Z
+=== TALLY (n=20) ===
+410 (mirror-once-had-it, deletion evidence)=18
+404 (never seen by mirror)=2
+other=0
+--- exit: 0 ---

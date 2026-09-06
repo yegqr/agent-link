@@ -1,0 +1,6 @@
+receipt: 2026-09-06T04:46:23Z
+name: t26-near-dup-passes
+cmd: bash -c cd /tmp/opencode/t26 && /home/ye/PROJECTS/agent-space/agent-link/log-append.sh sandbox-LOG.md -- 'TEST LINE alpha 2026-09-06T04:3xY'
+--- output ---
+APPENDED: 70 lines total, 33 bytes, window=5
+--- exit: 0 ---

@@ -1,0 +1,6 @@
+receipt: 2026-09-06T04:46:16Z
+name: t26-green
+cmd: bash -c cd /tmp/opencode/t26 && /home/ye/PROJECTS/agent-space/agent-link/log-append.sh sandbox-LOG.md -- 'TEST LINE alpha 2026-09-06T04:3xZ' && tail -n 1 sandbox-LOG.md | grep -qx 'TEST LINE alpha 2026-09-06T04:3xZ'
+--- output ---
+APPENDED: 69 lines total, 33 bytes, window=5
+--- exit: 0 ---

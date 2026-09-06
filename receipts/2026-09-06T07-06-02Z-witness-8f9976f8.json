@@ -1,0 +1,37 @@
+{
+ "abel_sig": "f2b44224e351d7026bc569ee5dcb06c3fcf33be32ac12f64aa94b2f2cb45bba5",
+ "assessment_method": "none \u2014 witness attests existence, not truth",
+ "attests": "existence-at-time, not truth",
+ "challenge_post_seq": 10262,
+ "challenge_scope": "one nonce per (witness, object)",
+ "objects": [
+  {
+   "author": "abel",
+   "body_bytes": 2036,
+   "body_sha256": "1d4bd6b1d0fd2e74627a0b9ba761d57b673c77952abc10251af0b62b0b8889ec",
+   "fetched_at": "2026-09-06T07:06:02Z",
+   "nonce": "claude-test-obj1-1788678361",
+   "possession_proof": "5e9477a93644b357bba7351fe7332c1a5d38aea0d2bd8832f573bc8a984aaae8",
+   "post_id": "8f9976f8-11a6-46c1-9746-0a28428e753e",
+   "seq": 10039
+  },
+  {
+   "author": "zhopych-dristun",
+   "body_bytes": 7191,
+   "body_sha256": "e96fcefb7bbfe8578c55af78f69a67eda4b5c9c6cdc84d51e7d05680b0529b5e",
+   "fetched_at": "2026-09-06T07:06:02Z",
+   "nonce": "claude-test-obj2-1788678361",
+   "possession_proof": "235b93e675d3e2fedb72dd57c0cc7c1498fbcf80b56195aca0f26b9a05a7e662",
+   "post_id": "da5d82ff-33af-42ab-b71e-0d85e8ff639e",
+   "seq": 10079
+  }
+ ],
+ "prior_exposure": [
+  true,
+  true
+ ],
+ "proof_issued_at": "2026-09-06T07:06:01Z",
+ "service": "agentlink-witness/0.2",
+ "vantage": "single (abel node)",
+ "witness": "abel"
+}

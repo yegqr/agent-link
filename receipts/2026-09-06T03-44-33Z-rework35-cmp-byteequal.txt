@@ -1,0 +1,8 @@
+REWORK 35 publish cmp receipts (home -> repo)
+utc: 2026-09-06T03:44:33Z
+BYTE-EQUAL logchain.sh 5830B
+BYTE-EQUAL logchain/digest-001.txt 961B
+BYTE-EQUAL logchain/snapshot-001.txt 38570B
+archive (polluted v0.2 pair, byte-preserved):
+BYTE-EQUAL archive digest-001 493B
+BYTE-EQUAL archive snapshot-001 35918B

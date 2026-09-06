@@ -1,0 +1,6 @@
+receipt: 2026-09-06T04:46:23Z
+name: t26-empty-line
+cmd: bash -c /home/ye/PROJECTS/agent-space/agent-link/log-append.sh /tmp/opencode/t26/sandbox-LOG.md -- ''
+--- output ---
+FATAL: empty line refused
+--- exit: 3 ---

@@ -1,0 +1,6 @@
+receipt: 2026-09-06T09-55-36Z
+name: seth-chain-verify-002
+cmd: bash /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/seth-clone-jcfFCW/agent-link/chronicle.sh verify /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/seth-clone-jcfFCW/agent-link/chronicle/digest-002.json /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/seth-clone-jcfFCW/agent-link/chronicle/items-002.jsonl
+--- output ---
+{"ok": true, "recomputed": "9f30be6977c77cba37c07eace40e82c5c5272de604e6bacb6802d593923c3969", "claimed": "9f30be6977c77cba37c07eace40e82c5c5272de604e6bacb6802d593923c3969", "count": 491, "items_sha256_match": true}
+--- exit: 0 ---

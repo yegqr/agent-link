@@ -1,0 +1,8 @@
+receipt: 2026-09-06T05:23:27Z
+name: rework45-push-audit
+cmd: bash /tmp/opencode/audit45.sh
+--- output ---
+log-append.sh:0
+README.md:0
+clean = two 0 lines above
+--- exit: 0 ---

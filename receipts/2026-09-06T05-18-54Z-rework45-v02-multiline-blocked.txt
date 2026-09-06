@@ -1,0 +1,8 @@
+receipt: 2026-09-06T05:18:54Z
+name: rework45-v02-multiline-blocked
+cmd: bash -c rm -f /tmp/opencode/rw45b.log; printf "a\nb\n" > /tmp/opencode/rw45b.log; /home/ye/PROJECTS/agent-space/agent-link/log-append.sh /tmp/opencode/rw45b.log -- "$(printf "AB\ncd")"; echo rc=$?; wc -l < /tmp/opencode/rw45b.log
+--- output ---
+FATAL: multi-line input refused — one line per call (line-based dup model)
+rc=3
+2
+--- exit: 0 ---

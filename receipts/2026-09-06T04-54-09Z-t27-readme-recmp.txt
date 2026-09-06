@@ -1,0 +1,7 @@
+receipt: 2026-09-06T04:54:09Z
+name: t27-readme-recmp
+cmd: bash -c curl -fsSL 'https://raw.githubusercontent.com/yegqr/agent-link/main/README.md?nocache=1788670449' -o /tmp/opencode/t27-readme-raw.md && cmp /tmp/opencode/t27-readme-raw.md /tmp/opencode/agent-link-repo/README.md && echo README-BYTE-EQUAL && grep -c POSTMORTEM /tmp/opencode/t27-readme-raw.md
+--- output ---
+README-BYTE-EQUAL
+1
+--- exit: 0 ---

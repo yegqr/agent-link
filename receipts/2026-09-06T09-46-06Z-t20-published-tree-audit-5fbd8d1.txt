@@ -1,0 +1,65 @@
+receipt: 2026-09-06T09-46-06Z
+name: t20-published-tree-audit-5fbd8d1
+cmd: bash -c cat /tmp/opencode/t20-audit-out.txt
+--- output ---
+== ghp_/gho_ tokens ==
+count: 0
+== Bearer literals ==
+./test_security.sh:224:  CB=$(curl -sS -o /dev/null -w '%{http_code}' -H "Authorization: Bearer tokenB-0123456789abcdef" http://127.0.0.1:$PORT4/jobs/$J29)
+./test_security.sh:225:  CBping=$(curl -sS -o /dev/null -w '%{http_code}' -X POST http://127.0.0.1:$PORT4/challenge -H "Authorization: Bearer tokenB-0123456789abcdef" -d '{"task":"peerB-task","from":"peerB"}')
+./receipts/2026-09-06T03-18-00Z-t20-secret-audit.txt:22:./integrity.sh:36:  -H 'Authorization: Bearer wrong-token-integrity-probe-v2' \
+./integrity.sh:36:  -H 'Authorization: Bearer wrong-token-integrity-probe-v2' \
+raw count: 4
+== key=value secret-ish ==
+./receipts/2026-09-06T08-02-09Z-cain-signer-v02-quote-probe.txt:28: "token": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+./receipts/2026-09-06T07-51-34Z-cain-signer-capbypass-spoofed.txt:24: "token": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+./receipts/2026-09-06T07-50-47Z-cain-signer-quote-multiline-purpose.txt:25: "token": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+./receipts/2026-09-06T07-49-53Z-cain-signer-quote-badchecksum.txt:24: "token": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+./receipts/2026-09-06T07-49-03Z-cain-signer-quote-dead.txt:24: "token": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+./daemon.mjs:51:// lines, one per peer: `<token> [peer-name]`. Every token authenticates;
+raw count: 7
+== 64-hex hits: files + nature ==
+  239  ./chronicle/items-001.jsonl
+  28  ./receipts/2026-09-06T07-47-40Z-cain-signer-thread-85421cfb.txt
+  25  ./chronicle/digest-001.json
+  17  ./receipts/2026-09-06T06-55-58Z-cain-live-mirrors-recompute.txt
+  16  ./chronicle/items-002.jsonl
+  15  ./receipts/2026-09-06T03-18-00Z-t20-secret-audit.txt
+  12  ./receipts/2026-09-06T06-42-17Z-verify-zhopych-3mirrors.json
+  11  ./logchain/digest-006.txt
+  9  ./receipts/2026-09-06T07-55-11Z-cain-signer-thread-ff65dbfb-followup.txt
+  9  ./receipts/2026-09-06T07-48-13Z-cain-signer-thread-ff65dbfb.txt
+  9  ./receipts/2026-09-06T07-06-51Z-v03-reachability-bootstrap.json
+  9  ./logchain/digest-005.txt
+  8  ./logchain/snapshot-006.txt
+  8  ./chronicle/digest-002.json
+  7  ./receipts/2026-09-06T08-32-10Z-witness-job2-flowbin-151-152.json
+  7  ./logchain/snapshot-005.txt
+  7  ./logchain/digest-004.txt
+  7  ./MANIFEST.sha256
+  6  ./logchain/snapshot-004.txt
+  6  ./logchain/snapshot-003.txt
+  5  ./receipts/2026-09-06T09-30-57Z-seth-verify-api-notes-rev12.txt
+  5  ./receipts/2026-09-06T09-30-55Z-seth-verify-layers-rev1.txt
+  5  ./receipts/2026-09-06T09-30-47Z-seth-verify-rules-rev2.txt
+  5  ./receipts/2026-09-06T09-30-45Z-seth-verify-gpbkit.txt
+  5  ./receipts/2026-09-06T06-54-50Z-witness-job1-10039-10079.json
+  5  ./logchain/digest-003.txt
+  5  ./chronicle/anchors-external.json
+  4  ./receipts/2026-09-06T06-31-00Z-verify-zhopych-GYGaU.json
+  3  ./logchain/digest-002.txt
+  2  ./receipts/2026-09-06T08-39-43Z-cain-postsign-forged-card-selfcheck.txt
+  2  ./receipts/2026-09-06T07-17-47Z-pay-scan-25902356-25916756.json
+  2  ./receipts/2026-09-06T07-17-08Z-pay-verify-3e4d7190.json
+  2  ./receipts/2026-09-06T02-53-19Z-logchain-v02-clean-verify.txt
+  2  ./receipts/2026-09-06T02-53-02Z-logchain-v02-repo-verify.txt
+  2  ./receipts/2026-09-06T02-52-48Z-logchain-clean-verify.txt
+  2  ./logchain/snapshot-002.txt
+  2  ./logchain/snapshot-001.txt
+  2  ./logchain/archive/20260906T034305Z/snapshot-001.txt
+  2  ./logchain/archive/20260906T034305Z/digest-001.txt
+  2  ./hire-ledger.json
+== non-receipt 64-hex outside .md/.txt/.json receipts ==
+./paywatch.sh:33:TRANSFER="0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
+done
+--- exit: 0 ---

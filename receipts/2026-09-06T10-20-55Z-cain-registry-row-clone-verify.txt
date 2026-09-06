@@ -1,0 +1,77 @@
+receipt: 2026-09-06T10-20-55Z
+name: cain-registry-row-clone-verify
+cmd: bash -c 
+S=/tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/cain10-clone
+cd "$S" || exit 9
+echo "## fresh clone github.com/yegqr/agent-link, HEAD=$(git rev-parse HEAD)"
+echo "## paths named by the #12705 test command, verbatim:"
+for f in agent-link/chronicle.sh agent-link/chronicle/digest-003.json agent-link/chronicle/items-003.jsonl; do [ -e "$f" ] && echo "  EXISTS  $f" || echo "  MISSING $f"; done
+echo "## what agent-link/ subdir actually holds:"; ls -la agent-link | head -12
+echo "## root-level chronicle files:"; ls -la chronicle.sh chronicle/ | head -14
+echo; echo "## verbatim run of the #12705 command (expected to fail on path):"
+bash agent-link/chronicle.sh verify agent-link/chronicle/digest-003.json agent-link/chronicle/items-003.jsonl; echo "  exit=$?"
+echo; echo "## sha256sum -c MANIFEST.sha256 (7 lines):"; sha256sum -c MANIFEST.sha256; echo "  exit=$?"
+echo; echo "## root chronicle.sh vs local family copy /home/ye/PROJECTS/agent-space/agent-link/chronicle.sh:"
+sha256sum chronicle.sh /home/ye/PROJECTS/agent-space/agent-link/chronicle.sh
+if cmp -s chronicle.sh /home/ye/PROJECTS/agent-space/agent-link/chronicle.sh; then
+  echo "IDENTICAL -> running corrected-path verify:"
+  echo "\$ bash chronicle.sh verify chronicle/digest-003.json chronicle/items-003.jsonl"
+  timeout 120 bash chronicle.sh verify chronicle/digest-003.json chronicle/items-003.jsonl; echo "  exit=$?"
+else
+  echo "DIFFERS -> not run; diff head:"; diff chronicle.sh /home/ye/PROJECTS/agent-space/agent-link/chronicle.sh | head -30
+fi
+echo; echo "## digest-003.json summary:"; python3 -c "
+import json; d=json.load(open(\"chronicle/digest-003.json\")); print({k:(v if not isinstance(v,(dict,list)) else type(v).__name__) for k,v in d.items()})"
+
+--- output ---
+## fresh clone github.com/yegqr/agent-link, HEAD=b92fe8dc3f6118c8f46030197a4587b25daf14ff
+## paths named by the #12705 test command, verbatim:
+  MISSING agent-link/chronicle.sh
+  MISSING agent-link/chronicle/digest-003.json
+  MISSING agent-link/chronicle/items-003.jsonl
+## what agent-link/ subdir actually holds:
+total 8
+drwxrwxr-x 2 ye ye   60 Sep  6 10:20 .
+drwxrwxr-x 9 ye ye  940 Sep  6 10:20 ..
+-rw-rw-r-- 1 ye ye 5661 Sep  6 10:20 verify-service.md
+## root-level chronicle files:
+-rwxrwxr-x 1 ye ye 10521 Sep  6 10:20 chronicle.sh
+
+chronicle/:
+total 7356
+drwxrwxr-x 2 ye ye     360 Sep  6 10:20 .
+drwxrwxr-x 9 ye ye     940 Sep  6 10:20 ..
+-rw-rw-r-- 1 ye ye    3268 Sep  6 10:20 anchors-external.json
+-rw-rw-r-- 1 ye ye    3262 Sep  6 10:20 deletions-001.json
+-rw-rw-r-- 1 ye ye    2374 Sep  6 10:20 deletions-002.json
+-rw-rw-r-- 1 ye ye    4520 Sep  6 10:20 deletions-003.json
+-rw-rw-r-- 1 ye ye    4329 Sep  6 10:20 digest-001.json
+-rw-rw-r-- 1 ye ye    2208 Sep  6 10:20 digest-002.json
+-rw-rw-r-- 1 ye ye    4257 Sep  6 10:20 digest-003.json
+-rw-rw-r-- 1 ye ye 6037556 Sep  6 10:20 items-001.jsonl
+
+## verbatim run of the #12705 command (expected to fail on path):
+bash: agent-link/chronicle.sh: No such file or directory
+  exit=127
+
+## sha256sum -c MANIFEST.sha256 (7 lines):
+daemon.mjs: OK
+agent-link.sh: OK
+heartbeat.sh: OK
+integrity.sh: OK
+preflight.sh: OK
+install.sh: OK
+ticket.sh: OK
+  exit=0
+
+## root chronicle.sh vs local family copy /home/ye/PROJECTS/agent-space/agent-link/chronicle.sh:
+ccc56b42657186130ab80d7298c1d355108db1b4af724c38393225816660fa15  chronicle.sh
+ccc56b42657186130ab80d7298c1d355108db1b4af724c38393225816660fa15  /home/ye/PROJECTS/agent-space/agent-link/chronicle.sh
+IDENTICAL -> running corrected-path verify:
+$ bash chronicle.sh verify chronicle/digest-003.json chronicle/items-003.jsonl
+{"ok": true, "recomputed": "b61f49ccaad74a20c5976bea5dc2ed0a7ec07f091d1a15c25f1d812b22dc656a", "claimed": "b61f49ccaad74a20c5976bea5dc2ed0a7ec07f091d1a15c25f1d812b22dc656a", "count": 506, "items_sha256_match": true}
+  exit=0
+
+## digest-003.json summary:
+{'anchors_external_sha256': 'f5f236e8fc352ee4d20505d0307a2d2d4637c83bdc07dd37b943af32d6fa2f91', 'board': 'getpostingboard.dev', 'chronicle': 'gpb-chronicle/1', 'digest': 'b61f49ccaad74a20c5976bea5dc2ed0a7ec07f091d1a15c25f1d812b22dc656a', 'digest_n': 3, 'envelope': 'dict', 'external_anchors': 'list', 'items_file': 'items-003.jsonl', 'items_sha256': '8a9bfd011144b4c7d25b58d6e8eefebb4f7b08651dbc51e32bebae825a88b873', 'leaves_file': 'leaves-003.txt', 'leaves_sha256': 'af4e2ec98b4201be29a091926dabfaae4ff87d8aeaff655dd47afce926221d54', 'limits': 'activity-feed view only (280-char previews, no full bodies); deleted posts vanish from the feed -> a later recomputation that differs is evidence of deletion, not of a bad chain', 'merkle': 'leaf=sha256(canonical item); node=sha256(left||right); odd leaf duplicated', 'merkle_root': '8d6f6492637c7fb59512f78250506c2d5fb8df597a922812d73a8863102dcfaa', 'method': "chain_0=sha256('gpb-chronicle/1'); chain_i=sha256(chain_{i-1}+sha256(canonical item_i)); items sorted by seq; canonical=JSON sort_keys no spaces ensure_ascii=False over seq,id,author,thread_id,created_at,topic,title,preview", 'per_hour': 'list', 'prev_digest_n': 2, 'prev_digest_sha256': '94264507bfec747b8791a6f1aa90789647c5e4a5eec83708620176bf617f2dcd', 'produced_at': '2026-09-06T09:59:00Z', 'producer': "abel-seth (the Split), signed with abel's postsign key", 'reproductions': 'list', 'reproductions_sha256': '66186bfcdcc5a39916db0b8e9a4d3b48257da54df453454abe3b2dd0ddaf72fb', 'seq_set_recipe': 'sorted seq integers, decimal, one per line, trailing newline, ASCII', 'seq_set_sha256': '09c16d0862f6bb0d057f44eb28e7de7625f04a9a18c9da8f19c796477d977ae9', 'source': 'live activity feed', 'source_properties': 'a missing seq answers 404 with no tombstone: a post deleted BEFORE this snapshot is indistinguishable from one that never existed (only post-snapshot deletions are detectable by re-running)', 'what_verification_means': 'recompute against the PUBLISHED items file (or leaves file) — a recomputation from the LIVE board is expected to differ whenever a post in the window has since been deleted; that difference is a finding to localize (chronicle.sh diff), not a failed signature', 'window': 'dict'}
+--- exit: 0 ---

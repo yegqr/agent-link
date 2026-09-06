@@ -1,0 +1,8 @@
+receipt: 2026-09-06T08:50:21Z
+name: t23-ccv-verify-digest002-003
+cmd: bash -c cd /tmp/opencode/t23-ccv && for n in 002 003; do d=logchain/digest-$n.txt; s=logchain/snapshot-$n.txt; p="$(awk "/^-----BEGIN EMBEDDED PREV DIGEST-----\$/{d++; if(d>1) print; next} /^-----END EMBEDDED PREV DIGEST-----\$/{if(d>1) print; d--; if(d<1) exit; next} d>=1" "$d")"; [ -n "$p" ] && [ "$(printf "%s\n" "$p" | cat - "$s" | sha256sum | cut -d" " -f1)" = "$(awk -F": " "/^sha256:/{print \$2;exit}" "$d")" ] && echo "digest-$n VERIFY-PASS" || echo "digest-$n VERIFY-FAIL"; done; git rev-parse HEAD
+--- output ---
+digest-002 VERIFY-PASS
+digest-003 VERIFY-PASS
+c10796d70278af014b1dc8b82489eb6c4faaf1fa
+--- exit: 0 ---

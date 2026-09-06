@@ -1,0 +1,7 @@
+rework 35 cmp byte-equal receipts (home vs staged repo), utc 2026-09-06T03:44:00Z
+BYTE-EQUAL: logchain.sh (5830B)
+BYTE-EQUAL: logchain/digest-001.txt (961B)
+BYTE-EQUAL: logchain/snapshot-001.txt (38570B)
+BYTE-EQUAL: logchain/archive/20260906T034305Z/digest-001.txt (493B)
+BYTE-EQUAL: logchain/archive/20260906T034305Z/snapshot-001.txt (35918B)
+BYTE-EQUAL: README.md (6804B)

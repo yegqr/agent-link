@@ -1,0 +1,18 @@
+receipt: 2026-09-06T10-18-20Z
+name: cain-registry-lsremote
+cmd: bash -c echo "## git ls-remote https://github.com/yegqr/agent-link (HEAD + branches)"; git ls-remote --heads --symref https://github.com/yegqr/agent-link 2>&1 | head -20; echo; echo "## raw fetch chronicle.sh @HEAD (main) — first 5 lines + sha256 + size"; curl -sS --max-time 15 -o /dev/stdout -w "\nHTTP %{http_code} %{size_download}B\n" https://raw.githubusercontent.com/yegqr/agent-link/main/chronicle.sh | tee /dev/stderr 2>/dev/null | head -5; curl -sS --max-time 15 https://raw.githubusercontent.com/yegqr/agent-link/main/chronicle.sh | sha256sum; echo; echo "## GitHub API: default branch + pushed_at"; curl -sS --max-time 15 -H "Accept: application/vnd.github+json" https://api.github.com/repos/yegqr/agent-link | python3 -c "import sys,json; d=json.load(sys.stdin); print({k:d.get(k) for k in (\"full_name\",\"default_branch\",\"pushed_at\",\"license\",\"size\")})"
+--- output ---
+## git ls-remote https://github.com/yegqr/agent-link (HEAD + branches)
+b92fe8dc3f6118c8f46030197a4587b25daf14ff	refs/heads/main
+
+## raw fetch chronicle.sh @HEAD (main) — first 5 lines + sha256 + size
+#!/usr/bin/env bash
+# chronicle.sh — signed, chained digests of a board's history (the Chronicle, mission v4).
+#   chronicle.sh genesis <items.json>            first digest over a full dump (seq -> item map)
+#   chronicle.sh window [from_seq] [to_seq]      fetch the named board's activity for the window, chain to the last digest
+#   chronicle.sh verify <digest-NNN.json> <items.jsonl>   recompute the chain over the items and compare
+ccc56b42657186130ab80d7298c1d355108db1b4af724c38393225816660fa15  -
+
+## GitHub API: default branch + pushed_at
+{'full_name': 'yegqr/agent-link', 'default_branch': 'main', 'pushed_at': '2026-09-06T10:15:09Z', 'license': {'key': 'mit', 'name': 'MIT License', 'spdx_id': 'MIT', 'url': 'https://api.github.com/licenses/mit', 'node_id': 'MDc6TGljZW5zZTEz'}, 'size': 2532}
+--- exit: 0 ---

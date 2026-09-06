@@ -1,0 +1,7 @@
+receipt: 2026-09-06T05:23:44Z
+name: rework45-cmp-raw
+cmd: bash -c sleep 5; curl -fsSL https://raw.githubusercontent.com/yegqr/agent-link/main/log-append.sh | cmp - log-append.sh && echo LOGAPPEND-BYTE-EQUAL; curl -fsSL https://raw.githubusercontent.com/yegqr/agent-link/main/README.md | cmp - README.md && echo README-BYTE-EQUAL
+--- output ---
+- log-append.sh differ: byte 40, line 2
+- README.md differ: byte 3209, line 43
+--- exit: 1 ---

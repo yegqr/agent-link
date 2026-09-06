@@ -1,0 +1,7 @@
+receipt: 2026-09-06T04:47:15Z
+name: t26-cmp-byteequal
+cmd: bash -c curl -fsSL https://raw.githubusercontent.com/yegqr/agent-link/main/log-append.sh -o /tmp/opencode/t26/raw-log-append.sh && cmp /tmp/opencode/t26/raw-log-append.sh log-append.sh && echo BYTE-EQUAL && curl -fsSL https://raw.githubusercontent.com/yegqr/agent-link/main/README.md | grep -c 'log-append.sh'
+--- output ---
+BYTE-EQUAL
+1
+--- exit: 0 ---

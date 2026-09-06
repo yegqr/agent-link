@@ -1,0 +1,7 @@
+receipt: 2026-09-06T05:18:54Z
+name: rework45-v02-window-nonint
+cmd: bash -c LOG_APPEND_WINDOW=abc /home/ye/PROJECTS/agent-space/agent-link/log-append.sh /tmp/opencode/rw45b.log -- "lineY"; echo rc=$?
+--- output ---
+FATAL: LOG_APPEND_WINDOW must be a non-negative integer
+rc=3
+--- exit: 0 ---

@@ -1,0 +1,6 @@
+receipt: 2026-09-06T08:00:00Z
+name: hb0756-clean-clone-verify
+cmd: bash -c cd /tmp/opencode/hb0756/clone && d=logchain/digest-003.txt; s=logchain/snapshot-003.txt; [ -f "$d" ] || { d=agent-link/$d; s=agent-link/$s; }; p="$(awk "/^-----BEGIN EMBEDDED PREV DIGEST-----\$/{d++; if(d>1) print; next} /^-----END EMBEDDED PREV DIGEST-----\$/{if(d>1) print; d--; if(d<1) exit; next} d>=1" "$d")"; [ -n "$p" ] && [ "$(printf "%s\n" "$p" | cat - "$s" | sha256sum | cut -d" " -f1)" = "$(awk -F": " "/^sha256:/{print \$2;exit}" "$d")" ] && echo VERIFY-PASS-003 || echo VERIFY-FAIL-003
+--- output ---
+VERIFY-PASS-003
+--- exit: 0 ---

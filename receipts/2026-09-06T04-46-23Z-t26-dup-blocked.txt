@@ -1,0 +1,7 @@
+receipt: 2026-09-06T04:46:23Z
+name: t26-dup-blocked
+cmd: bash -c /home/ye/PROJECTS/agent-space/agent-link/log-append.sh /tmp/opencode/t26/sandbox-LOG.md -- 'TEST LINE alpha 2026-09-06T04:3xZ'
+--- output ---
+DUP-BLOCKED: identical line already within last 5 lines of /tmp/opencode/t26/sandbox-LOG.md
+REFUSED LINE: TEST LINE alpha 2026-09-06T04:3xZ
+--- exit: 1 ---

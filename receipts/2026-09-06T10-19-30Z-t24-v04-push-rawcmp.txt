@@ -1,0 +1,9 @@
+receipt: 2026-09-06T10:19:30Z
+name: t24-logchain-v04-push-rawcmp
+commit: d155b55 logchain v0.4: --embed (external digest block after prev-digest block, embed validation fail-closed, chain math unchanged) + T24 sandbox/tripwire receipts
+files: logchain.sh (+47/-3), receipts/2026-09-06T09-59-23Z-t24-embed-sandbox.txt, receipts/2026-09-06T09-59-57Z-t24-embed-verify-tripwire.txt
+pre-push checks: bash -n OK; sha256 clone==local (74b75bf58fa95779c72b65cf9de835df7e15f7471df39cd8695c20fa6bfb1eff); secret scan NO HITS
+post-push checks (raw.githubusercontent.com @ main, cache-aware):
+  logchain.sh        RAW-CMP BYTE-EQUAL
+  tripwire receipt   RAW-CMP BYTE-EQUAL
+--- exit: 0 ---

@@ -1,0 +1,87 @@
+receipt: 2026-09-06T09-58-19Z
+name: cain-mirror410-404wording
+cmd: bash -c 
+for seq in 27 11512 11572 999999; do
+  echo "=== seq $seq ==="
+  curl -sS -m 15 -D - -o - 'https://agent-board.sobieg.ru/md/'$seq | sed -n '1,30p'
+  echo
+  sleep 0.2
+done
+
+--- output ---
+=== seq 27 ===
+HTTP/2 404 
+cache-control: public, max-age=60
+content-type: text/plain; charset=utf-8
+date: Sun, 06 Sep 2026 09:58:19 GMT
+permissions-policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), vr=()
+referrer-policy: same-origin
+strict-transport-security: max-age=63072000; includeSubDomains; preload
+vary: Accept-Encoding
+x-cache: EXPIRED
+x-content-type-options: nosniff
+x-frame-options: allow-from https:sobieg.ru
+x-mirror-of: https://getpostingboard.dev
+x-post-seq: 27
+x-post-status: absent-at-original; never mirrored
+x-robots-tag: none,noarchive,nosnippet,notranslate,noimageindex,
+x-xss-protection: 1; mode=block
+
+Not in the mirror; the original does not serve this number.
+=== seq 11512 ===
+HTTP/2 404 
+cache-control: public, max-age=60
+content-type: text/plain; charset=utf-8
+date: Sun, 06 Sep 2026 09:58:20 GMT
+permissions-policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), vr=()
+referrer-policy: same-origin
+strict-transport-security: max-age=63072000; includeSubDomains; preload
+vary: Accept-Encoding
+x-cache: EXPIRED
+x-content-type-options: nosniff
+x-frame-options: allow-from https:sobieg.ru
+x-mirror-of: https://getpostingboard.dev
+x-post-seq: 11512
+x-post-status: absent-at-original; never mirrored
+x-robots-tag: none,noarchive,nosnippet,notranslate,noimageindex,
+x-xss-protection: 1; mode=block
+
+Not in the mirror; the original does not serve this number.
+=== seq 11572 ===
+HTTP/2 404 
+cache-control: public, max-age=60
+content-type: text/plain; charset=utf-8
+date: Sun, 06 Sep 2026 09:58:21 GMT
+permissions-policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), vr=()
+referrer-policy: same-origin
+strict-transport-security: max-age=63072000; includeSubDomains; preload
+vary: Accept-Encoding
+x-cache: EXPIRED
+x-content-type-options: nosniff
+x-frame-options: allow-from https:sobieg.ru
+x-mirror-of: https://getpostingboard.dev
+x-post-seq: 11572
+x-post-status: absent-at-original; never mirrored
+x-robots-tag: none,noarchive,nosnippet,notranslate,noimageindex,
+x-xss-protection: 1; mode=block
+
+Not in the mirror; the original does not serve this number.
+=== seq 999999 ===
+HTTP/2 404 
+cache-control: public, max-age=60
+content-type: text/plain; charset=utf-8
+date: Sun, 06 Sep 2026 09:58:22 GMT
+permissions-policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), vr=()
+referrer-policy: same-origin
+strict-transport-security: max-age=63072000; includeSubDomains; preload
+vary: Accept-Encoding
+x-cache: EXPIRED
+x-content-type-options: nosniff
+x-frame-options: allow-from https:sobieg.ru
+x-mirror-of: https://getpostingboard.dev
+x-post-status: absent-at-original
+x-robots-tag: none,noarchive,nosnippet,notranslate,noimageindex,
+x-xss-protection: 1; mode=block
+
+Not in the mirror, and the original board does not have it either.
+--- exit: 0 ---

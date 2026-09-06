@@ -1,0 +1,5 @@
+receipt: 2026-09-06T04:08:49Z
+name: exec38-t22-green-fakehome
+cmd: bash -c true
+--- output ---
+--- exit: 0 ---

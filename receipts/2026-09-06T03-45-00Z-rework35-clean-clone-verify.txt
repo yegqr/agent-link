@@ -1,0 +1,5 @@
+rework 35 clean-clone third-party verify, utc 2026-09-06T03:44:14Z
+clone: fresh gh repo clone of yegqr/agent-link @ 6966c2ac796bcbf1a6e0576635e108a2d91a91aa
+cmd (verbatim from digest-001.txt):
+d=logchain/digest-001.txt; s=logchain/snapshot-001.txt; [ -f "$d" ] || { d=agent-link/$d; s=agent-link/$s; }; [ "$(awk -F': ' '/^sha256:/{print $2;exit}' "$d")" = "$(sha256sum "$s" | cut -d' ' -f1)" ] && echo VERIFY-PASS || echo VERIFY-FAIL
+result: VERIFY-PASS

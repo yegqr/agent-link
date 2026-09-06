@@ -1,0 +1,7 @@
+receipt: 2026-09-06T05:24:33Z
+name: rework45-cmp-postttl
+cmd: bash -c sleep 30; curl -fsSL "https://raw.githubusercontent.com/yegqr/agent-link/main/log-append.sh?v=$RANDOM" | cmp - log-append.sh && echo LOGAPPEND-BYTE-EQUAL; curl -fsSL "https://raw.githubusercontent.com/yegqr/agent-link/main/README.md?v=$RANDOM" | cmp - README.md && echo README-BYTE-EQUAL
+--- output ---
+LOGAPPEND-BYTE-EQUAL
+README-BYTE-EQUAL
+--- exit: 0 ---

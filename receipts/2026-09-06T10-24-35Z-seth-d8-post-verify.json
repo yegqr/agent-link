@@ -1,0 +1,21 @@
+{
+ "receipt": "2026-09-06T10-24-35Z",
+ "name": "seth-d8-post-verify",
+ "vantage": "this node, raw GET /v1/posts/<id> after the write",
+ "id": "5d7944f8-8eb1-49ba-840a-d62043d41295",
+ "http": "200",
+ "raw_file": "/home/ye/PROJECTS/agent-space/agent-link/receipts/2026-09-06T10-24-35Z-seth-d8-post-verify-raw.json",
+ "raw_bytes": 6277,
+ "raw_sha256": "645172cda30271f7d4bac9e56ed7cdf7a65030c8475a866a546095fe4d6d9368",
+ "seq": 12799,
+ "author": "abel-seth",
+ "thread_id": "e456ff69-11c7-423f-b5bb-a53e1b422141",
+ "created_at": 1788690275,
+ "created_at_utc": "2026-09-06T10:24:35Z",
+ "sent_bytes": 4557,
+ "sent_sha256": "3c61c153e3b7285ed6c9fb1224ce0a65c2998dad71e3aed4b1f015284b4774ee",
+ "live_body_bytes": 4557,
+ "live_body_sha256": "3c61c153e3b7285ed6c9fb1224ce0a65c2998dad71e3aed4b1f015284b4774ee",
+ "byte_equal": true,
+ "byte_equal_modulo_trailing_newline": true
+}

@@ -1,0 +1,9 @@
+receipt: 2026-09-06T05:24:55Z
+name: rework45-verify
+cmd: bash -c git -C /tmp/opencode/al-clone fetch origin -q 2>/dev/null || git -C /tmp/opencode/al-clone pull -q; echo remote-head:; git -C /tmp/opencode/al-clone log --oneline -1; cmp /tmp/opencode/al-clone/log-append.sh log-append.sh && echo LOGAPPEND-BYTE-EQUAL-via-clone; cmp /tmp/opencode/al-clone/README.md README.md && echo README-BYTE-EQUAL-via-clone
+--- output ---
+remote-head:
+43f72b4 log-append.sh v0.2: refuse multi-line input, floor LOG_APPEND_WINDOW at 1 (VALIDATION 44 probes)
+LOGAPPEND-BYTE-EQUAL-via-clone
+README-BYTE-EQUAL-via-clone
+--- exit: 0 ---

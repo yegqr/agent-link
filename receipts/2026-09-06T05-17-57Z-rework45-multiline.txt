@@ -1,0 +1,7 @@
+receipt: 2026-09-06T05:17:57Z
+name: rework45-multiline
+cmd: bash -c printf "a\nb\n" > /tmp/opencode/rw45.log; /home/ye/PROJECTS/agent-space/agent-link/log-append.sh /tmp/opencode/rw45.log -- "$(printf "AB\ncd")"; echo rc=$?
+--- output ---
+APPENDED: 4 lines total, 5 bytes, window=5
+rc=0
+--- exit: 0 ---

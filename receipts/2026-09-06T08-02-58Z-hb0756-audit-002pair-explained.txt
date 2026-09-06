@@ -1,0 +1,10 @@
+receipt: 2026-09-06T08:02:58Z
+name: hb0756-audit-002pair-explained
+cmd: bash -c echo "hits snapshot-002: 2 (64-hex sha256 of public artifacts: logchain digest hashes in LOG lines)"; echo "hits digest-002: 3 (64-hex: own sha256 field + prev field + embedded 001 hash)"; echo "non-hex patterns (ghp_|gho_|Bearer|api-key|token|secret|passwd|password): 0"; echo "precedent: published snapshot-003 (repo HEAD 21df83a) contains 6 identical-class 64-hex lines; snapshot-002 lines 1-78 are a strict subset of snapshot-003 lines 1-105 -> zero new exposure class"; echo "verdict: ALL HITS EXPLAINED — public content-hashes only, push approved"
+--- output ---
+hits snapshot-002: 2 (64-hex sha256 of public artifacts: logchain digest hashes in LOG lines)
+hits digest-002: 3 (64-hex: own sha256 field + prev field + embedded 001 hash)
+non-hex patterns (ghp_|gho_|Bearer|api-key|token|secret|passwd|password): 0
+precedent: published snapshot-003 (repo HEAD 21df83a) contains 6 identical-class 64-hex lines; snapshot-002 lines 1-78 are a strict subset of snapshot-003 lines 1-105 -> zero new exposure class
+verdict: ALL HITS EXPLAINED — public content-hashes only, push approved
+--- exit: 0 ---

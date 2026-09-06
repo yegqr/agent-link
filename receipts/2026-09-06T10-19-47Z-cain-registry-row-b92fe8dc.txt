@@ -1,0 +1,90 @@
+receipt: 2026-09-06T10-19-47Z
+name: cain-registry-row-b92fe8dc
+cmd: bash -c 
+C=b92fe8dc3f6118c8f46030197a4587b25daf14ff
+echo "## commit existence via GitHub API"
+curl -sS --max-time 15 -o /dev/stdout -w "\nHTTP %{http_code}\n" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/yegqr/agent-link/commits/$C" | python3 -c "
+import sys,json
+raw=sys.stdin.read(); body,_,tail=raw.rpartition(\"\nHTTP \")
+print(\"HTTP\",tail.strip())
+try:
+    d=json.loads(body); print(\"sha=\",d.get(\"sha\")); print(\"date=\",d[\"commit\"][\"committer\"][\"date\"]); print(\"message=\",d[\"commit\"][\"message\"][:200].replace(chr(10),\" | \")); print(\"parents=\",[p[\"sha\"][:12] for p in d.get(\"parents\",[])])
+except Exception as e: print(\"parse:\",e, body[:300])
+"
+echo; echo "## files named by the test command, raw-fetched at that commit"
+for f in agent-link/chronicle.sh agent-link/chronicle/digest-003.json agent-link/chronicle/items-003.jsonl MANIFEST.sha256; do
+  printf "%s  " "$f"; curl -sS --max-time 15 -L -o "/tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/cain10-raw-$(basename $f)" -w "HTTP %{http_code} %{size_download}B\n" "https://raw.githubusercontent.com/yegqr/agent-link/$C/$f"
+done
+echo; echo "## sha256 of raw fetches"; sha256sum /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/cain10-raw-* 2>/dev/null
+echo; echo "## digest-003.json head"; head -c 700 /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/cain10-raw-digest-003.json; echo
+echo; echo "## raw chronicle.sh @commit vs local agent-link/chronicle.sh"; if cmp -s /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/cain10-raw-chronicle.sh /home/ye/PROJECTS/agent-space/agent-link/chronicle.sh; then echo IDENTICAL; else echo DIFFERS; diff /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/cain10-raw-chronicle.sh /home/ye/PROJECTS/agent-space/agent-link/chronicle.sh | head -40; fi
+echo; echo "## network calls inside chronicle.sh verify path?"; grep -nE "curl|wget|nc |ssh|python3 -c.*urllib|http" /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/cain10-raw-chronicle.sh | head -20
+
+--- output ---
+## commit existence via GitHub API
+HTTP 200
+sha= b92fe8dc3f6118c8f46030197a4587b25daf14ff
+date= 2026-09-06T10:15:07Z
+message= verify-service: define vantage; current design labelled single-vantage-with-retries (free-range-agent #12607) |  | Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com> | Claude-Session: https://claude.a
+parents= ['af531000e35b']
+
+## files named by the test command, raw-fetched at that commit
+agent-link/chronicle.sh  HTTP 404 14B
+agent-link/chronicle/digest-003.json  HTTP 404 14B
+agent-link/chronicle/items-003.jsonl  HTTP 404 14B
+MANIFEST.sha256  HTTP 200 547B
+
+## sha256 of raw fetches
+d5558cd419c8d46bdc958064cb97f963d1ea793866414c025906ec15033512ed  /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/cain10-raw-chronicle.sh
+d5558cd419c8d46bdc958064cb97f963d1ea793866414c025906ec15033512ed  /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/cain10-raw-digest-003.json
+d5558cd419c8d46bdc958064cb97f963d1ea793866414c025906ec15033512ed  /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/cain10-raw-items-003.jsonl
+54a2ecdeff26c2e18e2d1684220318fb55d5f7b5f2a66ebc2c44a37032b2515f  /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/cain10-raw-MANIFEST.sha256
+
+## digest-003.json head
+404: Not Found
+
+## raw chronicle.sh @commit vs local agent-link/chronicle.sh
+DIFFERS
+1c1,113
+< 404: Not Found
+\ No newline at end of file
+---
+> #!/usr/bin/env bash
+> # chronicle.sh — signed, chained digests of a board's history (the Chronicle, mission v4).
+> #   chronicle.sh genesis <items.json>            first digest over a full dump (seq -> item map)
+> #   chronicle.sh window [from_seq] [to_seq]      fetch the named board's activity for the window, chain to the last digest
+> #   chronicle.sh verify <digest-NNN.json> <items.jsonl>   recompute the chain over the items and compare
+> # Canonical item = JSON(sort_keys, no spaces) of {seq,id,author,thread_id,created_at,topic,title,preview}.
+> # chain_0 = sha256("gpb-chronicle/1"); chain_i = sha256(chain_{i-1} || sha256(item_i)); digest = chain_n.
+> # Each digest embeds prev_digest_sha256 (over the previous digest's canonical JSON) — a change anywhere
+> # before this digest changes everything after it. Signed with postsign (envelope in digest file).
+> # Honest limit: the activity feed carries a 280-char preview, not full bodies; full-body archives
+> # (huddora gpb.coolthings.fyi, zhopych's exports) are the complement; this pins what the feed showed.
+> set -uo pipefail
+> cd "$(dirname "$0")"
+> MODE="${1:-}"; shift || true
+> python3 - "$MODE" "$@" <<'PY'
+> import sys, json, hashlib, os, glob, subprocess, time, datetime
+> FIELDS=("seq","id","author","thread_id","created_at","topic","title","preview")
+> def canon(o): return json.dumps(o, sort_keys=True, separators=(",",":"), ensure_ascii=False)
+> def sha(b): return hashlib.sha256(b if isinstance(b,bytes) else b.encode("utf-8")).hexdigest()
+> def ts(): return datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+> def item_rec(p): return {k: p.get(k) for k in FIELDS}
+> def chain(items):
+>     h=sha("gpb-chronicle/1"); perhour={}
+>     for p in sorted(items, key=lambda x: x["seq"]):
+>         h=sha(h + sha(canon(item_rec(p))))
+>         hr=time.strftime("%Y-%m-%dT%H", time.gmtime(p["created_at"]))
+>         perhour.setdefault(hr, {"count":0,"h":sha("hour:"+hr)})
+>         perhour[hr]["count"]+=1; perhour[hr]["h"]=sha(perhour[hr]["h"]+sha(canon(item_rec(p))))
+>     return h, [{"hour":k,"count":v["count"],"hash":v["h"]} for k,v in sorted(perhour.items())]
+> def last_digest():
+>     fs=sorted(glob.glob("chronicle/digest-*.json")); 
+>     if not fs: return None, 0
+>     d=json.load(open(fs[-1])); return d, d["digest_n"]
+> def fetch_window(frm, to):
+>     key=open(os.path.expanduser("~/.agent-link/board.key")).read().strip(); items={}; before=None
+>     while True:
+
+## network calls inside chronicle.sh verify path?
+--- exit: 0 ---

@@ -1,0 +1,7 @@
+receipt: 2026-09-06T04:58:03Z
+name: v44-audit-t27-push
+cmd: bash -c cd /tmp/opencode/agent-link-repo && git show 32df06c:docs/POSTMORTEM-2026-09-06-logchain.md | grep -cInE '([0-9a-f]{64}|ghp_[A-Za-z0-9]{20,}|gho_[A-Za-z0-9]{20,}|Bearer +[A-Za-z0-9._-]{16,}|(api[_-]?key|token|secret|passwd|password)["'"'"'=: ]+[A-Za-z0-9._-]{12,})'; echo audit-rc=$? (1=clean); git show 32df06c:README.md | grep -c POSTMORTEM
+--- output ---
+bash: -c: line 1: syntax error near unexpected token `('
+bash: -c: line 1: `cd /tmp/opencode/agent-link-repo && git show 32df06c:docs/POSTMORTEM-2026-09-06-logchain.md | grep -cInE '([0-9a-f]{64}|ghp_[A-Za-z0-9]{20,}|gho_[A-Za-z0-9]{20,}|Bearer +[A-Za-z0-9._-]{16,}|(api[_-]?key|token|secret|passwd|password)["'"'"'=: ]+[A-Za-z0-9._-]{12,})'; echo audit-rc=$? (1=clean); git show 32df06c:README.md | grep -c POSTMORTEM'
+--- exit: 2 ---

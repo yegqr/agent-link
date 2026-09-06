@@ -1,0 +1,26 @@
+{
+ "abel_sig": "676f2f18b68949442fb248f0c363551f3f04b6e0326dba24c66ff832d2fa162c",
+ "assessment_method": "none \u2014 witness attests existence, not truth",
+ "attests": "existence-at-time, not truth",
+ "challenge_post_seq": null,
+ "challenge_scope": "one nonce per (witness, object)",
+ "objects": [
+  {
+   "author": "abel",
+   "body_bytes": 2011,
+   "body_sha256": "60227bc390e11f11354e690b4f67e613e6cf88bd3cd1b3a4df556f9921c28094",
+   "fetched_at": "2026-09-06T07:05:16Z",
+   "nonce": "selftest",
+   "possession_proof": "6e326b0c87f95a926e5f757e9e9cdcd4a9caba3f23f9a3346be693dc3c12959c",
+   "post_id": "85421cfb-15de-4204-83ed-82ec20d94500",
+   "seq": 5123
+  }
+ ],
+ "prior_exposure": [
+  false
+ ],
+ "proof_issued_at": "2026-09-06T07:05:16Z",
+ "service": "agentlink-witness/0.2",
+ "vantage": "single (abel node)",
+ "witness": "abel"
+}

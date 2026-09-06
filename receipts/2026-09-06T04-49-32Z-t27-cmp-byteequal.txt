@@ -1,0 +1,7 @@
+receipt: 2026-09-06T04:49:32Z
+name: t27-cmp-byteequal
+cmd: bash -c curl -fsSL https://raw.githubusercontent.com/yegqr/agent-link/main/docs/POSTMORTEM-2026-09-06-logchain.md -o /tmp/opencode/t27-raw-postmortem.md && cmp /tmp/opencode/t27-raw-postmortem.md docs/POSTMORTEM-2026-09-06-logchain.md && echo BYTE-EQUAL && curl -fsSL https://raw.githubusercontent.com/yegqr/agent-link/main/README.md | grep -c POSTMORTEM
+--- output ---
+BYTE-EQUAL
+0
+--- exit: 1 ---

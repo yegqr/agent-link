@@ -1,0 +1,63 @@
+receipt: 2026-09-06T08:48:01Z
+name: logchain-cadence
+cmd: /home/ye/PROJECTS/agent-space/agent-link/logchain.sh digest
+--- output ---
+logchain digest 005 (snapshot-anchored, self-contained v0.3.3)
+utc: 2026-09-06T08:48:01Z
+prev: 94130a3e9f2bef0ea74bc2c25519b81aafc36b6fafc49aa99587d2f4c46f0484
+snapshot: logchain/snapshot-005.txt
+snapshot lines: 147
+sha256: 30eca93a3b5d15dd58e2ae60592454ee6300aa220c9ecf8456a5ae679d205085
+verify (bash, published artifacts only; run as-is from repo root or agent-link/ parent — auto-detects layout):
+  d=logchain/digest-005.txt; s=logchain/snapshot-005.txt; [ -f "$d" ] || { d=agent-link/$d; s=agent-link/$s; }; p="$(awk '/^-----BEGIN EMBEDDED PREV DIGEST-----$/{d++; if(d>1) print; next} /^-----END EMBEDDED PREV DIGEST-----$/{if(d>1) print; d--; if(d<1) exit; next} d>=1' "$d")"; [ -n "$p" ] && [ "$(printf '%s\n' "$p" | cat - "$s" | sha256sum | cut -d' ' -f1)" = "$(awk -F': ' '/^sha256:/{print $2;exit}' "$d")" ] && echo VERIFY-PASS || echo VERIFY-FAIL
+  # output must print VERIFY-PASS; the snapshot is frozen bytes, LOG.md growth is irrelevant
+prev-digest embedded verbatim below (between markers); self sha256 line sits ABOVE this block — verify greps the FIRST ^sha256: line, which must stay the digest's own
+-----BEGIN EMBEDDED PREV DIGEST-----
+logchain digest 004 (snapshot-anchored, self-contained v0.3.3)
+utc: 2026-09-06T08:16:01Z
+prev: fbd0b8921507eeb209d3e49555247197467a097c60464920a81a643c0ba0520c
+snapshot: logchain/snapshot-004.txt
+snapshot lines: 127
+sha256: cbeeade6941029713a8b8e6f9a5b5b289c2abc5fcbc03c7127361a87c647ee94
+verify (bash, published artifacts only; run as-is from repo root or agent-link/ parent — auto-detects layout):
+  d=logchain/digest-004.txt; s=logchain/snapshot-004.txt; [ -f "$d" ] || { d=agent-link/$d; s=agent-link/$s; }; p="$(awk '/^-----BEGIN EMBEDDED PREV DIGEST-----$/{d++; if(d>1) print; next} /^-----END EMBEDDED PREV DIGEST-----$/{if(d>1) print; d--; if(d<1) exit; next} d>=1' "$d")"; [ -n "$p" ] && [ "$(printf '%s\n' "$p" | cat - "$s" | sha256sum | cut -d' ' -f1)" = "$(awk -F': ' '/^sha256:/{print $2;exit}' "$d")" ] && echo VERIFY-PASS || echo VERIFY-FAIL
+  # output must print VERIFY-PASS; the snapshot is frozen bytes, LOG.md growth is irrelevant
+prev-digest embedded verbatim below (between markers); self sha256 line sits ABOVE this block — verify greps the FIRST ^sha256: line, which must stay the digest's own
+-----BEGIN EMBEDDED PREV DIGEST-----
+logchain digest 003 (snapshot-anchored, self-contained v0.3.3)
+utc: 2026-09-06T07:26:23Z
+prev: a354e7250b7234ae89006b47ed10e69405fde41b3bd5615784266651b10d372e
+snapshot: logchain/snapshot-003.txt
+snapshot lines: 105
+sha256: f678c8fe4487dd0d4de17b293cc55789a4d2ce19bb1f2c6e990f438bfe0419b1
+verify (bash, published artifacts only; run as-is from repo root or agent-link/ parent — auto-detects layout):
+  d=logchain/digest-003.txt; s=logchain/snapshot-003.txt; [ -f "$d" ] || { d=agent-link/$d; s=agent-link/$s; }; p="$(awk '/^-----BEGIN EMBEDDED PREV DIGEST-----$/{d++; if(d>1) print; next} /^-----END EMBEDDED PREV DIGEST-----$/{if(d>1) print; d--; if(d<1) exit; next} d>=1' "$d")"; [ -n "$p" ] && [ "$(printf '%s\n' "$p" | cat - "$s" | sha256sum | cut -d' ' -f1)" = "$(awk -F': ' '/^sha256:/{print $2;exit}' "$d")" ] && echo VERIFY-PASS || echo VERIFY-FAIL
+  # output must print VERIFY-PASS; the snapshot is frozen bytes, LOG.md growth is irrelevant
+prev-digest embedded verbatim below (between markers); self sha256 line sits ABOVE this block — verify greps the FIRST ^sha256: line, which must stay the digest's own
+-----BEGIN EMBEDDED PREV DIGEST-----
+logchain digest 002 (snapshot-anchored, self-contained v0.3.2)
+utc: 2026-09-06T06:08:01Z
+prev: 93f05bbc3557ff17772496d57da9f7381a1c3f1d0e6515ab1d5b8b0964aa679b
+snapshot: logchain/snapshot-002.txt
+snapshot lines: 78
+sha256: da752d8c82affc680a52e15345cef126a31edf13890bc58f92116257e0d096ee
+verify (bash, published artifacts only; run as-is from repo root or agent-link/ parent — auto-detects layout):
+  d=logchain/digest-002.txt; s=logchain/snapshot-002.txt; [ -f "$d" ] || { d=agent-link/$d; s=agent-link/$s; }; p="$(awk '/^-----BEGIN EMBEDDED PREV DIGEST-----$/{d++; if(d>1) print; next} /^-----END EMBEDDED PREV DIGEST-----$/{if(d>1) print; d--; if(d<1) exit; next} d>=1' "$d")"; [ -n "$p" ] && [ "$(printf '%s\n' "$p" | cat - "$s" | sha256sum | cut -d' ' -f1)" = "$(awk -F': ' '/^sha256:/{print $2;exit}' "$d")" ] && echo VERIFY-PASS || echo VERIFY-FAIL
+  # output must print VERIFY-PASS; the snapshot is frozen bytes, LOG.md growth is irrelevant
+prev-digest embedded verbatim below (between markers); self sha256 line sits ABOVE this block — verify greps the FIRST ^sha256: line, which must stay the digest's own
+-----BEGIN EMBEDDED PREV DIGEST-----
+logchain digest 001 (snapshot-anchored, self-contained v0.3)
+utc: 2026-09-06T03:43:09Z
+prev: GENESIS (no prior digest)
+note: supersedes v0.2 GENESIS cc5e2122... (2026-09-06T02:52:15Z, 51 lines) which was polluted 2026-09-06T03:12:10Z by a manual re-run of the v0.2 bookkeeping command and whose bytes are unrecoverable — re-seed per T18 spec kill-clause (REWORK 31, VALIDATION 34).
+snapshot: logchain/snapshot-001.txt
+snapshot lines: 58
+sha256: 7cda76535b2101a9b2e8d7e1d5e4e88dc26957a773738748b151bd412ca8521f
+verify (bash, published artifacts only; run as-is from repo root or agent-link/ parent — auto-detects layout):
+  d=logchain/digest-001.txt; s=logchain/snapshot-001.txt; [ -f "$d" ] || { d=agent-link/$d; s=agent-link/$s; }; [ "$(awk -F': ' '/^sha256:/{print $2;exit}' "$d")" = "$(sha256sum "$s" | cut -d' ' -f1)" ] && echo VERIFY-PASS || echo VERIFY-FAIL
+  # output must print VERIFY-PASS; the snapshot is frozen bytes, LOG.md growth is irrelevant
+-----END EMBEDDED PREV DIGEST-----
+-----END EMBEDDED PREV DIGEST-----
+-----END EMBEDDED PREV DIGEST-----
+-----END EMBEDDED PREV DIGEST-----
+--- exit: 0 ---

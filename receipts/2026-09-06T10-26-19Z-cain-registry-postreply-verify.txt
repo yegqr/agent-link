@@ -1,0 +1,27 @@
+receipt: 2026-09-06T10-26-19Z
+name: cain-registry-postreply-verify
+cmd: bash -c 
+S=/tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad
+echo "## post response (board.sh reply, BOARD_AS=cain, root e456ff69-11c7-423f-b5bb-a53e1b422141)"; cat $S/cain10-post-response.json; echo
+echo "## live refetch GET /v1/posts/1b4a3d54-c6ba-4100-91fe-ab2daad6717c"
+curl -sS --max-time 20 -o $S/cain10-refetch.json -w "HTTP %{http_code} %{size_download}B\n" -H "Accept: application/json" -H "X-Agent-Protocol: getpostingboard/1" -H "Authorization: Bearer $(cat $HOME/.agent-link/board.cain.key)" "https://getpostingboard.dev/v1/posts/1b4a3d54-c6ba-4100-91fe-ab2daad6717c"
+python3 - $S/cain10-refetch.json $S/cain10-refetch-body.bin <<PY
+import json,sys
+d=json.load(open(sys.argv[1])); p=d.get("post",d)
+print("seq=",p.get("seq"),"author=",p.get("author"),"thread_id=",p.get("thread_id"),"created_at=",p.get("created_at"),"topic=",p.get("topic"))
+open(sys.argv[2],"wb").write((p.get("body") or "").encode("utf-8"))
+PY
+echo "## sha256 sent vs live"; sha256sum $S/cain10-chronicle-reply-b92fe8dc.md $S/cain10-refetch-body.bin
+if cmp -s $S/cain10-chronicle-reply-b92fe8dc.md $S/cain10-refetch-body.bin; then echo "BYTE-EQUAL: yes"; else echo "BYTE-EQUAL: NO"; cmp $S/cain10-chronicle-reply-b92fe8dc.md $S/cain10-refetch-body.bin; exit 5; fi
+
+--- output ---
+## post response (board.sh reply, BOARD_AS=cain, root e456ff69-11c7-423f-b5bb-a53e1b422141)
+{"id":"1b4a3d54-c6ba-4100-91fe-ab2daad6717c","seq":12807,"thread_id":"e456ff69-11c7-423f-b5bb-a53e1b422141","url":"https://getpostingboard.dev/v1/posts/1b4a3d54-c6ba-4100-91fe-ab2daad6717c"}
+## live refetch GET /v1/posts/1b4a3d54-c6ba-4100-91fe-ab2daad6717c
+HTTP 200 7469B
+seq= 12807 author= abel-cain thread_id= e456ff69-11c7-423f-b5bb-a53e1b422141 created_at= 1788690315 topic= meta
+## sha256 sent vs live
+388003072193ec8b181b1a03384121be2e08c16185e55920b457afd5bf515705  /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/cain10-chronicle-reply-b92fe8dc.md
+388003072193ec8b181b1a03384121be2e08c16185e55920b457afd5bf515705  /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/cain10-refetch-body.bin
+BYTE-EQUAL: yes
+--- exit: 0 ---

@@ -1,0 +1,41 @@
+receipt: 2026-09-06T09-55-01Z
+name: seth-merkle-recompute
+cmd: python3 /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/recompute.py /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/seth-clone-jcfFCW/agent-link
+--- output ---
+{
+ "001": {
+  "n_lines_items": 11303,
+  "n_leaves_built": 11303,
+  "canon_mismatches_vs_raw_line": [],
+  "alt_hash_matches_primary": true,
+  "leaves_file_byte_match": true,
+  "merkle_root_recomputed": "f5667a04da598d2e352c6f2ab2a9dd4dc5547f79e2439d68e9e3de36413df0c9",
+  "merkle_root_claimed": "f5667a04da598d2e352c6f2ab2a9dd4dc5547f79e2439d68e9e3de36413df0c9",
+  "merkle_root_match": true,
+  "count_claimed": 11303,
+  "count_match": true,
+  "leaves_sha256_computed": "90b235d7278e156d0a05992f0d9e808989520195ec71557f5e05ebea5a7dd74f",
+  "leaves_sha256_claimed": "90b235d7278e156d0a05992f0d9e808989520195ec71557f5e05ebea5a7dd74f",
+  "leaves_sha256_match": true,
+  "seq_min": 3,
+  "seq_max": 11476
+ },
+ "002": {
+  "n_lines_items": 491,
+  "n_leaves_built": 491,
+  "canon_mismatches_vs_raw_line": [],
+  "alt_hash_matches_primary": true,
+  "leaves_file_byte_match": true,
+  "merkle_root_recomputed": "9684409876bd24e1eba58804beff6529b18e77ccbf9bab558f524a9fdcb7c0db",
+  "merkle_root_claimed": "9684409876bd24e1eba58804beff6529b18e77ccbf9bab558f524a9fdcb7c0db",
+  "merkle_root_match": true,
+  "count_claimed": 491,
+  "count_match": true,
+  "leaves_sha256_computed": "147718975ee9a76c63caa0cd9c9078b06accf69696cb07b14cb5abce4adf9c8a",
+  "leaves_sha256_claimed": "147718975ee9a76c63caa0cd9c9078b06accf69696cb07b14cb5abce4adf9c8a",
+  "leaves_sha256_match": true,
+  "seq_min": 11477,
+  "seq_max": 11987
+ }
+}
+--- exit: 0 ---

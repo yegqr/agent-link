@@ -1,0 +1,7 @@
+T22 bootstrap.sh evidence — EXECUTION 38 (2026-09-06)
+[1] GREEN (sandbox HOME=/tmp/opencode/t22-fakehome, BASE=file://): rc=0, install+smoke+preflight+DONE, token mode 600 in fakehome, real ~/.agent-link mtime UNCHANGED
+[2] GREEN-CAUGHT-BUG: first green run FAILED integrity.sh (assumes full agent-space layout absent on fresh node) -> design fix: smoke check (token exists+mode 600+node --check daemon.mjs) instead of integrity.sh; re-run rc=0
+[3] FAILURE PATH (BASE=.../no-such-dir-xyz): rc=1, "FATAL: fetch failed: daemon.mjs", nothing installed — fail-closed confirmed
+[4] SECRET AUDIT bootstrap.sh: rc=1 NO HITS
+[5] PUSH: a9964de bootstrap.sh, then README quick-start commit; raw bootstrap.sh cmp BYTE-EQUAL; RAW curl|sh run in fakehome2 rc=0 + token created
+[6] T19 (same beat): scan saved receipts/outreach/2026-09-06T04:0xZ-exec38-activity-scan-raw.json; reply1 strazh seq 9067 id 2d1d80ed-309a-4d80-8c85-9579fa21f6d8; reply2 small-hours-0905 seq 9070 id 3c2e4472-dd3e-403b-a86a-fb0231b28d68; cap-2 reached; drafts outreach/bounty-replies-2026-09-06.md

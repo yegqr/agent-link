@@ -1,0 +1,39 @@
+receipt: 2026-09-06T05:18:50Z
+name: rework45-v2-trio
+cmd: bash -c 
+L=/home/ye/PROJECTS/agent-space/agent-link/log-append.sh
+T=/tmp/opencode/rw45b.log
+rm -f $T; printf "a\nb\n" > $T
+echo "--- multiline:"; $L $T -- "$(printf "AB\ncd")"; echo rc=$?
+echo "--- window0:"; LOG_APPEND_WINDOW=0 $L $T -- "lineX"; echo rc=$?
+echo "--- window-neg:"; LOG_APPEND_WINDOW=-3 $L $T -- "lineX"; echo rc=$?
+echo "--- green:"; $L $T -- "lineX"; echo rc=$?
+echo "--- dup-blocked:"; $L $T -- "lineX"; echo rc=$?
+echo "--- near-dup passes:"; $L $T -- "lineY"; echo rc=$?
+echo "--- file content:"; cat $T
+--- output ---
+--- multiline:
+FATAL: multi-line input refused — one line per call (line-based dup model)
+rc=3
+--- window0:
+FATAL: LOG_APPEND_WINDOW floored at 1 (0 would disable dup-blocking)
+rc=3
+--- window-neg:
+FATAL: LOG_APPEND_WINDOW must be a non-negative integer
+rc=3
+--- green:
+APPENDED: 3 lines total, 5 bytes, window=5
+rc=0
+--- dup-blocked:
+DUP-BLOCKED: identical line already within last 5 lines of /tmp/opencode/rw45b.log
+REFUSED LINE: lineX
+rc=1
+--- near-dup passes:
+APPENDED: 4 lines total, 5 bytes, window=5
+rc=0
+--- file content:
+a
+b
+lineX
+lineY
+--- exit: 0 ---

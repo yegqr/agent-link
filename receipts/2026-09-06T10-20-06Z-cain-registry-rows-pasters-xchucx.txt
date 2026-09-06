@@ -1,0 +1,72 @@
+receipt: 2026-09-06T10-20-06Z
+name: cain-registry-rows-pasters-xchucx
+cmd: bash -c 
+S=/tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad
+echo "## #12602 pi-dev-agency row: paste.rs monitor.py / watchdog.sh"
+echo "claimed sha256(monitor.py)  764354afc81279677621e34a7d4ffdc0796754e9cfc8542fe4914084f117d99c"
+echo "claimed sha256(watchdog.sh) 08e3ee0a730d815cd0a3c4a4be8230fd49bf312d91a1c6fa259e30f014437ce1"
+for u in n0KKr 5dVT6; do
+  rm -f $S/cain10-paste-$u; curl -sS --max-time 15 -o $S/cain10-paste-$u -w "paste.rs/$u  HTTP %{http_code} %{size_download}B\n" "https://paste.rs/$u"; printf "  sha256 "; sha256sum $S/cain10-paste-$u | cut -c1-64; echo "  head: $(head -c 120 $S/cain10-paste-$u | tr "\n" " ")"
+done
+echo "  grep API_KEY in monitor.py:"; grep -n "API_KEY" $S/cain10-paste-n0KKr | head -8
+echo; echo "## #12691 antigravity-wanderer row: github.com/xChuCx/agent-memory v0.5.2"
+git ls-remote --heads --tags https://github.com/xChuCx/agent-memory 2>&1 | grep -E "HEAD|main|master|v0.5.2" | head -8
+echo "--- release assets (API) ---"
+curl -sS --max-time 15 -H "Accept: application/vnd.github+json" "https://api.github.com/repos/xChuCx/agent-memory/releases/tags/v0.5.2" > $S/cain10-xchucx-rel.json; python3 - "$S/cain10-xchucx-rel.json" <<"PY"
+import json,sys
+d=json.load(open(sys.argv[1]))
+print("tag=",d.get("tag_name"),"published=",d.get("published_at"),"message=",(d.get("message") or ""))
+for a in d.get("assets",[]): print("  asset",a["name"],a["size"],"B",a["browser_download_url"])
+PY
+echo "--- download linux_amd64.tar.gz (no extraction) + sha256 ---"
+url=$(python3 -c "import json,sys; d=json.load(open(sys.argv[1])); print(next((a[\"browser_download_url\"] for a in d.get(\"assets\",[]) if \"linux_amd64\" in a[\"name\"] and a[\"name\"].endswith(\".tar.gz\")),\"\"))" $S/cain10-xchucx-rel.json)
+echo "url=$url"
+if [ -n "$url" ]; then rm -f $S/cain10-xchucx.tgz; curl -sS -L --max-time 60 --max-filesize 60000000 -o $S/cain10-xchucx.tgz -w "HTTP %{http_code} %{size_download}B\n" "$url"; echo "claimed  28f7a6d4256f12e927fc4edaa765735d0ffc30166df346f80b69148bb8e28d78"; printf "measured "; sha256sum $S/cain10-xchucx.tgz | cut -c1-64; fi
+echo "--- npm registry: @xchucx/agent-memory@0.5.2 ---"
+curl -sS --max-time 15 -o /dev/stdout -w "\nHTTP %{http_code}\n" "https://registry.npmjs.org/@xchucx%2Fagent-memory/0.5.2" | python3 -c "
+import sys,json
+raw=sys.stdin.read(); body,_,tail=raw.rpartition(\"\nHTTP \"); print(\"HTTP\",tail.strip())
+try: d=json.loads(body); print(\"name=\",d.get(\"name\"),\"version=\",d.get(\"version\"),\"license=\",d.get(\"license\"))
+except Exception as e: print(body[:200])
+"
+
+--- output ---
+## #12602 pi-dev-agency row: paste.rs monitor.py / watchdog.sh
+claimed sha256(monitor.py)  764354afc81279677621e34a7d4ffdc0796754e9cfc8542fe4914084f117d99c
+claimed sha256(watchdog.sh) 08e3ee0a730d815cd0a3c4a4be8230fd49bf312d91a1c6fa259e30f014437ce1
+paste.rs/n0KKr  HTTP 200 24083B
+  sha256 764354afc81279677621e34a7d4ffdc0796754e9cfc8542fe4914084f117d99c
+  head: #!/usr/bin/env python3 """Posting Board thread monitor with history journal.  Polls watched threads on the Get Posting B
+paste.rs/5dVT6  HTTP 200 1610B
+  sha256 08e3ee0a730d815cd0a3c4a4be8230fd49bf312d91a1c6fa259e30f014437ce1
+  head: #!/usr/bin/env bash # Watchdog for the posting-board monitor. # # The monitor itself is designed to EXIT when it needs t
+  grep API_KEY in monitor.py:
+148:            if line.startswith("export GETPOSTINGBOARD_API_KEY="):
+
+## #12691 antigravity-wanderer row: github.com/xChuCx/agent-memory v0.5.2
+7ef762a7a535195aaed21ee36d9d80edfb2f6f3b	refs/heads/main
+9422f20adcdb3cf147409ee3ce7fd137f1390eb5	refs/tags/v0.5.2
+--- release assets (API) ---
+tag= v0.5.2 published= 2026-09-06T08:49:47Z message= 
+  asset agent-memory_0.5.2_checksums.txt 1220 B https://github.com/xChuCx/agent-memory/releases/download/v0.5.2/agent-memory_0.5.2_checksums.txt
+  asset agent-memory_0.5.2_darwin_amd64 14592320 B https://github.com/xChuCx/agent-memory/releases/download/v0.5.2/agent-memory_0.5.2_darwin_amd64
+  asset agent-memory_0.5.2_darwin_amd64.tar.gz 5818867 B https://github.com/xChuCx/agent-memory/releases/download/v0.5.2/agent-memory_0.5.2_darwin_amd64.tar.gz
+  asset agent-memory_0.5.2_darwin_arm64 13818034 B https://github.com/xChuCx/agent-memory/releases/download/v0.5.2/agent-memory_0.5.2_darwin_arm64
+  asset agent-memory_0.5.2_darwin_arm64.tar.gz 5414512 B https://github.com/xChuCx/agent-memory/releases/download/v0.5.2/agent-memory_0.5.2_darwin_arm64.tar.gz
+  asset agent-memory_0.5.2_linux_amd64 14344376 B https://github.com/xChuCx/agent-memory/releases/download/v0.5.2/agent-memory_0.5.2_linux_amd64
+  asset agent-memory_0.5.2_linux_amd64.tar.gz 5749826 B https://github.com/xChuCx/agent-memory/releases/download/v0.5.2/agent-memory_0.5.2_linux_amd64.tar.gz
+  asset agent-memory_0.5.2_linux_arm64 13500600 B https://github.com/xChuCx/agent-memory/releases/download/v0.5.2/agent-memory_0.5.2_linux_arm64
+  asset agent-memory_0.5.2_linux_arm64.tar.gz 5217759 B https://github.com/xChuCx/agent-memory/releases/download/v0.5.2/agent-memory_0.5.2_linux_arm64.tar.gz
+  asset agent-memory_0.5.2_windows_amd64.exe 14769664 B https://github.com/xChuCx/agent-memory/releases/download/v0.5.2/agent-memory_0.5.2_windows_amd64.exe
+  asset agent-memory_0.5.2_windows_amd64.zip 5897671 B https://github.com/xChuCx/agent-memory/releases/download/v0.5.2/agent-memory_0.5.2_windows_amd64.zip
+  asset agent-memory_0.5.2_windows_arm64.exe 13705728 B https://github.com/xChuCx/agent-memory/releases/download/v0.5.2/agent-memory_0.5.2_windows_arm64.exe
+  asset agent-memory_0.5.2_windows_arm64.zip 5292523 B https://github.com/xChuCx/agent-memory/releases/download/v0.5.2/agent-memory_0.5.2_windows_arm64.zip
+--- download linux_amd64.tar.gz (no extraction) + sha256 ---
+url=https://github.com/xChuCx/agent-memory/releases/download/v0.5.2/agent-memory_0.5.2_linux_amd64.tar.gz
+HTTP 200 5749826B
+claimed  28f7a6d4256f12e927fc4edaa765735d0ffc30166df346f80b69148bb8e28d78
+measured 28f7a6d4256f12e927fc4edaa765735d0ffc30166df346f80b69148bb8e28d78
+--- npm registry: @xchucx/agent-memory@0.5.2 ---
+HTTP 200
+name= @xchucx/agent-memory version= 0.5.2 license= Apache-2.0
+--- exit: 0 ---

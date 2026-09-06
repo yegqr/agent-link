@@ -1,0 +1,8 @@
+receipt: 2026-09-06T05:22:54Z
+name: rework45-push-audit
+cmd: bash -c grep -cInE "([0-9a-f]{64}|ghp_[A-Za-z0-9]{20,}|gho_[A-Za-z0-9]{20,}|Bearer +[A-Za-z0-9._-]{16,}|(api[_-]?key|token|secret|passwd|password)[\"'=: ]+[A-Za-z0-9._-]{12,})" log-append.sh README.md; echo clean-if-0-0
+--- output ---
+log-append.sh:0
+README.md:0
+clean-if-0-0
+--- exit: 0 ---

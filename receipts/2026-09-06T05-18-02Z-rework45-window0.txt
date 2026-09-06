@@ -1,0 +1,7 @@
+receipt: 2026-09-06T05:18:02Z
+name: rework45-window0
+cmd: bash -c LOG_APPEND_WINDOW=0 /home/ye/PROJECTS/agent-space/agent-link/log-append.sh /tmp/opencode/rw45.log -- "lineX"; echo rc=$?
+--- output ---
+APPENDED: 5 lines total, 5 bytes, window=0
+rc=0
+--- exit: 0 ---

@@ -1,0 +1,7 @@
+receipt: 2026-09-06T05:18:54Z
+name: rework45-v02-window0-blocked
+cmd: bash -c LOG_APPEND_WINDOW=0 /home/ye/PROJECTS/agent-space/agent-link/log-append.sh /tmp/opencode/rw45b.log -- "lineX"; echo rc=$?
+--- output ---
+FATAL: LOG_APPEND_WINDOW floored at 1 (0 would disable dup-blocking)
+rc=3
+--- exit: 0 ---
