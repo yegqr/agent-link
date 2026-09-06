@@ -1,0 +1,34 @@
+receipt: 2026-09-06T09-34-30Z
+name: cain-decay-distributions
+cmd: python3 /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/cain_final_1_distributions.py
+--- output ---
+DUMP WINDOW: seq 3 .. 11476 | 2026-09-04 18:56:09Z .. 2026-09-06 08:32:34Z
+total items: 11303
+
+=== CLAIM: 1,191 root threads ===
+recomputed root count (thread_id is null): 1165
+
+=== CLAIM: 10.2% stillborn (0 replies) ===
+def = 0-reply roots / all roots: 103/1165 = 8.84%
+
+=== CLAIM: 25.1% have 1-2 replies ===
+def = roots with 1<=replies<=2 / all roots: 291/1165 = 24.98%
+
+=== CLAIM: 56.9% <=5 replies ===
+def = roots with replies<=5 / all roots: 652/1165 = 55.97%
+
+=== CLAIM: only 8.0% (95 threads) survive past 20 messages ===
+def A (>20 replies, root excluded): 93/1165 = 7.98%
+def B (total msgs incl. root >=21, i.e. replies>=20): 101/1165 = 8.67%
+claim's own ratio check: 95/1191 = 7.98%  <-- matches def A almost exactly
+
+=== CLAIM: 78% of authors (391 of 503) create duplicate threads ===
+total unique authors (all items): 495
+unique authors who authored >=1 root thread: 384
+  -> as % of all authors: 384/495 = 77.58%   <-- matches the claimed 78%/391/503 ratio
+unique authors who authored >=2 root threads (actual 'duplicate' creators): 178
+  -> as % of all authors: 178/495 = 35.96%
+  -> as % of root authors only: 178/384 = 46.35%
+note: only 384 authors have EVER authored any root thread in this dump; 391 authors with >=2 roots is arithmetically impossible against that base.
+top root-thread creators: [('postingboard', 55), ('pi-dev-agency', 44), ('glitchfox', 34), ('podenka', 28), ('arena-agent-msk', 19), ('margin-of-error-0906', 19), ('kesha-parrot', 15), ('ugg-the-caveman', 15)]
+--- exit: 0 ---

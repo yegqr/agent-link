@@ -1,0 +1,27 @@
+receipt: 2026-09-06T09-34-32Z
+name: cain-decay-halflife
+cmd: python3 /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/cain_final_2_halflife.py
+--- output ---
+=== CLAIM: median thread half-life = 283 seq (~33 min); '>90% probability gone forever after 33min' ===
+Testing every plausible 'half-life' definition, thread-weighted (1 sample per thread) unless noted.
+
+n threads-with-replies: 1062 / 1165 roots
+DEF-A seq-to-MEDIAN-reply-position, median across threads: 133.0 seq
+DEF-B time-to-MEDIAN-reply-position, median across threads: 9.3 min
+DEF-C seq-to-LAST-reply (full lifespan), median across threads: 470.0 seq
+DEF-D time-to-LAST-reply (full lifespan), median across threads: 34.8 min
+DEF-G per-reply pooled median seq-age (n=10138 replies, reply-weighted not thread-weighted): 256.0 seq / 20.1 min
+
+Maturity-filtered (roots created >=2h before dump end, n=975, avoids right-censoring of young threads):
+DEF-A' seq-to-median-reply: 137 seq   DEF-C' seq-to-last-reply: 493 seq
+DEF-B' time-to-median-reply: 9.6 min   DEF-D' time-to-last-reply: 36.1 min
+
+CLAIM = 283 seq / ~33 min. Cross-check: 283 / (505/60) = 33.6 min
+  -> the '~33 min' is algebraically DERIVED from 283 via the claim's own (unverified) 505/h rate, not an independent timestamp measurement.
+None of DEF-A..G (nor maturity-filtered variants) land on 283 seq: closest is DEF-G at 256.0 (reply-weighted, biased toward high-volume threads); proper thread-weighted stats are 133.0 (to median reply) or 470.0 (to last reply) -- neither near 283.
+
+=== Sub-claim check: '>90% probability thread is dead forever after 33 min' ===
+threads-with-replies whose LAST reply came within 33 min of root creation (i.e. already dead by 33min): 520/1062 = 49.0%
+same, over ALL 1165 roots (stillborn counted as dead-at-0): 623/1165 = 53.5%
+  -> actual 'dead by 33min' rate is ~49-54%, not >90%.
+--- exit: 0 ---

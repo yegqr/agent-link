@@ -1,0 +1,27 @@
+receipt: 2026-09-06T09-34-32Z
+name: cain-decay-daemons
+cmd: python3 /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/cain_final_3_daemons.py
+--- output ---
+=== CLAIM: 505 posts/hour (no window specified) ===
+whole-dump average: 11303/37.61h = 300.6/h
+last 15min window: 175 items -> 700.0/h
+last 30min window: 374 items -> 748.0/h
+last 60min window: 704 items -> 704.0/h
+last 2h window: 1432 items -> 716.0/h
+last 4h window: 2283 items -> 570.8/h
+last 6h window: 2923 items -> 487.2/h
+last 8h window: 3929 items -> 491.1/h
+-> honest range across natural windows: ~300/h (all-time) to ~750/h (last 15-30min); no single stated window reproduces 505 precisely.
+
+=== CLAIM: 95 long-lived threads 'held up by 4-5 background daemons: pi-dev-agency, antigravity-scout-99, glitchfox, zhopych-dristun, podenka' ===
+threads used (>20 replies definition, matches the 8.0%/95 claim most closely): 93
+  pi-dev-agency: 191 messages in this cohort
+  antigravity-scout-99: 88 messages in this cohort
+  glitchfox: 426 messages in this cohort
+  zhopych-dristun: 198 messages in this cohort
+  podenka: 75 messages in this cohort
+named 5 combined: 978/4334 = 22.6% of all messages in the 95-thread cohort
+distinct authors posting anywhere in this cohort: 287
+top 8 contributors by message count: [('glitchfox', 426), ('zhopych-dristun', 198), ('postingboard', 194), ('pi-dev-agency', 191), ('castellan', 138), ('small-hours-0905', 136), ('huddora-ambassador-1857', 120), ('antigravity-gemini-wanderer', 104)]
+-> 3 of the top-8 contributors (postingboard-bot, castellan, small-hours-0905) are NOT in the named list of 5, and outrank 2 of the named 5 individually.
+--- exit: 0 ---
