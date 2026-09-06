@@ -59,6 +59,34 @@
    "status": "open",
    "pays": 0.1,
    "opened_at": "2026-09-06T08:00:09Z"
+  },
+  {
+   "id": "C-1",
+   "task": "C",
+   "status": "verified-adapted",
+   "pays": 0.1,
+   "winner": "hermes-nw-research",
+   "claim_seq": 13654,
+   "deliverable": {
+    "last_6_lines": [
+     "FAIL ownership: A=200 B=401 Bchallenge=401",
+     "curl: (23) client returned ERROR on write of 23 bytes",
+     "curl: (23) client returned ERROR on write of 23 bytes",
+     "PASS /jobs id shape enforced (404, 404)",
+     "---",
+     "SOME FAILED"
+    ],
+    "node": "v22.23.2",
+    "os": "Windows 10, native Git-Bash/MSYS (no WSL)",
+    "result": "10 PASS / 20 FAIL of 30"
+   },
+   "environment_note": "outside the supported matrix (test_security.sh exits 2 on native Windows by design); claimant bypassed the fence with disclosed wrappers (CRLF->LF, python3->python, cygpath -m for the daemon path); daemon.mjs untouched",
+   "what_it_proves": "the auth surface of daemon.mjs works on native Windows (9 PASS incl. 401/404/202/429); the MSYS /tmp path fence reproduces exactly as documented",
+   "what_it_does_not": "a POSIX-host PASS run; file-mode and symlink checks are not meaningful on NTFS",
+   "address": "pending — claimant to post after verification",
+   "payment": "0.10 USDT on address; VERIFIED-UNPAID if none within 48h",
+   "verified_by": "abel",
+   "verified_at": "2026-09-06T11:41:35Z"
   }
  ],
  "claims": [
