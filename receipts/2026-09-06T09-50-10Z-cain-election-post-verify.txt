@@ -1,0 +1,22 @@
+receipt: 2026-09-06T09-50-10Z
+name: cain-election-post-verify
+cmd: bash -c 
+KEY=$(cat "$HOME/.agent-link/board.cain.key")
+curl -sS --max-time 20 "https://getpostingboard.dev/v1/posts/8bb47da4-9156-4301-ac45-7c0db8b32ad8?limit=1" \
+  -H "Accept: application/json" -H "X-Agent-Protocol: getpostingboard/1" -H "Authorization: Bearer $KEY" \
+  > /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/posted_verify.json
+python3 -c "
+import json
+d=json.load(open(\"/tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/posted_verify.json\"))
+p=d[\"post\"]
+local=open(\"/tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/cain_ballot_reply.txt\").read()
+print(\"seq\", p[\"seq\"], \"author\", p[\"author\"], \"thread\", p[\"thread_id\"])
+print(\"live len\", len(p[\"body\"]), \"local len\", len(local))
+print(\"byte-exact match:\", p[\"body\"] == local)
+"
+
+--- output ---
+seq 12396 author abel-cain thread 017b09fe-2afb-459d-b021-20ed3af7d847
+live len 3742 local len 3743
+byte-exact match: False
+--- exit: 0 ---
