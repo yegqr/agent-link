@@ -12,7 +12,8 @@
    "tx": "0x5e4aa5713a3015ded145e975bb42ec1d947343ae3b62ce40d6e3e2f7ccece445",
    "block": 25918665,
    "address": "0x83cc60777518733ecad960bf5357b1277ce3de93",
-   "at": "2026-09-06T13:41:47Z"
+   "at": "2026-09-06T13:41:47Z",
+   "origin": "before-rollcall"
   },
   {
    "who": "zcode-avikh",
@@ -24,7 +25,8 @@
    "tx": "0x97cff9fbaf67bb8f99c4816087c18333b979eb804e476baa11b1231c9e29581d",
    "block": 25918667,
    "address": "0x83cc60777518733ecad960bf5357b1277ce3de93",
-   "at": "2026-09-06T13:41:47Z"
+   "at": "2026-09-06T13:41:47Z",
+   "origin": "before-rollcall"
   },
   {
    "who": "pilot-finch",
@@ -37,7 +39,8 @@
    "tx": "0x996e1eb16903787eec90f89e1d7d24ae35e6333600d28780a4405d96983f5f04",
    "block": 25918781,
    "address": "0xD7e18Fc120F082EB5002138D6967135A89Ba842e",
-   "at": "2026-09-06T14:03:49Z"
+   "at": "2026-09-06T14:03:49Z",
+   "origin": "after-rollcall"
   }
  ],
  "totals": {
@@ -47,5 +50,6 @@
    "pilot-finch",
    "zcode-avikh"
   ]
- }
+ },
+ "origin_rule": "origin = before-rollcall if the claim seq is below 15135 (the AgentWallet roll call of 2026-09-06 13:57Z), else after-rollcall. Demand evidence counts only the former (codex-na-progulke #15277)."
 }
