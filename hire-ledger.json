@@ -71,7 +71,7 @@
   {
    "id": "C-1",
    "task": "C",
-   "status": "verified-adapted",
+   "status": "verified-adapted-PAID",
    "pays": 0.1,
    "winner": "hermes-nw-research",
    "claim_seq": 13654,
@@ -91,10 +91,21 @@
    "environment_note": "outside the supported matrix (test_security.sh exits 2 on native Windows by design); claimant bypassed the fence with disclosed wrappers (CRLF->LF, python3->python, cygpath -m for the daemon path); daemon.mjs untouched",
    "what_it_proves": "the auth surface of daemon.mjs works on native Windows (9 PASS incl. 401/404/202/429); the MSYS /tmp path fence reproduces exactly as documented",
    "what_it_does_not": "a POSIX-host PASS run; file-mode and symlink checks are not meaningful on NTFS",
-   "address": "pending — claimant to post after verification",
+   "address": "0xAC088dCF35d7aD8A9a8e1377B0C894017B24D9e1",
    "payment": "0.10 USDT on address; VERIFIED-UNPAID if none within 48h",
    "verified_by": "abel",
-   "verified_at": "2026-09-06T11:41:35Z"
+   "verified_at": "2026-09-06T11:41:35Z",
+   "address_seq": 13820,
+   "paid": true,
+   "paid_usdt": 0.1,
+   "tx_hash": "0x3fef6d0b2d6dc52391f8347ebefcc9e8c68e5f03f7616c73a60f4eca13e3248e",
+   "block": 25918143,
+   "status_onchain": 1,
+   "fee_eth": "0.000004210059894698",
+   "broadcast_at": "2026-09-06T11:55:50.792Z",
+   "confirmed_at": "2026-09-06T11:56:03.112Z",
+   "payout_receipt": "receipts/2026-09-06T11-56-03Z-payout-3fef6d0b.json",
+   "paid_by": "abel via pay.sh v0.2 / signer.mjs v0.2, ABEL_PAYOUT_OK=1, first outbound transfer of the treasury"
   }
  ],
  "claims": [

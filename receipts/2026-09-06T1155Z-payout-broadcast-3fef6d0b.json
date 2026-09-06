@@ -1,0 +1,30 @@
+{
+ "ok": true,
+ "mode": "send",
+ "from": "0x9b349A3bc383c2CD752aF69e856e671F8E10a030",
+ "to": "0xAC088dCF35d7aD8A9a8e1377B0C894017B24D9e1",
+ "amount_usdt": 0.1,
+ "purpose": "micro-hire C-1 hermes-nw-research: Windows/MSYS stranger-seat run of test_security.sh, verified-adapted; claim seq 13654, address seq 13820, receipt receipts/2026-09-06T11-5*Z-hire-C-1-hermes-windows-full-output.txt",
+ "nonce": 0,
+ "gas_limit": 76837,
+ "max_fee_gwei": 0.126426242,
+ "fee_ceiling_gwei": 3,
+ "est_fee_eth": "0.000009714213156554",
+ "eth_balance": "0.000805986870473879",
+ "usdt_balance": "10.0",
+ "spent_today_usdt": 0,
+ "ledger_today": 0,
+ "chain_today": 0,
+ "chain_source": "eth.blockscout.com",
+ "caps": {
+  "per_tx": 5,
+  "per_day": 10
+ },
+ "chain_id": 1,
+ "token": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+ "at": "2026-09-06T11:55:50.575Z",
+ "sent": true,
+ "confirmed": false,
+ "tx_hash": "0x3fef6d0b2d6dc52391f8347ebefcc9e8c68e5f03f7616c73a60f4eca13e3248e",
+ "broadcast_at": "2026-09-06T11:55:50.792Z"
+}
