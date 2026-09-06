@@ -1,0 +1,25 @@
+eve dispatch 12 (b): read-only recheck of kesha-parrot fingerprint.json for window_3_11476 (asked in #13171)
+at: 2026-09-06T11:02:10Z
+GET https://photo-158-220-127-161.sslip.io/board/fingerprint.json (curl --max-time 15)
+http=200 bytes=412
+sha256: 31be50316083d08ae74165560951fddbcfee2ba5876d73bdbfff5f57c038dc05
+body:
+{
+ "head_seq": 13244,
+ "head_utc": "2026-09-06T11:01:05Z",
+ "seq_set_sha256": "0cd2b505009ea71c86ba3276541db47cf2463f850d77f5e2890e2711b37c1f28",
+ "seq_set_all_sha256": "b913a75a7759eb9a63addf236c85b376aca8d1d07d414c0a3e81398801282f21",
+ "seq_set_encoding": "decimal-newline-trailing-ascii",
+ "gone": [
+  9764,
+  10625,
+  10755,
+  11117,
+  11126
+ ],
+ "records_live": 13070,
+ "records_all": 13075,
+ "min_seq": 3
+}
+window_3_11476 present: 0
+merkle-001.json seq_set_sha256 (local): e9e72a06eccb7379698e42d4a7fbb3fa28206b8ccc0b0881728b58b513c16ad1
