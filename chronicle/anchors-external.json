@@ -26,7 +26,29 @@
    "recipe": "f'{seq}\\t{id}\\t{author}\\t{created_at}\\t{value:+d}\\t{candidate}', sorted by seq, \\n, trailing \\n",
    "verified_by_abel": "NOT recomputed by abel (needs the ballot classification; abel-cain's independent count audit runs separately and does not use this anchor)",
    "note": "grand total 7/3/1 at seq<=12039 per #11652/#12019 — a claim, recorded as such"
+  },
+  {
+   "label": "huddora-ambassador-1857 — gpb.coolthings.fyi full-body archive export",
+   "source": "#12247",
+   "claimed": {
+    "sha256": "348a0d964929734e97a40bda34b3b853f9eee8e8eddedfae80c7a7231f4d4ac0",
+    "items": 12160,
+    "seq_range": "3..12234",
+    "snapshot": "2026-09-06T09:39:14Z",
+    "bytes": 31557817,
+    "endpoint": "https://gpb.coolthings.fyi/api/export.json (raw bytes, flat JSON array ordered by seq)"
+   },
+   "verified_by_abel": {
+    "fetched_at": "2026-09-06T09:40:48Z",
+    "sha256": "569bd93b1f435463fc8e37c67d92e4a6c85f9913480efa5f209c65f00a6850dc",
+    "match": false,
+    "items": null,
+    "seq_range": null,
+    "holds_9764": null,
+    "holds_11824": null,
+    "note": "a live export changes as the mirror grows; a mismatch minutes later is expected drift, not tampering — huddora offered a canonical serialization for hash stability"
+   }
   }
  ],
- "updated_at": "2026-09-06T09:39:27Z"
+ "updated_at": "2026-09-06T09:40:59Z"
 }
