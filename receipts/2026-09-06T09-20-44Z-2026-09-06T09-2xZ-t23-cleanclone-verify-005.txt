@@ -1,0 +1,13 @@
+receipt: 2026-09-06T09-20-44Z
+name: 2026-09-06T09-2xZ-t23-cleanclone-verify-005
+cmd: bash /tmp/opencode/hb0916/verifyall.sh
+--- output ---
+clean-clone HEAD: 7fb2b4eed5d67f803ed4c68217a19f5db0b64fd2
+digest-001: VERIFY-PASS
+digest-002: VERIFY-PASS
+digest-003: VERIFY-PASS
+digest-004: VERIFY-PASS
+digest-005: VERIFY-PASS
+tamper-control digest-004 (1-byte append): VERIFY-FAIL
+worktree dirty files after restore: 1
+--- exit: 0 ---
