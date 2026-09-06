@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+# test_wallet.sh v0.1 — AgentWallet policy-gate, MCP and quote tests. Uses a STUB signer and a throwaway
+# policy directory: no real key, no broadcast. Network: read-only public RPC for balance/verify/quote.
+set -uo pipefail
+HERE="$(cd "$(dirname "$0")" && pwd)"; T="$(mktemp -d)"; fail=0
+ok(){ echo "PASS $1"; }; bad(){ echo "FAIL $1"; fail=1; }
+cleanup(){ [ -n "${DP:-}" ] && kill "$DP" 2>/dev/null; rm -rf "$T"; }; trap cleanup EXIT
+# stub signer: echoes what it was asked, never touches a key
+cat > "$T/signer-stub.mjs" <<'JS'
+const [mode,to,amount,purpose]=process.argv.slice(2); console.log(JSON.stringify({ok:true,mode,to,amount:Number(amount),purpose,sent:mode==="send",stub:true}));
+JS
+cp "$HERE/policy.json" "$T/policy.json"; cp "$HERE/allowlist.json" "$T/allowlist.json"; cp "$HERE/approve.sh" "$T/approve.sh"; chmod +x "$T/approve.sh"
+SOCK="$T/s.sock"; node "$HERE/signerd.mjs" --socket "$SOCK" --policy "$T/policy.json" --signer "$T/signer-stub.mjs" 2>"$T/signerd.log" & DP=$!; sleep 0.8
+ask(){ printf '%s\n' "$1" | timeout 10 python3 -c '
+import socket,sys,json; s=socket.socket(socket.AF_UNIX); s.connect(sys.argv[1]); s.sendall(sys.stdin.read().encode()); b=b""
+while b"\n" not in b:
+    d=s.recv(65536)
+    if not d: break
+    b+=d
+print(b.decode().split("\n")[0])' "$SOCK"; }
+A=0x1111111111111111111111111111111111111111
+R=$(ask '{"op":"policy"}'); echo "$R" | grep -q '"allowlist_required": *true' && ok "1 policy op answers" || bad "1 policy: $R"
+R=$(ask "{\"op\":\"quote\",\"to\":\"$A\",\"amount\":0.5,\"purpose\":\"test purpose long enough seq 1\"}"); echo "$R" | grep -q 'not in allowlist' && ok "2 quote refused: payee not allowlisted" || bad "2: $R"
+"$T/approve.sh" allow $A 12345 "tester" >/dev/null && R=$(ask "{\"op\":\"quote\",\"to\":\"$A\",\"amount\":0.5,\"purpose\":\"test purpose long enough seq 1\"}"); echo "$R" | grep -q '"stub":true' && echo "$R" | grep -q '"sent":false' && ok "3 quote passes gate after allow (stub signer, nothing sent)" || bad "3: $R"
+R=$(ask "{\"op\":\"send\",\"to\":\"$A\",\"amount\":2.0,\"purpose\":\"test purpose long enough seq 1\"}"); echo "$R" | grep -q 'above human threshold' && ok "4 send 2.0 refused without approval code" || bad "4: $R"
+R=$(ask "{\"op\":\"send\",\"to\":\"$A\",\"amount\":0.5,\"purpose\":\"test purpose long enough seq 1\"}"); echo "$R" | grep -q '"sent":true' && ok "5 send 0.5 (below threshold) reaches the signer" || bad "5: $R"
+CODE=$("$T/approve.sh" code $A 3 "tester" 1 | grep -oE 'code: [A-Za-z0-9]+' | cut -d' ' -f2)
+R=$(ask "{\"op\":\"send\",\"to\":\"$A\",\"amount\":2.0,\"purpose\":\"test purpose long enough seq 1\",\"approval\":\"$CODE\"}"); echo "$R" | grep -q '"sent":true' && ok "6 send 2.0 with one-time approval code" || bad "6: $R"
+R=$(ask "{\"op\":\"send\",\"to\":\"$A\",\"amount\":2.0,\"purpose\":\"test purpose long enough seq 1\",\"approval\":\"$CODE\"}"); echo "$R" | grep -q 'already used' && ok "7 approval code cannot be reused" || bad "7: $R"
+R=$(ask "{\"op\":\"send\",\"to\":\"0x2222222222222222222222222222222222222222\",\"amount\":2.0,\"purpose\":\"x\",\"approval\":\"$CODE\"}"); echo "$R" | grep -qE 'not in allowlist|different payee|already used' && ok "8 approval bound to payee" || bad "8: $R"
+R=$(ask "{\"op\":\"send\",\"to\":\"$A\",\"amount\":6,\"purpose\":\"test purpose long enough seq 1\"}"); echo "$R" | grep -q 'amount must be' && ok "9 per-tx cap in the gate" || bad "9: $R"
+grep -q "not enforcement" "$T/signerd.log" && ok "10 daemon reports same-uid policy honestly" || bad "10 isolation report: $(cat "$T/signerd.log")"
+# MCP read-only
+M=$(timeout 90 node "$HERE/mcp-client-test.mjs" 2>&1); echo "$M" | grep -q 'tools: wallet.address, wallet.balance, wallet.verify_tx, wallet.policy' && ok "11 MCP tools/list is read-only (4 tools)" || bad "11: $M"
+echo "$M" | grep -E '^balance:' | grep -qE '"usdt":[0-9.]+,"eth":[0-9.e-]+,"outgoing_tx_count":[0-9]+,"is_contract":false' && ok "12 MCP wallet.balance via public RPC (shape + EOA)" || bad "12: $(echo "$M" | grep -E "^balance:" | head -c 300)"
+echo "$M" | grep -q '"to_match":true' && echo "$M" | grep -q '"amount_match":true' && ok "13 MCP wallet.verify_tx matches payee and amount" || bad "13: $(echo "$M" | grep verify)"
+# swap quote (read-only)
+QD="$T/q"; mkdir -p "$QD"; cp "$HERE/swap_quote.mjs" "$QD/"; NM="$HERE/node_modules"; [ -d "$NM" ] || NM="$HOME/.agent-link/signer/node_modules"; ln -s "$NM" "$QD/node_modules"
+Q=$(cd "$QD" && timeout 60 node swap_quote.mjs 1 50 2>&1 || true)
+echo "$Q" | grep -q '"ok": true' && echo "$Q" | grep -q 'amount_out_weth' && ok "14 swap_quote: QuoterV2 answers for 1 USDT" || bad "14: $(echo "$Q" | head -c 300)"
+echo "---"; [ "$fail" = 0 ] && echo "ALL PASS" || echo "SOME FAILED"; exit $fail

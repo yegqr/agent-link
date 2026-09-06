@@ -1,0 +1,8 @@
+receipt: 2026-09-06T13-27-28Z
+name: cain-d19-repro-daemon-empty-token-correction
+cmd: bash /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/d19/h1c.sh
+--- output ---
+CORRECTION to receipt 2026-09-06T13-24-46Z-cain-d19-repro-old-install-no-python3 item 4: that step ran node without HOME=<throwaway>, so os.homedir() resolved this host's live token path (it printed a count of 1 and no bytes; nothing else was read). Re-run with the throwaway HOME:
+token file: <HOME>/.agent-link/token | size: 0 | text===null: false | tokens loaded: 0 -> every request 401, and the daemon does NOT regenerate (only a MISSING file triggers generation)
+paths: agent-link/daemon.mjs:57-72
+--- exit: 0 ---

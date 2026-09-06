@@ -28,11 +28,34 @@ curl -fsS --retry 2 "$BASE_URL/MANIFEST.sha256" -o "$TMP/MANIFEST.sha256" || { e
 echo "  all $(wc -l < "$TMP/MANIFEST.sha256") files match the manifest"
 
 echo "[bootstrap] installing to $HOME/.agent-link"
-bash "$TMP/install.sh"
+# v0.2.7 (hermes-nw-research #14548): an install.sh failure used to end this
+# script silently (set -e) with a 0-byte token left behind. Say so, and stop.
+bash "$TMP/install.sh" || { rc=$?; echo "FATAL: install.sh failed (exit $rc) — not smoke-checking a broken install" >&2; exit "$rc"; }
 
 echo "[bootstrap] smoke check (token + daemon syntax)"
 [ -s "$HOME/.agent-link/token" ] || { echo "FATAL: token missing" >&2; exit 1; }
-[ "$(stat -c %a "$HOME/.agent-link/token")" = "600" ] || { echo "FATAL: token not 600" >&2; exit 1; }
+# v0.2.7 (hermes-nw-research #14548): the token is also checked at the path the
+# DAEMON resolves — daemon.mjs:57 path.join(os.homedir(), ".agent-link", "token")
+# — printed by node itself. On Windows os.homedir() is %USERPROFILE%; under
+# MSYS/Git-Bash $HOME can be set or spelled differently. A token bash sees but
+# node would not is a 401 waiting to happen, so a mismatch is fatal here.
+TOKEN_PATH="$(node -e "process.stdout.write(require('path').join(require('os').homedir(),'.agent-link','token'))")" || { echo "FATAL: node is required (the daemon runs on it)" >&2; exit 2; }
+echo "  token path as the daemon resolves it: $TOKEN_PATH"
+[ -s "$TOKEN_PATH" ] || { echo "FATAL: token missing or empty at $TOKEN_PATH (install.sh wrote under HOME=$HOME; the daemon reads os.homedir())" >&2; exit 2; }
+[ "$HOME/.agent-link/token" -ef "$TOKEN_PATH" ] || { echo "FATAL: HOME mismatch — bash wrote $HOME/.agent-link/token, the daemon reads $TOKEN_PATH; make HOME match os.homedir() (Windows: HOME=%USERPROFILE%) and re-run" >&2; exit 2; }
+# how many tokens the daemon will load from it (daemon.mjs:68-71: one per non-blank line); 0 = every request 401
+NTOK="$(node -e "process.stdout.write(String(require('fs').readFileSync(process.argv[1],'utf8').split('\n').filter(function(l){return l.trim().length>0}).length))" "$TOKEN_PATH")" || NTOK=0
+[ "$NTOK" -ge 1 ] 2>/dev/null || { echo "FATAL: the daemon would load 0 tokens from $TOKEN_PATH (blank lines only)" >&2; exit 2; }
+echo "  tokens the daemon will load: $NTOK"
+# mode: GNU stat / BSD stat (macOS seats, pilot-finch C-2). MSYS/Git-Bash noacl
+# mounts cannot express 600 (chmod 600 reads back 644): warn there, fatal elsewhere.
+mode="$(stat -c %a "$TOKEN_PATH" 2>/dev/null || stat -f %A "$TOKEN_PATH" 2>/dev/null || echo unknown)"
+if [ "$mode" != "600" ]; then
+  case "$(uname -s)" in
+    MINGW*|MSYS*|CYGWIN*) echo "  WARN: token mode reads $mode — this mount cannot express 600 (MSYS noacl); the token is protected only by the NTFS ACL of the profile directory" ;;
+    *) echo "FATAL: token not 600" >&2; exit 1 ;;
+  esac
+fi
 node --check "$HOME/.agent-link/daemon.mjs" || { echo "FATAL: daemon.mjs invalid" >&2; exit 1; }
 
 echo "[bootstrap] preflight"

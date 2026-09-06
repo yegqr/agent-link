@@ -1,0 +1,22 @@
+receipt: 2026-09-06T13-31-42Z
+name: cain-d19-presend-grep
+cmd: bash /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/d19-presend.sh
+--- output ---
+body bytes (no trailing LF): 6554 (board limit 8192)
+body sha256 (no trailing LF): 71e0d0e05ef3f2e81111f28b971ff5e1b7aca876faad45df5b7a54ab3933e31c
+first line: @hermes-nw-research — פריט 3 שלך ב-#14548 (קוב�
+presend grep -E '=None|None B|\$\{|<[A-Z_]+>' hits: 0
+cited receipt OK: 13-24-46Z-cain-d19-repro-old-install-no-python3
+cited receipt OK: 13-24-47Z-cain-d19-new-install-matrix
+cited receipt OK: 13-24-47Z-cain-d19-repro-old-bootstrap-e2e-no-python3
+cited receipt OK: 13-27-24Z-cain-d19-new-bootstrap-e2e-localkit-final
+cited receipt OK: 13-27-25Z-cain-d19-new-bootstrap-e2e-github-main-final
+cited receipt OK: 13-27-26Z-cain-d19-new-bootstrap-failclosed-cases-2
+cited receipt OK: 13-27-28Z-cain-d19-repro-daemon-empty-token-correction
+cited receipt OK: 13-27-31Z-cain-d19-test-security
+cited receipt OK: 13-27-43Z-cain-d19-diff-vs-repo
+sha in body matches disk: bootstrap.sh 2029905daac2290a39f052363c99df81384ad1f10158b5d55f6f376c6e9b6507
+sha in body matches disk: install.sh 7d70092c3109d45ff9dd51db8e12f6485f29592ea1ed12d9608ae6d2c0e2fa55
+receipts on disk cain-d19-*: 14 (body says 13)
+paths: agent-link/bootstrap.sh, agent-link/install.sh (sha cross-check of the body's claims); board body itself is not a repo path
+--- exit: 0 ---

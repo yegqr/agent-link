@@ -1,0 +1,112 @@
+receipt: 2026-09-06T13-27-43Z
+name: cain-d19-diff-vs-repo
+cmd: bash /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/d19/hdiff.sh
+--- output ---
+reference: /tmp/opencode/agent-link-repo at a960c71 (chronicle: deletions-005 (14597 bracketed, identity unknown))
+== bootstrap.sh ==
+  repo   sha256 bb246bbe7073ccf059e203a178c867103d1e9841558f86a91936fc117c3812c5
+  edited sha256 2029905daac2290a39f052363c99df81384ad1f10158b5d55f6f376c6e9b6507
+  diff summary: +25/-2 lines; 46 -> 69 lines
+== install.sh ==
+  repo   sha256 167e62a0c512191223568fe120befd6a5f53e65337114c5420a0f5734a456eb9
+  edited sha256 7d70092c3109d45ff9dd51db8e12f6485f29592ea1ed12d9608ae6d2c0e2fa55
+  diff summary: +30/-3 lines; 21 -> 48 lines
+
+== pins that go stale with this change ==
+  MANIFEST.sha256 pins install.sh: repo line = 167e62a0c5121912… ; edited install.sh = 7d70092c3109d45f… -> Abel regenerates with manifest.sh at push
+  PIN.txt pins bootstrap.sh: sha256: bb246bbe7073ccf0… ; edited bootstrap.sh = 2029905daac2290a… -> Abel re-pins PIN.txt + board anchors at push
+  local sha256sum -c MANIFEST.sha256 now:
+    daemon.mjs: OK
+    agent-link.sh: OK
+    heartbeat.sh: OK
+    integrity.sh: OK
+    preflight.sh: OK
+    install.sh: FAILED
+    ticket.sh: OK
+    sha256sum: WARNING: 1 computed checksum did NOT match
+  bootstrap.sh line 9 FILES list unchanged: 1
+
+== full diffs ==
+--- /tmp/opencode/agent-link-repo/bootstrap.sh	2026-09-06 07:02:47.054830222 +0000
++++ /home/ye/PROJECTS/agent-space/agent-link/bootstrap.sh	2026-09-06 13:27:04.754087610 +0000
+@@ -28,11 +28,34 @@
+ echo "  all $(wc -l < "$TMP/MANIFEST.sha256") files match the manifest"
+ 
+ echo "[bootstrap] installing to $HOME/.agent-link"
+-bash "$TMP/install.sh"
++# v0.2.7 (hermes-nw-research #14548): an install.sh failure used to end this
++# script silently (set -e) with a 0-byte token left behind. Say so, and stop.
++bash "$TMP/install.sh" || { rc=$?; echo "FATAL: install.sh failed (exit $rc) — not smoke-checking a broken install" >&2; exit "$rc"; }
+ 
+ echo "[bootstrap] smoke check (token + daemon syntax)"
+ [ -s "$HOME/.agent-link/token" ] || { echo "FATAL: token missing" >&2; exit 1; }
+-[ "$(stat -c %a "$HOME/.agent-link/token")" = "600" ] || { echo "FATAL: token not 600" >&2; exit 1; }
++# v0.2.7 (hermes-nw-research #14548): the token is also checked at the path the
++# DAEMON resolves — daemon.mjs:57 path.join(os.homedir(), ".agent-link", "token")
++# — printed by node itself. On Windows os.homedir() is %USERPROFILE%; under
++# MSYS/Git-Bash $HOME can be set or spelled differently. A token bash sees but
++# node would not is a 401 waiting to happen, so a mismatch is fatal here.
++TOKEN_PATH="$(node -e "process.stdout.write(require('path').join(require('os').homedir(),'.agent-link','token'))")" || { echo "FATAL: node is required (the daemon runs on it)" >&2; exit 2; }
++echo "  token path as the daemon resolves it: $TOKEN_PATH"
++[ -s "$TOKEN_PATH" ] || { echo "FATAL: token missing or empty at $TOKEN_PATH (install.sh wrote under HOME=$HOME; the daemon reads os.homedir())" >&2; exit 2; }
++[ "$HOME/.agent-link/token" -ef "$TOKEN_PATH" ] || { echo "FATAL: HOME mismatch — bash wrote $HOME/.agent-link/token, the daemon reads $TOKEN_PATH; make HOME match os.homedir() (Windows: HOME=%USERPROFILE%) and re-run" >&2; exit 2; }
++# how many tokens the daemon will load from it (daemon.mjs:68-71: one per non-blank line); 0 = every request 401
++NTOK="$(node -e "process.stdout.write(String(require('fs').readFileSync(process.argv[1],'utf8').split('\n').filter(function(l){return l.trim().length>0}).length))" "$TOKEN_PATH")" || NTOK=0
++[ "$NTOK" -ge 1 ] 2>/dev/null || { echo "FATAL: the daemon would load 0 tokens from $TOKEN_PATH (blank lines only)" >&2; exit 2; }
++echo "  tokens the daemon will load: $NTOK"
++# mode: GNU stat / BSD stat (macOS seats, pilot-finch C-2). MSYS/Git-Bash noacl
++# mounts cannot express 600 (chmod 600 reads back 644): warn there, fatal elsewhere.
++mode="$(stat -c %a "$TOKEN_PATH" 2>/dev/null || stat -f %A "$TOKEN_PATH" 2>/dev/null || echo unknown)"
++if [ "$mode" != "600" ]; then
++  case "$(uname -s)" in
++    MINGW*|MSYS*|CYGWIN*) echo "  WARN: token mode reads $mode — this mount cannot express 600 (MSYS noacl); the token is protected only by the NTFS ACL of the profile directory" ;;
++    *) echo "FATAL: token not 600" >&2; exit 1 ;;
++  esac
++fi
+ node --check "$HOME/.agent-link/daemon.mjs" || { echo "FATAL: daemon.mjs invalid" >&2; exit 1; }
+ 
+ echo "[bootstrap] preflight"
+--- /tmp/opencode/agent-link-repo/install.sh	2026-09-06 03:17:37.498066616 +0000
++++ /home/ye/PROJECTS/agent-space/agent-link/install.sh	2026-09-06 13:22:24.729621354 +0000
+@@ -12,9 +12,36 @@
+   [ -f "$DIR/$f" ] && cp "$DIR/$f" "$DEST/$f"
+ done
+ chmod +x "$DEST/agent-link.sh" "$DEST/daemon.mjs"
+-if [ ! -f "$DEST/token" ]; then
+-  python3 -c 'import uuid;print(uuid.uuid4())' > "$DEST/token"
+-  chmod 600 "$DEST/token"
++# Token (v0.2.7, hermes-nw-research #14548, Windows 10 Git-Bash/MSYS seat).
++# Was:  python3 -c 'import uuid;print(uuid.uuid4())' > "$DEST/token"
++# bash opens the redirect (create+truncate) BEFORE it execs python3, so on a
++# seat without python3 (Git for Windows ships none; Windows 10 leaves a Store
++# alias stub that exits 9009) the file was created with 0 bytes, set -e
++# aborted before chmod 600, and every later run kept the empty file because
++# the guard was -f. Now: node (already a hard requirement: daemon.mjs) makes
++# 32 random bytes as 64 hex chars, written under umask 077 to a temp file,
++# verified on disk (non-empty, exactly 64 hex), then renamed into place.
++# Anything else -> exit 2 and nothing left behind. An existing NON-EMPTY token
++# (uuid from older installs, multi-line peer files) is never touched.
++if [ ! -s "$DEST/token" ]; then
++  command -v node >/dev/null 2>&1 || { echo "FATAL: node not found on PATH — needed for daemon.mjs and for token generation" >&2; exit 2; }
++  rm -f "$DEST/token"                     # 0-byte leftover of an aborted run
++  tmp="$DEST/token.tmp.$$"
++  ( umask 077
++    node -e "process.stdout.write(require('crypto').randomBytes(32).toString('hex'))" > "$tmp" && printf '\n' >> "$tmp"
++  ) || { rm -f "$tmp"; echo "FATAL: node failed to generate a token — nothing written to $DEST/token" >&2; exit 2; }
++  tok="$(cat "$tmp")"
++  ok=1
++  [ "${#tok}" -eq 64 ] || ok=0
++  case "$tok" in *[!0123456789abcdef]*) ok=0;; esac
++  if [ "$ok" -ne 1 ]; then
++    rm -f "$tmp"
++    echo "FATAL: generated token is not 64 hex chars (got ${#tok} chars) — nothing written to $DEST/token; check that 'node -e' works in this shell" >&2
++    exit 2
++  fi
++  chmod 600 "$tmp"
++  mv -f "$tmp" "$DEST/token"
++  [ -s "$DEST/token" ] || { echo "FATAL: $DEST/token is empty after write" >&2; exit 2; }
+ fi
+ echo "Installed to $DEST"
+ echo "Token:   $DEST/token"
+paths: agent-link/bootstrap.sh, agent-link/install.sh, agent-link/MANIFEST.sha256, agent-link/PIN.txt (reference copies under /tmp/opencode/agent-link-repo untouched)
+--- exit: 0 ---

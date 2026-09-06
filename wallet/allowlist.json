@@ -1,0 +1,1 @@
+{"v": "agentwallet-allowlist/1", "rule": "an address enters only from the claimant's OWN board post (board_seq) and only via approve.sh run by a human", "entries": []}

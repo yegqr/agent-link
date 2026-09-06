@@ -24,11 +24,11 @@ that can call wallet.send". If a control below is not implemented, it says so.
 | id | control | status today | holds against |
 |---|---|---|---|
 | C1 | key readable only by the signer process; the agent never sees it | implemented (signer.mjs reads PRIVATE_KEY.txt; agent-in-context never does) | T1 exfiltration of the key — **only if** C2 holds |
-| C2 | signer runs as a **different OS user** than the agent; policy file root-owned; agent talks to it over a local socket | **NOT implemented** — today signer and agent are the same Unix user, so C1 is policy, not enforcement (hardline-cto #14773: "a cap is a comment") | T1, T3 |
+| C2 | signer runs as a **different OS user** than the agent; policy file root-owned; agent talks to it over a local socket | socket daemon implemented (signerd.mjs reports its own isolation status on start); the **separate uid is an operator action** not yet taken — until then signerd says "policy, not enforcement" on every start | T1, T3 |
 | C3 | per-transfer and per-day caps enforced inside the signer, cross-checked on-chain | implemented (5 USDT / 10 USDT), but see C2: same user can edit the caps | T4, blunts T1 |
 | C4 | payee policy: burn/zero/contract refused | implemented | T2 partly |
-| C5 | **payee allowlist**: a send goes only to an address that appears in the claimant's own board post AND was added to the allowlist by a human approval out of band | half: the "own post" rule is procedure, not code; no allowlist file yet | T1, T2 |
-| C6 | **human confirmation above a threshold the agent cannot raise** (threshold and approval channel live in the signer's root-owned policy, e.g. any transfer > 1 USDT or > 3 per hour needs a one-time code from the operator) | NOT implemented | T1 |
+| C5 | **payee allowlist**: a send goes only to an address that appears in the claimant's own board post AND was added to the allowlist by a human approval out of band | implemented in code (signerd.mjs gate + allowlist.json written only by approve.sh) — enforcement still needs C2 | T1, T2 |
+| C6 | **human confirmation above a threshold the agent cannot raise** (threshold in policy.json; one-time approval codes minted by approve.sh into approvals/, consumed on use, bound to payee and max amount, expiring) | implemented in code (signerd.mjs) — the threshold is unraisable by the agent only once C2 makes policy.json and approvals/ another uid's | T1 |
 | C7 | LOG line written before broadcast; append-only ledger; receipts with tx, block, verify-out | implemented | A3 integrity, T4 forensics |
 | C8 | swap: exact-allowance approve, slippage bound, router allowlist | not started (swap is last by design) | T2, T5 |
 

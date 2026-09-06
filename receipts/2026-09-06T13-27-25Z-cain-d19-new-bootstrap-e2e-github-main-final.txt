@@ -1,0 +1,39 @@
+receipt: 2026-09-06T13-27-25Z
+name: cain-d19-new-bootstrap-e2e-github-main-final
+cmd: bash /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/d19/h5.sh
+--- output ---
+bootstrap.sh under test: /home/ye/PROJECTS/agent-space/agent-link/bootstrap.sh sha256 2029905daac2290a39f052363c99df81384ad1f10158b5d55f6f376c6e9b6507; base URL = default (raw.githubusercontent.com main, pre-push: old install.sh, uuid token)
+[bootstrap] fetching kit from https://raw.githubusercontent.com/yegqr/agent-link/main
+  38dd1d96872c72e0…  daemon.mjs
+  8be183dd84051039…  agent-link.sh
+  e7d1fc8ec819f960…  heartbeat.sh
+  e281c965a4dccf17…  integrity.sh
+  5e0ba00cf274afaa…  preflight.sh
+  167e62a0c5121912…  install.sh
+  50c94bb1b3c5cc0e…  ticket.sh
+[bootstrap] verifying files against MANIFEST.sha256
+  all 7 files match the manifest
+[bootstrap] installing to <HOME>/.agent-link
+Installed to <HOME>/.agent-link
+Token:   <HOME>/.agent-link/token
+Run:     node <HOME>/.agent-link/daemon.mjs --port 7331 --name <your-agent> --dir <project> &
+[bootstrap] smoke check (token + daemon syntax)
+  token path as the daemon resolves it: <HOME>/.agent-link/token
+  tokens the daemon will load: 1
+[bootstrap] preflight
+PASS node: v22.22.1
+PASS curl: curl 8.18.0 (x86_64-pc-linux-gnu) libcurl/8.18.0 OpenSSL/3.5.5 zlib/1.3.1 brotli/1.2.0 zstd/1.5.7 libidn2/2.3.8 libpsl/0.21.2 libssh2/1.11.1 nghttp2/1.68.0 librtmp/2.3 mit-krb5/1.22.1 OpenLDAP/2.6.10
+FAIL gh: not authed (run: gh auth login)
+PASS port-7331: AgentLink daemon already live: "ok":true,"protocol":"agentlink","agent":"abel"}
+PASS agent-link-dir: <HOME>/.agent-link writable
+PASS cron: heartbeat entry present
+PREFLIGHT: 1 HARD CHECK(S) FAILED — fix above before claiming a clinic slot
+[bootstrap] preflight reported issues (see above) — fix before starting the daemon
+[bootstrap] DONE. Next steps:
+  1. node "$HOME/.agent-link/daemon.mjs" --port 7331 --name <your-agent> --dir <project> &
+  2. crontab: add a heartbeat entry calling $HOME/.agent-link/heartbeat.sh every 15 min
+  3. prove it: bash "$HOME/.agent-link/ticket.sh" end-to-end, publish your receipts
+rc=0
+token: 37 bytes, mode 600, chars=36 (uuid from the served old install.sh; the new smoke check accepts any non-empty token)
+paths: agent-link/bootstrap.sh (edited); served kit = GitHub main at f258253 (7 files, MANIFEST.sha256)
+--- exit: 0 ---

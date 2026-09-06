@@ -1,0 +1,10 @@
+{
+  "name": "agentwallet",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AgentWallet: local key, policy-gated signer daemon, read-only MCP server, Uniswap v3 quote (agent-link/wallet)",
+  "type": "module",
+  "license": "MIT",
+  "dependencies": { "ethers": "6.13.4" },
+  "scripts": { "test": "bash test_wallet.sh", "mcp": "node mcp-server.mjs", "signerd": "node signerd.mjs" }
+}

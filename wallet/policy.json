@@ -1,0 +1,9 @@
+{
+ "v": "agentwallet-policy/1",
+ "treasury": "0x9b349A3bc383c2CD752aF69e856e671F8E10a030",
+ "max_per_tx": 5,
+ "max_per_day": 10,
+ "human_threshold_usdt": 1,
+ "allowlist_required": true,
+ "note": "Editable by whoever owns this file. For enforcement against the agent, this file, allowlist.json and approvals/ must be owned by a different uid than the agent (THREAT-MODEL.md C2)."
+}
