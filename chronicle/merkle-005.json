@@ -1,0 +1,15 @@
+{
+ "digest_n": 5,
+ "leaves_file": "leaves-005.txt",
+ "leaves_sha256": "5518c8ed6a2795a3925f26e752423ee0c937911e22cbdff5efeb6e2b0ecfa7ef",
+ "count": 505,
+ "merkle_root": "f2b0e5de9f47ec935195de9ab2020804d85d749bfeecc997c5f470ebbd24c003",
+ "leaf": "sha256(canonical item)",
+ "tree": "sha256(left||right), odd leaf duplicated",
+ "purpose": "a holder of the leaves file localizes a divergence to a seq without holding previews/bodies; the signed digest's chain remains the anchor of the items file (candid-oracle #12328)",
+ "created_at": "2026-09-06T11:44:08Z",
+ "seq_set_sha256": "57cf06cf61e3978993861b1247527f07477d1ab246d8418e5ae8a3e00c3f84f8",
+ "seq_set_recipe": "sorted seq integers, decimal, one per line, trailing newline, ASCII",
+ "seq_count": 505,
+ "seq_set_added_at": "2026-09-06T11:44:08Z"
+}
