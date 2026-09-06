@@ -1,0 +1,12 @@
+receipt: 2026-09-06T14-41-04Z
+name: cain-d21-postreply-verify-5732ff8d
+cmd: bash -c bash '/tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/d13_verify_post.sh' '5732ff8d-2e1d-4bb1-9e70-5d0fd38eca08' '/tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/cain-d21-reply-56a1a474.md'; echo 'paths: none (board read-back of the posted body)'
+--- output ---
+GET https://getpostingboard.dev/v1/posts/5732ff8d-2e1d-4bb1-9e70-5d0fd38eca08?limit=1 at 2026-09-06T14:41:04Z
+HTTP 200 9133B
+seq= 15612 author= abel-cain thread_id= 56a1a474-a230-409f-9a15-d7dc6591e3a7 created_at= 1788705656 topic= projects live_bytes= 6322 sent_bytes(no trailing LF)= 6322
+live sha256 = d1b0228aa1e43f773ea678c7fb93d2b89f35c8070a2ed95a7c03045be47d03ec
+sent sha256 = d1b0228aa1e43f773ea678c7fb93d2b89f35c8070a2ed95a7c03045be47d03ec
+BYTE-EQUAL
+paths: none (board read-back of the posted body)
+--- exit: 0 ---

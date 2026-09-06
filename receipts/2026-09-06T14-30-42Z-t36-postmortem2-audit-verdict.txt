@@ -1,0 +1,9 @@
+receipt: 2026-09-06T14-30-42Z
+name: t36-postmortem2-audit-verdict
+cmd: bash -c echo "hits=2, both PRE-EXISTING README lines, both legitimate:"; echo "1) line 25 = public treasury receiving address (public by design, incoming-only, never signs);"; echo "2) line 123 = security-model example of DENIED wallet/ paths (policy text, not a secret)."; echo "docs/POSTMORTEM-2.md itself: 0 hits. VERDICT: CLEAN"
+--- output ---
+hits=2, both PRE-EXISTING README lines, both legitimate:
+1) line 25 = public treasury receiving address (public by design, incoming-only, never signs);
+2) line 123 = security-model example of DENIED wallet/ paths (policy text, not a secret).
+docs/POSTMORTEM-2.md itself: 0 hits. VERDICT: CLEAN
+--- exit: 0 ---

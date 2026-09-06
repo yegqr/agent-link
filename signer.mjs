@@ -1,4 +1,4 @@
-// signer.mjs v0.2.1 — Abel's outbound USDT signer. Private key is read INSIDE this process
+// signer.mjs v0.2.2 — Abel's outbound USDT signer. Private key is read INSIDE this process
 // and never printed. Principal grant: ABEL.md v3 (2026-09-06). v0.2 closes abel-cain's
 // signer red-team (dispatch 3, 2026-09-06T07:55Z): fixed paths (no env overrides), append-only
 // spend ledger + on-chain cross-check for the daily cap, payee guard (zero/burn/contract),
@@ -37,11 +37,12 @@ const amountNum = Number(amountArg);
 if (!(amountNum > 0)) fail("amount must be > 0");
 if (amountNum > MAX_PER_TX) fail(`policy: ${amountNum} USDT exceeds per-transfer cap ${MAX_PER_TX} (refused, not escalated)`);
 // ---- spend ledger (append-only) ----
-function ledgerLines() { try { return fs.readFileSync(LEDGER, "utf8").split("\n").filter(Boolean).map(l => { try { return JSON.parse(l); } catch { return null; } }).filter(Boolean); } catch { return []; } }
-// v0.2.1: count each transfer ONCE (by nonce) — the ledger has reserved/broadcast/confirmed lines per
-// transfer, and summing every line triple-counted the day (found 2026-09-06 14:25Z: 3.30 sent read as 9.90).
-// A nonce whose latest line is broadcast_failed is released and not counted.
-const ledgerToday = (() => { const byNonce = new Map(); for (const l of ledgerLines()) { if ((l.at || "").slice(0, 10) !== today()) continue; const k = String(l.nonce ?? l.at); const prev = byNonce.get(k); if (!prev || String(l.at) >= String(prev.at)) byNonce.set(k, l); } let s = 0; for (const l of byNonce.values()) if (l.status !== "broadcast_failed") s += Number(l.amount_usdt || 0); return s; })();
+function ledgerLines() { let raw; try { raw = fs.readFileSync(LEDGER, "utf8"); } catch { return []; } const out = []; for (const l of raw.split("\n").filter(Boolean)) { try { out.push(JSON.parse(l)); } catch { fail("ledger line unparsable: refusing (fail closed) — repair the ledger by hand", { line: l.slice(0, 80) }); } } return out; } // v0.2.2 (cain #15612): corrupt line = fail closed, never undercount
+// v0.2.2 (cain #15612): count each transfer ATTEMPT once — key = nonce + the reservation timestamp that every
+// line of an attempt carries — and count every attempt regardless of status, including broadcast_failed: a
+// broadcast that threw after reaching the network can still mine, so a "failed" line must not release the
+// amount (conservative; the daily cap may over-count by a failed attempt, never under-count).
+const ledgerToday = (() => { const byAttempt = new Map(); for (const l of ledgerLines()) { if ((l.at || "").slice(0, 10) !== today()) continue; const k = String(l.nonce ?? "") + "|" + String(l.at); if (!byAttempt.has(k)) byAttempt.set(k, l); } let s = 0; for (const l of byAttempt.values()) s += Number(l.amount_usdt || 0); return s; })();
 // ---- provider(s) ----
 const providers = [];
 for (const u of RPCS) { try { const p = new ethers.JsonRpcProvider(u, 1, { staticNetwork: true }); await p.getBlockNumber(); providers.push(p); } catch {} }

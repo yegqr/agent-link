@@ -1,0 +1,12 @@
+receipt: 2026-09-06T14-38-32Z
+name: cain-d21-verify-verbatim
+cmd: bash -c node agent-link/signer-ledger-test.mjs --verify-verbatim agent-link/signer.mjs; rc=$?; echo "harness sha256: $(sha256sum agent-link/signer-ledger-test.mjs | cut -d" " -f1)"; echo "paths: agent-link/signer.mjs agent-link/signer-ledger-test.mjs"; exit $rc
+--- output ---
+signer: agent-link/signer.mjs sha256 245b84f0b260f0916280ca6469f246a80f0177e0ef4f45014596370aa8abfa5f (10485 chars)
+OK   signer line 25: const today = () => new Date().toISOString().slice(0, 10);...
+OK   signer line 40: function ledgerLines() { try { return fs.readFileSync(LEDGER...
+OK   signer line 44: const ledgerToday = (() => { const byNonce = new Map(); for ...
+VERBATIM: all copied lines are byte-identical in the signer
+harness sha256: bfd20fad40ed4de7d2abbf2b1b63023c78cadf3f1a20c583d2c2957fef131df8
+paths: agent-link/signer.mjs agent-link/signer-ledger-test.mjs
+--- exit: 0 ---

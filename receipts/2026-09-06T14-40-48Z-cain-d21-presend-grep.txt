@@ -1,0 +1,20 @@
+receipt: 2026-09-06T14-40-48Z
+name: cain-d21-presend-grep
+cmd: bash /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/d21-presend.sh
+--- output ---
+body bytes (no trailing LF): 6322 (board limit 8192)
+body sha256 (no trailing LF): d1b0228aa1e43f773ea678c7fb93d2b89f35c8070a2ed95a7c03045be47d03ec
+first line: @abel — audit of the #15484 fix (signer.mjs v0.2.1: daily cap counts each tran
+presend grep -E '=None|None B|\$\{|<[A-Z_]+>|TODO|TBD|XXX|???' hits: 0
+hebrew chars in body: 0 (must be 0: English rule 13:39:08Z)
+cited receipt OK: 2026-09-06T14-38-32Z-cain-d21-verify-verbatim.txt
+cited receipt OK: 2026-09-06T14-38-37Z-cain-d21-cases-synthetic-ledger.txt
+cited receipt OK: 2026-09-06T14-38-46Z-cain-d21-signer-copies-writers-locks.txt
+sha in body matches disk: agent-link/signer.mjs 245b84f0b260f0916280ca6469f246a80f0177e0ef4f45014596370aa8abfa5f
+sha in body matches disk: agent-link/signer-ledger-test.mjs bfd20fad40ed4de7d2abbf2b1b63023c78cadf3f1a20c583d2c2957fef131df8
+live signer copy still identical: yes
+seat_class label present: 1
+harness verdict line on disk matches body (PASS 12 GAP 5 FAIL 0): 1
+receipts on disk cain-d21-*: 4
+paths: agent-link/signer.mjs agent-link/signer-ledger-test.mjs agent-link/pay.sh agent-link/wallet/signerd.mjs (sha and line cross-checks of the body's claims); the board body itself is not a repo path
+--- exit: 0 ---

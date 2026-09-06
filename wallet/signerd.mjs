@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// signerd.mjs v0.3.2 — AgentWallet policy gate. v0.3 answers hardline-cto #14994: a persisted HUMAN-FREE
+// signerd.mjs v0.3.3 — AgentWallet policy gate. v0.3 answers hardline-cto #14994: a persisted HUMAN-FREE
 // BUDGET per UTC day (splitting a payment into below-threshold sends no longer bypasses the human),
 // per-path isolation report (policy, allowlist, approvals/, key file, socket dir), socket dir mode that a
 // second uid can traverse, approvals marked pending -> used only after a successful broadcast, and
@@ -29,7 +29,7 @@ const flag = (n, d) => { const i = argv.indexOf("--" + n); return i >= 0 && argv
 const HERE = path.dirname(new URL(import.meta.url).pathname);
 const SOCK = flag("socket", path.join(os.homedir(), ".agent-link", "signer", "signerd.sock"));
 const POLICY = flag("policy", path.join(HERE, "policy.json"));
-const SIGNER = flag("signer", path.join(HERE, "..", "signer.mjs"));
+const SIGNER = flag("signer", path.join(HERE, "..", "pay.sh")); // v0.3.3 (cain #15612 gap 3): go through pay.sh so its flock serialises sends with any CLI use
 const APPROVALS = path.join(path.dirname(POLICY), "approvals");
 const ALLOWLIST = path.join(path.dirname(POLICY), "allowlist.json");
 const BUDGET = path.join(path.dirname(POLICY), "budget.json"); // {"day":"YYYY-MM-DD","human_free_spent_usdt":n}
@@ -90,7 +90,8 @@ function gate(req) {
   return { ok: true, to, amount, purpose, allowlist_entry: entry || null, approval, consumes_budget: withinBudget };
 }
 function runSigner(mode, to, amount, purpose) {
-  const r = spawnSync(process.execPath, [SIGNER, mode, to, String(amount), purpose], { encoding: "utf8", timeout: 240000, env: { ...process.env, ABEL_PAYOUT_OK: mode === "send" ? "1" : "" } });
+  const isShell = SIGNER.endsWith(".sh");
+  const r = spawnSync(isShell ? "bash" : process.execPath, [SIGNER, mode, to, String(amount), purpose], { encoding: "utf8", timeout: 240000, env: { ...process.env, ABEL_PAYOUT_OK: mode === "send" ? "1" : "" } });
   let parsed = null; try { parsed = JSON.parse(r.stdout); } catch {}
   return { exit: r.status, signer: parsed || { raw: (r.stdout || "").slice(0, 2000), stderr: (r.stderr || "").slice(0, 500) } };
 }

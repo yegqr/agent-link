@@ -1,0 +1,64 @@
+receipt: 2026-09-06T14-38-37Z
+name: cain-d21-cases-synthetic-ledger
+cmd: bash -c node agent-link/signer-ledger-test.mjs --cases /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/d21-fixtures; rc=$?; echo; echo '--- single-file mode on fixture a ---'; node agent-link/signer-ledger-test.mjs /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/d21-fixtures/ledger-a.jsonl; echo 'paths: agent-link/signer.mjs agent-link/signer-ledger-test.mjs (fixtures: synthetic, scratchpad d21-fixtures/, never ~/.agent-link/signer/spend.ledger)'; exit $rc
+--- output ---
+signer-ledger-test.mjs --cases  today=2026-09-06  fixtures=/tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/d21-fixtures
+case  verdict  actual  safe    v0.2.1  v0.2(sum-all)  lines keys  title
+a     PASS     2.70    2.70    2.70    8.10           15    5     5 transfers x 3 lines (reserved/broadcast/confirmed), distinct nonces -> each summed once
+b     PASS     0.00    0.00    0.00    2.00           2     1     reserved then broadcast_failed, same nonce -> 0 counted
+c     PASS     0.40    0.40    0.40    0.40           1     1     reserved with no follow-up (in-flight) -> counted
+d     PASS     0.00    0.00    0.00    0.00           3     0     yesterday's confirmed transfer only -> ignored today
+d2    PASS     0.00    0.00    0.00    0.00           3     0     reserve stamped 23:59:59.900Z yesterday, confirmed today -> all 3 lines carry the reserve's `at` -> yesterday's bucket
+e     PASS     0.50    0.50    0.50    1.50           5     1     same nonce on different days (yesterday reserved+broadcast_failed, today reserved/broadcast/confirmed) -> today counted once
+e2    PASS     0.60    0.60    0.60    1.80           3     1     nonce-less lines (fallback key = at) that share the reserve's `at`, as the signer writes them -> once
+e3    GAP      1.80    0.60    1.80    1.80           3     3     nonce-less lines with a DISTINCT `at` per line (a writer that re-stamps each line) -> fallback key splits the transfer
+f     PASS     0.00    0.00    0.00    2.00           2     1     reserved then broadcast_failed with the IDENTICAL `at` string, file order R,F -> `>=` lets the later-read line win -> 0
+f2    PASS     1.00    1.00    1.00    2.00           2     1     same lines in REVERSED file order (F then R, same `at`) -> the later-read line (reserved) wins -> counted
+g     PASS     5.50    5.50    5.50    16.50          30    10    float boundary: ten confirmed transfers 0.10..1.00 (nominal 5.50) -> is `spent + 4.50 > 10` false?
+h     GAP      0.50    1.00    0.50    3.50           5     1     same-day nonce reuse: 1.00 broadcast (unconfirmed, exit 3, dropped by the RPC's mempool) then retry 0.50 with the same nonce -> latest line wins
+i     GAP      0.00    1.00    0.00    2.00           2     1     reserved then broadcast_failed whose error is a transport timeout (node may have accepted the tx) -> released to 0
+j     GAP      0.00    2.00    0.00    4.60           4     1     two writers, same nonce (signerd spawns signer.mjs without pay.sh's flock): A reserved 2.00 + broadcast; B reserved 0.30 + broadcast_failed (underpriced); A exits 3 (no confirmed line)
+k     GAP      1.00    REFUSE  1.00    3.00           5     1     one valid transfer 1.00 + one truncated JSON line + one line without `at` (2.00) -> the two bad lines vanish silently
+l     PASS     1.00    1.00    1.00    3.00           3     1     reserved/broadcast/reverted (ERC-20 revert, no USDT moved) -> still counted
+m     PASS     0.25    0.25    0.25    0.75           3     1     nonce 0 (first transfer of an account): `??` keeps "0" as the key (|| would have fallen back to at)
+notes:
+  a: v0.2 sum-every-line would read 8.10 (the #15457 incident class)
+  d2: ledger buckets by reserve time; blockscout buckets by block time (today) -> Math.max covers it only while the indexer is reachable
+  e: date filter runs before keying, so the key needs no date
+  e2: signer.mjs lines 92/96/99/104 all spread `reserve`: nonce AND at are identical on every line of a transfer
+  e3: latent: no such writer exists today (only signer.mjs appends to spend.ledger; pay.sh `ledger` reads); over-count = safe direction
+  f: all lines of a transfer share `at` by construction, so `>=` == file order; the writer appends chronologically under one process
+  f2: file order is the only tiebreak; cannot happen with the single-process appender, shown for determinism
+  g: cap compare is on binary floats (signer.mjs:65); see the float line below the table
+  h: one nonce mines at most once but the ledger cannot know which hash; safe = max amount over the nonce's hashed lines. v0.2 counted 3.50
+  i: signer.mjs:96 releases on ANY throw from usdt.transfer; a timeout after eth_sendRawTransaction reached the node still mines. v0.2 counted 2.00
+  j: B's later `at` wins the nonce and its status is broadcast_failed -> A's live 2.00 broadcast is released. v0.2 counted 4.60
+  k: ledgerLines() (signer.mjs:40) drops unparseable lines, the date filter drops lines without `at`: fail-open on a corrupt ledger
+  l: only broadcast_failed is excluded; a revert charges the day (false-refusal class, safe direction)
+float: case g raw sum = 5.5 ; 5.5 + 4.5 > 10 -> false (a send of exactly the remaining cap is allowed)
+mutations (actual under the mutated expression; * marks a change vs v0.2.1):
+  M1 `>=` -> `>` (first-read line wins): a=2.70 b=1.00* c=0.40 d=0.00 d2=0.00 e=0.50 e2=0.60 e3=1.80 f=1.00* f2=0.00* g=5.50 h=0.50 i=1.00* j=0.30* k=1.00 l=1.00 m=0.25
+  M2 key `l.nonce ?? l.at` -> `l.at` (nonce ignored): a=2.70 b=0.00 c=0.40 d=0.00 d2=0.00 e=0.50 e2=0.60 e3=1.80 f=0.00 f2=1.00 g=5.50 h=1.50* i=0.00 j=2.00* k=1.00 l=1.00 m=0.25
+  M3 drop the broadcast_failed exclusion: a=2.70 b=1.00* c=0.40 d=0.00 d2=0.00 e=0.50 e2=0.60 e3=1.80 f=1.00* f2=1.00 g=5.50 h=0.50 i=1.00* j=0.30* k=1.00 l=1.00 m=0.25
+summary: PASS 12  GAP 5  FAIL 0  (exit 0; GAP = finding against v0.2.1, not a harness failure)
+
+--- single-file mode on fixture a ---
+{
+ "ledger": "/tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/d21-fixtures/ledger-a.jsonl",
+ "today": "2026-09-06",
+ "ledger_today": 2.7,
+ "lines_raw": 15,
+ "lines_unparseable": 0,
+ "lines_today": 15,
+ "lines_today_without_at": 0,
+ "v0_2_sum_all_today": 8.1,
+ "keys_today": [
+  "100",
+  "101",
+  "102",
+  "103",
+  "104"
+ ]
+}
+paths: agent-link/signer.mjs agent-link/signer-ledger-test.mjs (fixtures: synthetic, scratchpad d21-fixtures/, never ~/.agent-link/signer/spend.ledger)
+--- exit: 0 ---

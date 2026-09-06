@@ -1,0 +1,39 @@
+receipt: 2026-09-06T14-38-46Z
+name: cain-d21-signer-copies-writers-locks
+cmd: bash -c echo "== signer copies =="; sha256sum agent-link/signer.mjs /home/ye/.agent-link/signer/signer.mjs; diff -q agent-link/signer.mjs /home/ye/.agent-link/signer/signer.mjs && echo "IDENTICAL (repo copy == live copy)"; echo; echo "== ledger writers (only signer.mjs appends; every line spreads reserve = same nonce, same at) =="; grep -n "appendFileSync(LEDGER" agent-link/signer.mjs | cut -c1-170; grep -n "^const reserve" agent-link/signer.mjs | cut -c1-170; echo; echo "== other readers/writers of spend.ledger under agent-link (excluding receipts) =="; grep -rln "spend.ledger" agent-link --include=*.sh --include=*.mjs --include=*.py | grep -v receipts; echo "pay.sh ledger subcommand is read-only:"; grep -n "ledger)" agent-link/pay.sh | cut -c1-120; echo; echo "== serialization of sends =="; grep -n "flock" agent-link/pay.sh | cut -c1-140; echo "signerd flock lines: $(grep -c flock agent-link/wallet/signerd.mjs)"; grep -n "spawnSync(process.execPath" agent-link/wallet/signerd.mjs | cut -c1-140; echo "-> pay.sh serializes via .send.lock; signerd serializes via spawnSync (event loop blocked); the two entry points do NOT share a lock; direct node signer.mjs send has none"; echo; echo "== cap check order (chain cross-check fails open) =="; sed -n 51p agent-link/signer.mjs | cut -c1-120; sed -n 63,65p agent-link/signer.mjs | cut -c1-200; echo "nonceLatest is fetched at line 77, AFTER the cap check at 65:"; sed -n 77p agent-link/signer.mjs | cut -c1-160; echo "paths: agent-link/signer.mjs agent-link/pay.sh agent-link/wallet/signerd.mjs"
+--- output ---
+== signer copies ==
+245b84f0b260f0916280ca6469f246a80f0177e0ef4f45014596370aa8abfa5f  agent-link/signer.mjs
+245b84f0b260f0916280ca6469f246a80f0177e0ef4f45014596370aa8abfa5f  /home/ye/.agent-link/signer/signer.mjs
+IDENTICAL (repo copy == live copy)
+
+== ledger writers (only signer.mjs appends; every line spreads reserve = same nonce, same at) ==
+93:fs.appendFileSync(LEDGER, JSON.stringify(reserve) + "\n", { mode: 0o600 });
+96:catch (e) { fs.appendFileSync(LEDGER, JSON.stringify({ ...reserve, status: "broadcast_failed", error: String(e.shortMessage || e.message) }) + "\n"); fail("broadcast f
+99:fs.appendFileSync(LEDGER, JSON.stringify({ ...reserve, status: "broadcast", tx_hash: tx.hash }) + "\n");
+104:fs.appendFileSync(LEDGER, JSON.stringify({ ...reserve, status: rec.status === 1 ? "confirmed" : "reverted", tx_hash: tx.hash, block: rec.blockNumber }) + "\n");
+92:const reserve = { at: new Date().toISOString(), amount_usdt: amountNum, to, nonce: nonceLatest, purpose, status: "reserved" };
+
+== other readers/writers of spend.ledger under agent-link (excluding receipts) ==
+agent-link/signer.mjs
+agent-link/signer-ledger-test.mjs
+agent-link/pay.sh
+pay.sh ledger subcommand is read-only:
+17:  ledger) [ -f "$LEDGER" ] && python3 -c '
+
+== serialization of sends ==
+4:#   pay.sh send  <to> <amount_usdt> "<purpose citing seq/receipt>"   flock, LOG line BEFORE the send,
+26:exec 9>"$LOCK"; flock -w 5 9 || { echo "REFUSED: another send holds the lock"; exit 1; }
+signerd flock lines: 0
+93:  const r = spawnSync(process.execPath, [SIGNER, mode, to, String(amount), purpose], { encoding: "utf8", timeout: 240000, env: { ...proce
+-> pay.sh serializes via .send.lock; signerd serializes via spawnSync (event loop blocked); the two entry points do NOT share a lock; direct node signer.mjs send has none
+
+== cap check order (chain cross-check fails open) ==
+let chainToday = 0, chainSrc = "unavailable";
+} catch {}
+const spentToday = Math.max(ledgerToday, chainToday);
+if (spentToday + amountNum > MAX_PER_DAY) fail(`policy: daily cap ${MAX_PER_DAY} USDT would be exceeded`, { ledger_today: ledgerToday, chain_today: chainToday, chain_source: chainSrc });
+nonceLatest is fetched at line 77, AFTER the cap check at 65:
+const [usdtBal, ethBal, fee, nonceLatest, noncePending] = await Promise.all([usdt.balanceOf(TREASURY), provider.getBalance(TREASURY), provider.getFeeData(), pro
+paths: agent-link/signer.mjs agent-link/pay.sh agent-link/wallet/signerd.mjs
+--- exit: 0 ---
