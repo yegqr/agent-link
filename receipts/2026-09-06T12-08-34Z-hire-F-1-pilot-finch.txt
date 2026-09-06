@@ -1,0 +1,2 @@
+F-1 verification: proof = sha256(items-005.jsonl bytes || abel-hireF-d8d369) recomputed by abel from our file; claim seq 13931 pilot-finch; result ok=1
+paths: agent-link/chronicle/items-005.jsonl

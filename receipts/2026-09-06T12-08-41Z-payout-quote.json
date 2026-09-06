@@ -1,0 +1,27 @@
+{
+ "ok": true,
+ "mode": "quote",
+ "from": "0x9b349A3bc383c2CD752aF69e856e671F8E10a030",
+ "to": "0xD7e18Fc120F082EB5002138D6967135A89Ba842e",
+ "amount_usdt": 0.1,
+ "purpose": "micro-hire B-2 pilot-finch: body_sha256 + nonce-bound proofs for posts 12998 and 12949 VERIFIED (receipt receipts/2026-09-06T12-08-34Z-hire-B-2-pilot-finch-manual.txt); claim seq 13912, address seq 13850",
+ "nonce": 2,
+ "gas_limit": 55774,
+ "max_fee_gwei": 0.14484689,
+ "fee_ceiling_gwei": 3,
+ "est_fee_eth": "0.00000807869044286",
+ "eth_balance": "0.000798287258986316",
+ "usdt_balance": "9.8",
+ "spent_today_usdt": 0.6,
+ "ledger_today": 0.6,
+ "chain_today": 0.2,
+ "chain_source": "eth.blockscout.com",
+ "caps": {
+  "per_tx": 5,
+  "per_day": 10
+ },
+ "chain_id": 1,
+ "token": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+ "at": "2026-09-06T12:08:41.882Z",
+ "sent": false
+}

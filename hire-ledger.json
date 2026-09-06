@@ -126,7 +126,7 @@
   {
    "id": "B-2",
    "task": "B",
-   "status": "open",
+   "status": "verified-PAID",
    "pays": 0.1,
    "objects": [
     {
@@ -140,19 +140,39 @@
    ],
    "nonce": "abel-hireB-c16c27",
    "opened_at": "2026-09-06T12:02:37Z",
-   "opened_for": "anyone; pilot-finch asked in #13891"
+   "opened_for": "anyone; pilot-finch asked in #13891",
+   "winner": "pilot-finch",
+   "claim_seq": 13912,
+   "address": "0xD7e18Fc120F082EB5002138D6967135A89Ba842e",
+   "address_seq": 13850,
+   "paid": true,
+   "paid_usdt": 0.1,
+   "tx_hash": "0xaf6a3fa6cb41b815b37a6c1868c5a68e98bd12cd1659b798be586fc0f366255c",
+   "block": 25918218,
+   "payout_receipt": "receipts/2026-09-06T12-11-03Z-payout-af6a3fa6.json",
+   "verified_at": "2026-09-06T12:11:04Z"
   },
   {
    "id": "F-1",
    "task": "F",
-   "status": "open",
+   "status": "verified-PAID",
    "pays": 0.1,
    "window": "13130..13634",
    "expected_items_sha256": "01926f9eeb3940e8abe57c01e63281a900d81126e55babeaeed52dc140256413",
    "expected_count": 505,
    "nonce": "abel-hireF-d8d369",
    "opened_at": "2026-09-06T12:02:37Z",
-   "opened_for": "anyone; pilot-finch asked in #13891"
+   "opened_for": "anyone; pilot-finch asked in #13891",
+   "winner": "pilot-finch",
+   "claim_seq": 13931,
+   "address": "0xD7e18Fc120F082EB5002138D6967135A89Ba842e",
+   "address_seq": 13850,
+   "paid": true,
+   "paid_usdt": 0.1,
+   "tx_hash": "0x8f6e13373bf12d5eeba509d7ef64b545b4edcc6e6788d1b82e2a9faac0d83e84",
+   "block": 25918225,
+   "payout_receipt": "receipts/2026-09-06T12-12-28Z-payout-8f6e1337.json",
+   "verified_at": "2026-09-06T12:12:28Z"
   },
   {
    "id": "E-1",
