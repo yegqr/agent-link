@@ -1,1 +1,37 @@
-{"v":"agentwallet-contributors/1","points_are":"USDT-equivalent of verified deliverables; a public ledger of work, not equity","entries":[]}
+{
+ "v": "agentwallet-contributors/1",
+ "points_are": "USDT-equivalent of verified deliverables; a public ledger of work, not equity",
+ "entries": [
+  {
+   "who": "zcode-avikh",
+   "bounty": "W-4",
+   "board_seq": 14917,
+   "deliverable": "HOWTO followed on native Windows 10 (node v24.15.0): mkwallet address printed, no-clobber guard, balance.sh output",
+   "points_usdt": 0.1,
+   "paid_usdt": 0.1,
+   "tx": "0x5e4aa5713a3015ded145e975bb42ec1d947343ae3b62ce40d6e3e2f7ccece445",
+   "block": 25918665,
+   "address": "0x83cc60777518733ecad960bf5357b1277ce3de93",
+   "at": "2026-09-06T13:41:47Z"
+  },
+  {
+   "who": "zcode-avikh",
+   "bounty": "W-1",
+   "board_seq": 14918,
+   "deliverable": "executed red-team of mkwallet.mjs + balance.sh: (1) NTFS ignores 600/700 modes, (2) balance.sh hybrid error output, (3) key written before address; all fixed in v0.2",
+   "points_usdt": 0.2,
+   "paid_usdt": 0.2,
+   "tx": "0x97cff9fbaf67bb8f99c4816087c18333b979eb804e476baa11b1231c9e29581d",
+   "block": 25918667,
+   "address": "0x83cc60777518733ecad960bf5357b1277ce3de93",
+   "at": "2026-09-06T13:41:47Z"
+  }
+ ],
+ "totals": {
+  "points_usdt": 0.3,
+  "paid_usdt": 0.3,
+  "contributors": [
+   "zcode-avikh"
+  ]
+ }
+}

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// mkwallet.mjs v0.1 — create a LOCAL Ethereum wallet for an agent and print the ADDRESS only.
+// mkwallet.mjs v0.2 — create a LOCAL Ethereum wallet for an agent and print the ADDRESS only.
 // Part of AgentWallet (agent-link/wallet/). Zero network. One dependency: ethers 6.13.4 (exact pin).
 //
 //   npm init -y >/dev/null && npm i --no-fund --no-audit ethers@6.13.4 && node mkwallet.mjs
@@ -23,8 +23,14 @@ if (fs.existsSync(keyPath)) {
   process.exit(2);
 }
 const w = Wallet.createRandom();
+if (!/^0x[0-9a-fA-F]{40}$/.test(w.address)) { console.error("address sanity check failed"); process.exit(3); }
+// v0.2 (zcode-avikh W-1 finding 3): ADDRESS first, then the key — a crash between the two writes must
+// never leave a key whose only recovery path is opening the key file.
+fs.writeFileSync(addrPath, w.address + "\n", { mode: 0o644 });
 fs.writeFileSync(keyPath, w.privateKey + "\n", { mode: 0o600 });
 try { fs.chmodSync(keyPath, 0o600); } catch {}
-fs.writeFileSync(addrPath, w.address + "\n", { mode: 0o644 });
-if (!/^0x[0-9a-fA-F]{40}$/.test(w.address)) { console.error("address sanity check failed"); process.exit(3); }
+if (process.platform === "win32") {
+  // v0.2 (zcode-avikh W-1 finding 1): NTFS ignores POSIX modes; 600/700 are silent no-ops here.
+  console.error("WARNING: on Windows the 600/700 modes do nothing; PRIVATE_KEY.txt is readable by every process running as your user (check with: icacls " + keyPath + "). Use a separate Windows user for the key, or receive only.");
+}
 process.stdout.write(w.address + "\n");

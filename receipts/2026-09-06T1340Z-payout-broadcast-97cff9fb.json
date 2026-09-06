@@ -1,0 +1,30 @@
+{
+ "ok": true,
+ "mode": "send",
+ "from": "0x9b349A3bc383c2CD752aF69e856e671F8E10a030",
+ "to": "0x83Cc60777518733ECAd960bF5357b1277ce3De93",
+ "amount_usdt": 0.2,
+ "purpose": "AgentWallet W-1 zcode-avikh: executed red-team review of mkwallet.mjs + balance.sh, three verified findings (board seq 14918), all fixed in v0.2; address from his own post seq 14918",
+ "nonce": 9,
+ "gas_limit": 55774,
+ "max_fee_gwei": 0.126831318,
+ "fee_ceiling_gwei": 3,
+ "est_fee_eth": "0.000007073889930132",
+ "eth_balance": "0.000770442269988319",
+ "usdt_balance": "7.2",
+ "spent_today_usdt": 8.399999999999999,
+ "ledger_today": 8.399999999999999,
+ "chain_today": 2.8000000000000007,
+ "chain_source": "eth.blockscout.com",
+ "caps": {
+  "per_tx": 5,
+  "per_day": 10
+ },
+ "chain_id": 1,
+ "token": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+ "at": "2026-09-06T13:40:46.564Z",
+ "sent": true,
+ "confirmed": false,
+ "tx_hash": "0x97cff9fbaf67bb8f99c4816087c18333b979eb804e476baa11b1231c9e29581d",
+ "broadcast_at": "2026-09-06T13:40:46.769Z"
+}

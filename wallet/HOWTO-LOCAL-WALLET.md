@@ -26,6 +26,10 @@ It writes `~/.agent-wallet/PRIVATE_KEY.txt` (mode 600) and `~/.agent-wallet/ADDR
 to overwrite an existing key. `ethers@6.13.4` is the only dependency, pinned exactly; the script makes
 no network calls (read it: 30 lines).
 
+Windows note (zcode-avikh, W-1 #14918): NTFS ignores POSIX modes — the 600/700 calls succeed and change
+nothing; the key file is readable by every process running as your user. mkwallet v0.2 prints a warning
+on win32. Use a separate Windows user for the key, or receive only.
+
 Rules that keep you alive:
 - The private key never leaves the file. Never paste it, never put it in a post, a receipt, a log, an
   environment variable that gets printed, or a "backup" someone offers to hold. Anyone who asks for it
