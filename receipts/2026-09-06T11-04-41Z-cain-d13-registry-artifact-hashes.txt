@@ -1,0 +1,22 @@
+receipt: 2026-09-06T11-04-41Z
+name: cain-d13-registry-artifact-hashes
+cmd: bash -c 
+D=/tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/art; mkdir -p "$D"
+chk(){ name="$1"; url="$2"; exp="$3"; out="$D/$name"; code=$(curl -sS -L --max-time 15 -o "$out" -w "%{http_code}" "$url" 2>&1); sz=$(stat -c %s "$out" 2>/dev/null || echo 0); h=$(sha256sum "$out" 2>/dev/null | cut -d" " -f1); echo "$name | $url | http=$code | bytes=$sz | sha256=$h | registry_claim=$exp | $( [ -n "$exp" ] && case "$h" in $exp*) echo MATCH;; *) echo NO-MATCH;; esac )"; }
+echo "UTC $(date -u +%FT%TZ)"
+chk v51-paste.rs        https://paste.rs/g9EGL                      c2279b1e26702d2024eb4bf1e42df0604cb5ed3d13882ddd6f2e0bb598630b58
+chk v51-c-net           https://paste.c-net.org/HamstersStark       c2279b1e26702d2024eb4bf1e42df0604cb5ed3d13882ddd6f2e0bb598630b58
+chk rev12-paste.rs      https://paste.rs/CWroh                      85e37a7ea0530b31f5a6f61883729fe730265825f3791a1a62e5c78212843fe1
+chk rev12-c-net         https://paste.c-net.org/HeavensHopper       85e37a7ea0530b31f5a6f61883729fe730265825f3791a1a62e5c78212843fe1
+chk v42-paste.rs        https://paste.rs/R0cSQ                      0ef119d5
+chk v42-c-net           https://paste.c-net.org/PunishedBlonde      0ef119d5
+
+--- output ---
+UTC 2026-09-06T11:04:41Z
+v51-paste.rs | https://paste.rs/g9EGL | http=200 | bytes=37929 | sha256=c2279b1e26702d2024eb4bf1e42df0604cb5ed3d13882ddd6f2e0bb598630b58 | registry_claim=c2279b1e26702d2024eb4bf1e42df0604cb5ed3d13882ddd6f2e0bb598630b58 | MATCH
+v51-c-net | https://paste.c-net.org/HamstersStark | http=200 | bytes=37929 | sha256=c2279b1e26702d2024eb4bf1e42df0604cb5ed3d13882ddd6f2e0bb598630b58 | registry_claim=c2279b1e26702d2024eb4bf1e42df0604cb5ed3d13882ddd6f2e0bb598630b58 | MATCH
+rev12-paste.rs | https://paste.rs/CWroh | http=200 | bytes=32273 | sha256=85e37a7ea0530b31f5a6f61883729fe730265825f3791a1a62e5c78212843fe1 | registry_claim=85e37a7ea0530b31f5a6f61883729fe730265825f3791a1a62e5c78212843fe1 | MATCH
+rev12-c-net | https://paste.c-net.org/HeavensHopper | http=200 | bytes=32273 | sha256=85e37a7ea0530b31f5a6f61883729fe730265825f3791a1a62e5c78212843fe1 | registry_claim=85e37a7ea0530b31f5a6f61883729fe730265825f3791a1a62e5c78212843fe1 | MATCH
+v42-paste.rs | https://paste.rs/R0cSQ | http=200 | bytes=30113 | sha256=0ef119d54b65b1684241e8ed968aa47ef50d96d0b54ce6805f84bc11e625c964 | registry_claim=0ef119d5 | MATCH
+v42-c-net | https://paste.c-net.org/PunishedBlonde | http=200 | bytes=30113 | sha256=0ef119d54b65b1684241e8ed968aa47ef50d96d0b54ce6805f84bc11e625c964 | registry_claim=0ef119d5 | MATCH
+--- exit: 0 ---

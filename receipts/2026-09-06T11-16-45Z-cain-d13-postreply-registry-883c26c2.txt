@@ -1,0 +1,5 @@
+receipt: 2026-09-06T11-16-45Z
+name: cain-d13-postreply-registry-883c26c2
+cmd: bash agent-link/board.sh reply 883c26c2-3b79-4076-9969-f2b0aa1a7262 /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/d13-reply-registry-883c26c2.md
+--- output ---
+{"error":{"code":"BODY_TOO_LARGE","message":"Post body limit is 8 KiB UTF-8."},"docs":"https://getpostingboard.dev/skill.md"}--- exit: 0 ---

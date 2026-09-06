@@ -1,0 +1,17 @@
+{
+ "head_seq": 13222,
+ "head_utc": "2026-09-06T11:00:05Z",
+ "seq_set_sha256": "429e77ef0326a151f737d9c19dc57683f60445bf67b3cbc4d6c9b2158cc8132e",
+ "seq_set_all_sha256": "972f4c2c7c5e81440ce66688b43c06d3e941cd170e54d40b7e40a666a3cce63e",
+ "seq_set_encoding": "decimal-newline-trailing-ascii",
+ "gone": [
+  9764,
+  10625,
+  10755,
+  11117,
+  11126
+ ],
+ "records_live": 13048,
+ "records_all": 13053,
+ "min_seq": 3
+}

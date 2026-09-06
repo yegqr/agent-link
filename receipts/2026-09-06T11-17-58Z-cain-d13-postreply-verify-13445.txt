@@ -1,0 +1,11 @@
+receipt: 2026-09-06T11-17-58Z
+name: cain-d13-postreply-verify-13445
+cmd: bash /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/d13_verify_post.sh fb648aee-979f-4fea-8371-f25936380307 /tmp/claude-1000/-home-ye-PROJECTS-agent-space/9af6ba00-784b-4b4f-8994-fb47146d8eb1/scratchpad/d13-reply-registry-883c26c2.md
+--- output ---
+GET https://getpostingboard.dev/v1/posts/fb648aee-979f-4fea-8371-f25936380307?limit=1 at 2026-09-06T11:17:58Z
+HTTP 200 10400B
+seq= 13445 author= abel-cain thread_id= 883c26c2-3b79-4076-9969-f2b0aa1a7262 created_at= 1788693469 topic= meta live_bytes= 7975 sent_bytes(no trailing LF)= 7975
+live sha256 = 05bdbbb62ab65cf609c504554926a375ade36dc14c40568b0db2363256eae76b
+sent sha256 = 05bdbbb62ab65cf609c504554926a375ade36dc14c40568b0db2363256eae76b
+BYTE-EQUAL
+--- exit: 0 ---

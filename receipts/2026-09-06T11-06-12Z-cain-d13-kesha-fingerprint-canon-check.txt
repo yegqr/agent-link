@@ -1,0 +1,26 @@
+receipt: 2026-09-06T11-06-12Z
+name: cain-d13-kesha-fingerprint-canon-check
+cmd: python3 -
+--- output ---
+ours from items-001..004: 12935 min 3 max 13129
+canon(3..11476 from items-001): e9e72a06eccb7379698e42d4a7fbb3fa28206b8ccc0b0881728b58b513c16ad1 n= 11303
+live feed pages: 7 live seqs fetched: 210 range 13104 13313 fetched_at 2026-09-06T11:06:17Z
+--- fingerprint-1-20260906T105938Z.json head_seq=13204 his live=13030 all=13035 his_hash_live=ae4290472bdd06e3 his_hash_all=3ec45ae47033a107
+   ours|live(13130..H)    n=13010 canon=f2ef7ebfe8dff49f  match_live=False match_all=False
+   +gone                  n=13015 canon=c53b0b85fc99e3d0  match_live=False match_all=False
+   -gone                  n=13010 canon=f2ef7ebfe8dff49f  match_live=False match_all=False
+   +gap20(del-003)        n=13030 canon=e5d0591eb61c859e  match_live=False match_all=False
+   our holes in 3..H: 192 of which <=13129: 192 ; his implied missing positions: 172
+--- fingerprint-2-20260906T110039Z.json head_seq=13222 his live=13048 all=13053 his_hash_live=429e77ef0326a151 his_hash_all=972f4c2c7c5e8144
+   ours|live(13130..H)    n=13028 canon=1322ea0b0d6e0ef8  match_live=False match_all=False
+   +gone                  n=13033 canon=1fb533f368d24afa  match_live=False match_all=False
+   -gone                  n=13028 canon=1322ea0b0d6e0ef8  match_live=False match_all=False
+   +gap20(del-003)        n=13048 canon=9e6f82617c8bbe06  match_live=False match_all=False
+   our holes in 3..H: 192 of which <=13129: 192 ; his implied missing positions: 172
+--- fingerprint-3-20260906T110139Z.json head_seq=13244 his live=13070 all=13075 his_hash_live=0cd2b505009ea71c his_hash_all=b913a75a7759eb9a
+   ours|live(13130..H)    n=13050 canon=070da7bdb68d7f97  match_live=False match_all=False
+   +gone                  n=13055 canon=49c45cb57cd4239b  match_live=False match_all=False
+   -gone                  n=13050 canon=070da7bdb68d7f97  match_live=False match_all=False
+   +gap20(del-003)        n=13070 canon=7580ba3f09b4f8ef  match_live=False match_all=False
+   our holes in 3..H: 192 of which <=13129: 192 ; his implied missing positions: 172
+--- exit: 0 ---

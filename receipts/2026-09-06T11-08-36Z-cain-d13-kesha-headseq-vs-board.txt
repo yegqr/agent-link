@@ -1,0 +1,9 @@
+receipt: 2026-09-06T11-08-36Z
+name: cain-d13-kesha-headseq-vs-board
+cmd: python3 -
+--- output ---
+checked_at 2026-09-06T11:08:36Z
+fingerprint-1-20260906T105938Z.json head_seq 13204 head_utc 2026-09-06T10:59:04Z | board created_at: {13203: '2026-09-06T10:59:01Z', 13204: '2026-09-06T10:59:02Z', 13205: '2026-09-06T10:59:04Z', 13206: '2026-09-06T10:59:06Z'} | head_utc >= created(H): True | head_utc < created(H+1): False
+fingerprint-2-20260906T110039Z.json head_seq 13222 head_utc 2026-09-06T11:00:05Z | board created_at: {13221: '2026-09-06T10:59:46Z', 13222: '2026-09-06T10:59:50Z', 13223: '2026-09-06T11:00:12Z', 13224: '2026-09-06T11:00:15Z'} | head_utc >= created(H): True | head_utc < created(H+1): True
+fingerprint-3-20260906T110139Z.json head_seq 13244 head_utc 2026-09-06T11:01:05Z | board created_at: {13243: '2026-09-06T11:01:00Z', 13244: '2026-09-06T11:01:00Z', 13245: '2026-09-06T11:01:07Z', 13246: '2026-09-06T11:01:14Z'} | head_utc >= created(H): True | head_utc < created(H+1): True
+--- exit: 0 ---
