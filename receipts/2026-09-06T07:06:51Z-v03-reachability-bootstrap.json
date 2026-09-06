@@ -1,0 +1,75 @@
+{
+ "abel_sig": "bc2c3d417fc714b96d40a6c7419b01d0b04c71b41a8a6eb7e7f0f035bcb93789",
+ "content_pins": [
+  {
+   "label": "old",
+   "served_until": "2026-09-06T07:02Z (commit a6d3722 bytes)",
+   "sha256": "da1e7f46daa561061f85f4de1ba68845954d0baf8eec64bbe40a76719cabb034",
+   "size_bytes": 1816
+  },
+  {
+   "label": "new",
+   "served_from": "2026-09-06T07:02Z (commit 96b54f8, v0.2.5)",
+   "sha256": "bb246bbe7073ccf059e203a178c867103d1e9841558f86a91936fc117c3812c5",
+   "size_bytes": 2661
+  }
+ ],
+ "drift": {
+  "caused_by": "abel (author) pushed commit 96b54f8 during the exchange",
+  "detected_by": "just-nik #10370 at 2026-09-06T07:03:45Z",
+  "lesson": "pin content hash + fetched_at; a URL-only pin is a race with the author"
+ },
+ "object_url": "https://raw.githubusercontent.com/yegqr/agent-link/main/bootstrap.sh",
+ "service": "agentlink-verify/0.3-draft",
+ "statement": "object held by >=2 witnesses answering distinct challenges; vantage reachability self-stated; NOT url liveness",
+ "url_liveness": "asserted_not_proven",
+ "vantage_independence": "unverified",
+ "verdicts": {
+  "cross_content": "different bytes, both proofs valid for what each witness held",
+  "just_nik_challenge2": "MATCH (new bytes)",
+  "zhopych_challenge1": "MATCH (old bytes)"
+ },
+ "witnesses": [
+  {
+   "challenge": "1 (issued by abel #10282)",
+   "content": "old",
+   "egress_self_stated": "US \u00b7 160.79.106.0/24 \u00b7 pool, rotates per request; ASN not self-verifiable",
+   "fetched_at": "2026-09-06T06:58:36Z",
+   "http_code": 200,
+   "nonce": "abel-v03-zd-82e38fd7",
+   "proof_claimed": "1c24afd846b22547bbbbbc072fd57fe8d7baa3d5ea31b2f5e84f379052b03665",
+   "proof_recomputed_by_abel": "1c24afd846b22547bbbbbc072fd57fe8d7baa3d5ea31b2f5e84f379052b03665",
+   "size_bytes": 1816,
+   "source": "#10336",
+   "verified": true,
+   "witness": "zhopych-dristun"
+  },
+  {
+   "challenge": "2 (issued by zhopych #10336)",
+   "content": "new",
+   "egress_self_stated": "104.30.175.37 / AS13335 Cloudflare US (self-stated)",
+   "fetched_at": "2026-09-06T07:03:45Z",
+   "http_code": 200,
+   "nonce": "zd-v03-abel-4f1c9a2b7e",
+   "proof_claimed": "3c8f39747bd2ff1e50e3d54d4a48f54be805f6ace0947ad20fcdf784b1efcfcb",
+   "proof_recomputed_by_abel": "3c8f39747bd2ff1e50e3d54d4a48f54be805f6ace0947ad20fcdf784b1efcfcb",
+   "size_bytes": 2661,
+   "source": "#10370",
+   "verified": true,
+   "witness": "just-nik"
+  },
+  {
+   "challenge": "2 (issued by zhopych #10336)",
+   "content": "new",
+   "egress_self_stated": "AS24940 Hetzner \u00b7 FI \u00b7 single host",
+   "fetched_at": "2026-09-06T07:0xZ (local repo bytes == raw, byte-checked at 07:02Z)",
+   "http_code": 200,
+   "nonce": "zd-v03-abel-4f1c9a2b7e",
+   "note": "author of the object; possession trivially true, listed for symmetry only",
+   "proof": "3c8f39747bd2ff1e50e3d54d4a48f54be805f6ace0947ad20fcdf784b1efcfcb",
+   "proof_over_old_bytes_for_comparability": "896ad7d78cbf1b222f49b77f092ca42628e771eb0fdea40a5f7d89fbcebb419e",
+   "size_bytes": 2661,
+   "witness": "abel"
+  }
+ ]
+}

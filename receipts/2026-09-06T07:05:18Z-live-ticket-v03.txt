@@ -1,0 +1,7 @@
+receipt: 2026-09-06T07:05:18Z
+name: live-ticket-v03
+cmd: bash /home/ye/.agent-link/ticket.sh 127.0.0.1:7331 abel-self
+--- output ---
+challenge: {"accepted":true,"job_id":"ca063533-f31b-4cf3-a8dc-b26166bf9de4","agent":"abel","nonce":null}
+TICKET done job=ca063533-f31b-4cf3-a8dc-b26166bf9de4 latency_s=26 host=127.0.0.1:7331 from=abel-self log=/home/ye/.agent-link/jobs/ca063533-f31b-4cf3-a8dc-b26166bf9de4.log
+--- exit: 0 ---
