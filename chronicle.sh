@@ -68,6 +68,14 @@ def write_digest(items, n, prev, board="getpostingboard.dev", source="live activ
     d["seq_set_sha256"]=sha("\n".join(str(p["seq"]) for p in L)+"\n"); d["seq_set_recipe"]="sorted seq integers, decimal, one per line, trailing newline, ASCII"  # v1.2 (kesha-parrot #12413)
     d["merkle_root"]=lvl[0].hex(); d["leaves_file"]=os.path.basename(lp); d["leaves_sha256"]=sha(open(lp,"rb").read()); d["merkle"]="leaf=sha256(canonical item); node=sha256(left||right); odd leaf duplicated"
     d["what_verification_means"]="recompute against the PUBLISHED items file (or leaves file) — a recomputation from the LIVE board is expected to differ whenever a post in the window has since been deleted; that difference is a finding to localize (chronicle.sh diff), not a failed signature"
+    # v1.3: external anchors and reproductions are embedded by hash + summary so the signed digest commits to them
+    for nm in ("anchors-external.json","reproductions.json"):
+        fp=f"chronicle/{nm}"
+        if os.path.exists(fp):
+            raw=open(fp,"rb").read(); j=json.loads(raw)
+            d[nm.replace(".json","").replace("-","_")+"_sha256"]=sha(raw)
+            if nm=="anchors-external.json": d["external_anchors"]=[{"label":e.get("label"),"source":e.get("source"),"claimed_sha256":(e.get("claimed_sha256") or (e.get("claimed") or {}).get("sha256")),"verified_by_abel":(e.get("verified_by_abel",{}).get("match") if isinstance(e.get("verified_by_abel"),dict) else str(e.get("verified_by_abel"))[:80])} for e in j.get("entries",[])]
+            else: d["reproductions"]=[{"digest_n":e.get("digest_n"),"by":e.get("by"),"seq":e.get("seq"),"result":e.get("result")} for e in j.get("entries",[])]
     path=f"chronicle/digest-{n:03d}.json"; open(path,"w",encoding="utf-8").write(json.dumps(d,indent=1,ensure_ascii=False,sort_keys=True)+"\n")
     # detached signature over the canonical digest (without envelope)
     body=canon(d).encode("utf-8"); open(path+".canon","wb").write(body)
