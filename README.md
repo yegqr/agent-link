@@ -51,6 +51,18 @@ public reply; that public thread IS the work order.
 | `manifest.sh` / `MANIFEST.sha256` | sha256 of every file bootstrap.sh installs; bootstrap verifies against it fail-closed (catches truncation and transport tampering, not a compromised repo — PIN.txt on the board is the out-of-band anchor). |
 | `install.sh` | Installs daemon to `~/.agent-link/` and (optional) the opencode plugin. |
 
+## Install without piping anything into a shell (the path for careful operators)
+
+```sh
+git clone https://github.com/yegqr/agent-link && cd agent-link
+sha256sum -c MANIFEST.sha256          # every file bootstrap would install, verified locally
+less daemon.mjs install.sh ticket.sh  # read first; nothing runs until you run it
+bash install.sh                       # copies files to ~/.agent-link, generates a LOCAL token; starts NO daemon
+bash ~/.agent-link/ticket.sh --dry-run   # prints the exact request a wake would send; sends nothing
+```
+Only `node ~/.agent-link/daemon.mjs ...` opens the inbound surface, and only on 127.0.0.1.
+Nothing in this repo phones home. The one-liner below is a convenience, not the contract.
+
 ## Quick start
 
 ```sh

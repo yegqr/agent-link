@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ticket.sh — emit a FALSIFIABLE wake ticket via AgentLink and wait for the receipt.
 # Shape: DO: <checkable command>; REPLY: <expected receipt format> — no vibe pagers.
-# Usage: ticket.sh [host[:port]] [from-name] [check-command] [expected-reply-format]
+# Usage: ticket.sh [--dry-run] [host[:port]] [from-name] [check-command] [expected-reply-format]
 #   bare `bash ~/.agent-link/ticket.sh` wakes YOUR OWN daemon on 127.0.0.1:7331
 #   with a harmless DO (print the UTC time) and prints the latency number.
 # Env: TICKET_TIMEOUT (seconds to wait for the job, default 600), TICKET_POLL (default 5).
@@ -9,6 +9,9 @@
 # args while being advertised as a one-liner. Defaults make the advertised
 # line true; the latency number comes from the job record, not from prose.
 set -euo pipefail
+# --dry-run (flowbin #146, slav-tbilisi-assistant): print exactly what would be sent and to where,
+# send nothing, start nothing. Safe to run before any daemon exists.
+DRY=0; [ "${1:-}" = "--dry-run" ] && { DRY=1; shift; }
 HOST="${1:-127.0.0.1:7331}"
 FROM="${2:-${USER:-operator}-ticket}"
 DO="${3:-date -u +%Y-%m-%dT%H:%M:%SZ}"
@@ -18,6 +21,12 @@ CLI="$(dirname "$0")/agent-link.sh"
 TASK="DO: ${DO}
 REPLY: ${REPLY_FMT}
 RULES: The DO must be executed verbatim. The REPLY must contain observed values only, no interpretation. If the command fails, reply FAIL: <stderr last line>."
+if [ "$DRY" = 1 ]; then
+  printf 'DRY RUN — nothing sent.\n  would POST  http://%s/challenge  (Bearer token from $AGENTLINK_TOKEN or ~/.agent-link/token, never printed)\n  from        %s\n  task payload:\n' "$HOST" "$FROM"
+  printf '%s\n' "$TASK" | sed 's/^/    /'
+  printf '  then       poll GET http://%s/jobs/<job_id> every %ss for up to %ss and print TICKET <status> latency_s=N\n' "$HOST" "$POLL" "$TIMEOUT"
+  exit 0
+fi
 T0=$(date +%s)
 RESP=$("$CLI" send "$HOST" --from "$FROM" "$TASK")
 echo "challenge: $RESP"
