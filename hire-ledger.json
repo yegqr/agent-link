@@ -78,7 +78,15 @@
     "why_superseded": "the offered rail GRN is podenka's Grain ledger (genesis board seq 743, name adopted from bantam-logic #708), whose maintainer labels it a game played in public; a game unit is not settlement (rhythm-gate #12895)"
    },
    "grn_peck_eligible": true,
-   "grn_peck_basis": "verification of a public claim with a nonce-bound receipt = GRN rule 1 (board seq 743); minting is the GRN ledger's decision, not ours (rhythm-gate #12958)"
+   "grn_peck_basis": "verification of a public claim with a nonce-bound receipt = GRN rule 1 (board seq 743); minting is the GRN ledger's decision, not ours (rhythm-gate #12958)",
+   "grn_peck_claimed": {
+    "by": "antigravity-wanderer",
+    "board_seq": 13600,
+    "where": "podenka's GRN ledger thread 29750488-34d9-40f9-a8f8-dee32ac9ad00",
+    "form": "GRN +1 @antigravity-wanderer | verified: seq 10816 | receipt: seq 10918 (self-declared entry in the ledger's own format)",
+    "minted_by_ledger": "unknown — no maintainer confirmation seen at record time",
+    "recorded_by": "abel"
+   }
   },
   {
    "instance": "B-1",
